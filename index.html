@@ -589,7 +589,7 @@ body {
   display: none;
   position: fixed;
   inset: 0;
-  background: rgba(0,0,0,0.7);
+  background: rgba(0,0,0,0.8);
   z-index: 100;
   align-items: center;
   justify-content: center;
@@ -599,11 +599,11 @@ body {
 .modal {
   background: #1c1917;
   border: 1px solid #3a3530;
-  border-radius: 16px;
-  padding: 40px;
-  max-width: 560px;
+  border-radius: 20px;
+  padding: 36px 40px 40px;
+  max-width: 520px;
   width: 100%;
-  max-height: 90vh;
+  max-height: 92vh;
   overflow-y: auto;
   position: relative;
 }
@@ -619,47 +619,109 @@ body {
   padding: 4px;
 }
 .modal-close:hover { color: #faf8f3; }
-.modal h3 {
-  font-family: 'Fraunces', serif;
-  font-size: 24px;
-  font-weight: 600;
-  color: #faf8f3;
-  margin-bottom: 8px;
-}
-.modal-intro {
-  font-size: 14px;
-  color: #6a6560;
+
+/* Quiz progress bar */
+.quiz-progress-wrap {
   margin-bottom: 32px;
 }
-.quiz-q {
+.quiz-progress-label {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 11px;
+  letter-spacing: 0.1em;
+  color: #5a5550;
+  text-transform: uppercase;
+  margin-bottom: 8px;
+}
+.quiz-progress-bar {
+  height: 4px;
+  background: #2e2b28;
+  border-radius: 4px;
+  overflow: hidden;
+}
+.quiz-progress-fill {
+  height: 100%;
+  background: var(--amber);
+  border-radius: 4px;
+  transition: width 0.3s ease;
+}
+
+/* Quiz question */
+.quiz-question {
+  font-family: 'Fraunces', serif;
+  font-size: 22px;
+  font-weight: 600;
+  color: #faf8f3;
+  line-height: 1.35;
   margin-bottom: 28px;
 }
-.quiz-q p {
-  font-size: 15px;
-  font-weight: 600;
-  color: #c8c3bc;
-  margin-bottom: 12px;
-}
-.quiz-q label {
+
+/* Quiz answer cards */
+.quiz-options {
   display: flex;
-  align-items: flex-start;
+  flex-direction: column;
   gap: 10px;
-  padding: 10px 14px;
-  margin-bottom: 8px;
+  margin-bottom: 28px;
+}
+.quiz-option {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  padding: 16px 20px;
   background: #262320;
-  border: 1px solid #3a3530;
-  border-radius: 8px;
+  border: 2px solid #3a3530;
+  border-radius: 12px;
   cursor: pointer;
-  font-size: 14px;
-  color: #8a857e;
   transition: all 0.15s;
-}
-.quiz-q label:hover { border-color: var(--amber); color: #c8c3bc; }
-.quiz-q input[type="radio"] { margin-top: 2px; flex-shrink: 0; accent-color: var(--amber); }
-.quiz-submit {
+  text-align: left;
   width: 100%;
-  margin-top: 8px;
+  font-family: 'Plus Jakarta Sans', sans-serif;
 }
+.quiz-option:hover {
+  border-color: #6a6560;
+  background: #2e2b28;
+}
+.quiz-option.selected {
+  border-color: var(--amber);
+  background: rgba(217,119,6,0.12);
+}
+.quiz-option-emoji {
+  font-size: 24px;
+  flex-shrink: 0;
+  width: 32px;
+  text-align: center;
+}
+.quiz-option-text {
+  font-size: 15px;
+  font-weight: 500;
+  color: #c8c3bc;
+  line-height: 1.4;
+}
+.quiz-option.selected .quiz-option-text { color: #faf8f3; }
+
+/* Quiz nav */
+.quiz-nav {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+}
+.quiz-back {
+  background: none;
+  border: none;
+  font-family: 'Plus Jakarta Sans', sans-serif;
+  font-size: 14px;
+  font-weight: 600;
+  color: #5a5550;
+  cursor: pointer;
+  padding: 8px 0;
+}
+.quiz-back:hover { color: #8a857e; }
+.quiz-next {
+  flex: 1;
+  max-width: 200px;
+  margin-left: auto;
+}
+
 .quiz-link {
   display: inline-flex;
   align-items: center;
@@ -1355,50 +1417,22 @@ body {
 <div class="modal-overlay" id="quizModal" onclick="closeQuizOnOverlay(event)">
   <div class="modal">
     <button class="modal-close" onclick="closeQuiz()">✕</button>
-    <h3>Find your profile</h3>
-    <p class="modal-intro">Answer 5 quick questions. We'll suggest the best profile for you.</p>
 
-    <div class="quiz-q">
-      <p>1. When you read, unfamiliar or long words feel:</p>
-      <label><input type="radio" name="q1" value="phonological"> Hard to sound out or decode</label>
-      <label><input type="radio" name="q1" value="visual"> Blurry or they seem to move</label>
-      <label><input type="radio" name="q1" value="memory"> Fine to read but I forget them quickly</label>
-      <label><input type="radio" name="q1" value="none"> Not a problem for me</label>
+    <div class="quiz-progress-wrap">
+      <div class="quiz-progress-label" id="quiz-progress-label">Question 1 of 5</div>
+      <div class="quiz-progress-bar">
+        <div class="quiz-progress-fill" id="quiz-progress-fill" style="width:20%"></div>
+      </div>
     </div>
 
-    <div class="quiz-q">
-      <p>2. When reading a long block of text:</p>
-      <label><input type="radio" name="q2" value="visual"> It feels uncomfortable or tiring on my eyes</label>
-      <label><input type="radio" name="q2" value="memory"> I lose my place or forget what I just read</label>
-      <label><input type="radio" name="q2" value="phonological"> Technical words trip me up</label>
-      <label><input type="radio" name="q2" value="none"> I manage fine</label>
-    </div>
+    <div class="quiz-question" id="quiz-question"></div>
 
-    <div class="quiz-q">
-      <p>3. Following step-by-step instructions feels:</p>
-      <label><input type="radio" name="q3" value="memory"> Hard — I lose track of where I am</label>
-      <label><input type="radio" name="q3" value="phonological"> OK unless the words are complex</label>
-      <label><input type="radio" name="q3" value="visual"> Hard if the text is dense or cramped</label>
-      <label><input type="radio" name="q3" value="none"> Easy enough</label>
-    </div>
+    <div class="quiz-options" id="quiz-options"></div>
 
-    <div class="quiz-q">
-      <p>4. Reading on screen compared to paper:</p>
-      <label><input type="radio" name="q4" value="visual"> Screen is harder — more visual discomfort</label>
-      <label><input type="radio" name="q4" value="memory"> Both are hard if there's a lot of text</label>
-      <label><input type="radio" name="q4" value="phonological"> Both fine unless the words are complex</label>
-      <label><input type="radio" name="q4" value="none"> No real difference</label>
+    <div class="quiz-nav">
+      <button class="quiz-back" id="quiz-back" onclick="quizBack()">← Back</button>
+      <button class="btn-primary quiz-next" id="quiz-next" onclick="quizNext()" disabled>Next →</button>
     </div>
-
-    <div class="quiz-q">
-      <p>5. When someone explains something complex verbally:</p>
-      <label><input type="radio" name="q5" value="memory"> I follow it but struggle to hold all the parts in my head</label>
-      <label><input type="radio" name="q5" value="phonological"> I follow it better than reading it</label>
-      <label><input type="radio" name="q5" value="visual"> I follow it fine — reading is the main issue</label>
-      <label><input type="radio" name="q5" value="none"> I follow it fine either way</label>
-    </div>
-
-    <button class="btn-primary quiz-submit" onclick="submitQuiz()">Show my profile ↓</button>
   </div>
 </div>
 
@@ -1467,8 +1501,121 @@ function selectProfile(p, el) {
   buildPrompt();
 }
 
+// ── QUIZ ─────────────────────────────────────────────────
+const quizQuestions = [
+  {
+    q: "When you see a long or unfamiliar word...",
+    options: [
+      { emoji: "🔤", text: "It's hard to sound it out",        value: "phonological" },
+      { emoji: "👁️", text: "It seems to move or blur",         value: "visual" },
+      { emoji: "🧠", text: "I read it fine but forget it fast", value: "memory" },
+      { emoji: "✓",  text: "Not really a problem",             value: "none" }
+    ]
+  },
+  {
+    q: "Reading a big block of text feels...",
+    options: [
+      { emoji: "👁️", text: "Tiring or uncomfortable on my eyes", value: "visual" },
+      { emoji: "🧠", text: "I lose my place easily",             value: "memory" },
+      { emoji: "🔤", text: "Hard if the words are complex",      value: "phonological" },
+      { emoji: "✓",  text: "Fine",                              value: "none" }
+    ]
+  },
+  {
+    q: "Following a list of steps...",
+    options: [
+      { emoji: "🧠", text: "I lose track of where I am",         value: "memory" },
+      { emoji: "🔤", text: "Hard if the words are complicated",  value: "phonological" },
+      { emoji: "👁️", text: "Hard if the text is dense or small", value: "visual" },
+      { emoji: "✓",  text: "Easy enough",                        value: "none" }
+    ]
+  },
+  {
+    q: "When I listen to something vs read it...",
+    options: [
+      { emoji: "🔤", text: "Listening is much easier for me",  value: "phonological" },
+      { emoji: "🧠", text: "Both are hard — I lose the thread", value: "memory" },
+      { emoji: "👁️", text: "Screen reading is the main issue", value: "visual" },
+      { emoji: "✓",  text: "About the same",                   value: "none" }
+    ]
+  },
+  {
+    q: "Reading something long, I most often...",
+    options: [
+      { emoji: "🧠", text: "Forget what I just read",               value: "memory" },
+      { emoji: "👁️", text: "Feel my eyes getting tired or sore",    value: "visual" },
+      { emoji: "🔤", text: "Get stuck on specific words or phrases", value: "phonological" },
+      { emoji: "✓",  text: "Manage fine",                           value: "none" }
+    ]
+  }
+];
+
+let quizStep = 0;
+let quizAnswers = [];
+
+function renderQuiz() {
+  const q = quizQuestions[quizStep];
+  const total = quizQuestions.length;
+
+  document.getElementById('quiz-progress-label').textContent = `Question ${quizStep + 1} of ${total}`;
+  document.getElementById('quiz-progress-fill').style.width = `${((quizStep + 1) / total) * 100}%`;
+  document.getElementById('quiz-question').textContent = q.q;
+
+  const optWrap = document.getElementById('quiz-options');
+  optWrap.innerHTML = '';
+  q.options.forEach((opt, i) => {
+    const btn = document.createElement('button');
+    btn.className = 'quiz-option' + (quizAnswers[quizStep] === opt.value ? ' selected' : '');
+    btn.innerHTML = `<span class="quiz-option-emoji">${opt.emoji}</span><span class="quiz-option-text">${opt.text}</span>`;
+    btn.onclick = () => selectQuizOption(opt.value);
+    optWrap.appendChild(btn);
+  });
+
+  const isLast = quizStep === total - 1;
+  const nextBtn = document.getElementById('quiz-next');
+  nextBtn.textContent = isLast ? 'Show my profile ↓' : 'Next →';
+  nextBtn.disabled = !quizAnswers[quizStep];
+
+  document.getElementById('quiz-back').style.visibility = quizStep === 0 ? 'hidden' : 'visible';
+}
+
+function selectQuizOption(value) {
+  quizAnswers[quizStep] = value;
+  document.querySelectorAll('.quiz-option').forEach(btn => {
+    btn.classList.toggle('selected', btn.querySelector('.quiz-option-text').textContent ===
+      quizQuestions[quizStep].options.find(o => o.value === value).text);
+  });
+  document.getElementById('quiz-next').disabled = false;
+}
+
+function quizNext() {
+  if (quizStep < quizQuestions.length - 1) {
+    quizStep++;
+    renderQuiz();
+  } else {
+    finishQuiz();
+  }
+}
+
+function quizBack() {
+  if (quizStep > 0) { quizStep--; renderQuiz(); }
+}
+
+function finishQuiz() {
+  const scores = { phonological: 0, visual: 0, memory: 0 };
+  quizAnswers.forEach(v => { if (v && v !== 'none') scores[v]++; });
+  const top = Object.entries(scores).sort((a,b) => b[1]-a[1]);
+  const profile = (top[0][1] === top[1][1] || top[0][1] === 0) ? 'mixed' : top[0][0];
+  closeQuiz();
+  const card = document.querySelector(`.profile-card[onclick*="'${profile}'"]`);
+  if (card) selectProfile(profile, card);
+  document.getElementById('builder').scrollIntoView({ behavior: 'smooth' });
+}
+
 function openQuiz() {
-  document.querySelectorAll('input[type="radio"]').forEach(r => r.checked = false);
+  quizStep = 0;
+  quizAnswers = [];
+  renderQuiz();
   document.getElementById('quizModal').classList.add('open');
   document.body.style.overflow = 'hidden';
 }
@@ -1481,37 +1628,7 @@ function closeQuiz() {
 function closeQuizOnOverlay(e) {
   if (e.target === document.getElementById('quizModal')) closeQuiz();
 }
-
-function submitQuiz() {
-  const questions = ['q1','q2','q3','q4','q5'];
-  const scores = { phonological: 0, visual: 0, memory: 0 };
-  let answered = 0;
-
-  questions.forEach(q => {
-    const selected = document.querySelector(`input[name="${q}"]:checked`);
-    if (selected && selected.value !== 'none') {
-      scores[selected.value]++;
-      answered++;
-    }
-  });
-
-  if (answered < 3) {
-    alert('Please answer at least 3 questions before continuing.');
-    return;
-  }
-
-  const top = Object.entries(scores).sort((a,b) => b[1]-a[1]);
-  const profile = (top[0][1] === top[1][1] || top[0][1] === 0) ? 'mixed' : top[0][0];
-
-  closeQuiz();
-
-  // Select the matching profile card
-  const card = document.querySelector(`.profile-card[onclick*="'${profile}'"]`);
-  if (card) selectProfile(profile, card);
-
-  // Scroll to builder
-  document.getElementById('builder').scrollIntoView({ behavior: 'smooth' });
-}
+// ── END QUIZ ──────────────────────────────────────────────
 
 // ── DEMO ────────────────────────────────────────────────
 const demoOriginal = `<h4>How to Build a Business Plan</h4>
