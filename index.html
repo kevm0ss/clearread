@@ -740,6 +740,15 @@ body {
 }
 .quiz-link:hover { color: #5eead4; }
 
+/* HERO TOP BAR */
+.hero-top {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 36px;
+  padding-right: 100px;
+}
+
 /* HERO LOGO */
 .hero-logo {
   font-family: Monaco, Menlo, 'JetBrains Mono', monospace;
@@ -848,24 +857,26 @@ body {
 }
 .demo-profile-btn:hover { border-color: var(--amber); color: #c8c3bc; }
 .demo-profile-btn.active { background: var(--amber); border-color: var(--amber); color: #fff; }
-.demo-label-row {
+.demo-columns {
   display: flex;
-  border-bottom: 1px solid #ddd8ce;
 }
-.demo-label {
+.demo-col {
   flex: 1;
+  display: flex;
+  flex-direction: column;
+}
+.demo-col:first-child { border-right: 1px solid #ddd8ce; }
+.demo-label {
   padding: 12px 28px;
   font-family: 'JetBrains Mono', monospace;
   font-size: 11px;
   letter-spacing: 0.12em;
   text-transform: uppercase;
   font-weight: 600;
+  border-bottom: 1px solid #ddd8ce;
 }
-.demo-label.original { color: #ef4444; background: #fff5f5; border-right: 1px solid #ddd8ce; }
+.demo-label.original { color: #ef4444; background: #fff5f5; }
 .demo-label.clearread { color: #0d9488; background: #f0fdfb; }
-.demo-panels {
-  display: flex;
-}
 .demo-panel {
   flex: 1;
   padding: 28px;
@@ -969,10 +980,14 @@ body {
   .proof { padding: 24px; }
   .hero-cta { flex-direction: column; }
   .modal { padding: 28px 20px; }
-  .demo-panels { flex-direction: column; }
-  .demo-panel.original { border-right: none; border-bottom: 1px solid #ddd8ce; }
-  .demo-label-row { flex-direction: column; }
-  .demo-label.original { border-right: none; border-bottom: 1px solid #ddd8ce; }
+  .hero-top {
+    padding-right: 0;
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 12px;
+  }
+  .demo-columns { flex-direction: column; }
+  .demo-col:first-child { border-right: none; border-bottom: 1px solid #ddd8ce; }
 }
 </style>
 </head>
@@ -983,7 +998,7 @@ body {
   <div class="hero-grid"></div>
   <div class="hero-glow"></div>
   <div class="hero-inner">
-    <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:36px;padding-right:100px;">
+    <div class="hero-top">
       <div class="hero-logo" style="margin-bottom:0;">clearread</div>
       <div class="hero-badge" style="margin-bottom:0;">
         <div class="hero-badge-dot"></div>
@@ -1427,13 +1442,15 @@ body {
         <button class="demo-close" onclick="closeDemo()">✕</button>
       </div>
     </div>
-    <div class="demo-label-row">
-      <div class="demo-label original">❌ Without ClearRead</div>
-      <div class="demo-label clearread">✓ With ClearRead</div>
-    </div>
-    <div class="demo-panels">
-      <div class="demo-panel original" id="demo-original"></div>
-      <div class="demo-panel clearread" id="demo-clearread"></div>
+    <div class="demo-columns">
+      <div class="demo-col">
+        <div class="demo-label original">❌ Without ClearRead</div>
+        <div class="demo-panel original" id="demo-original"></div>
+      </div>
+      <div class="demo-col">
+        <div class="demo-label clearread">✓ With ClearRead</div>
+        <div class="demo-panel clearread" id="demo-clearread"></div>
+      </div>
     </div>
   </div>
 </div>
