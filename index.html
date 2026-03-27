@@ -1072,6 +1072,12 @@ body {
 
     <div class="step-label">Step 1 — Your profile</div>
     <div class="profiles">
+      <div class="profile-card" onclick="selectProfile('mixed',this)">
+        <div class="profile-emoji">⚡</div>
+        <div class="profile-name">Mixed / Unsure</div>
+        <div class="profile-desc">Multiple traits apply, or still figuring it out.</div>
+        <div class="active-check">✓ Selected</div>
+      </div>
       <div class="profile-card" onclick="selectProfile('phonological',this)">
         <div class="profile-emoji">🔤</div>
         <div class="profile-name">Phonological</div>
@@ -1088,12 +1094,6 @@ body {
         <div class="profile-emoji">🧠</div>
         <div class="profile-name">Working Memory</div>
         <div class="profile-desc">Lose the thread mid-sentence. Need clear chunking.</div>
-        <div class="active-check">✓ Selected</div>
-      </div>
-      <div class="profile-card" onclick="selectProfile('mixed',this)">
-        <div class="profile-emoji">⚡</div>
-        <div class="profile-name">Mixed / Unsure</div>
-        <div class="profile-desc">Multiple traits apply, or still figuring it out.</div>
         <div class="active-check">✓ Selected</div>
       </div>
     </div>
@@ -1434,10 +1434,10 @@ body {
       <h3>See readclear in action</h3>
       <div style="display:flex;align-items:center;gap:16px;">
         <div class="demo-profiles">
-          <button class="demo-profile-btn active" onclick="switchDemoProfile('phonological',this)">Phonological</button>
+          <button class="demo-profile-btn active" onclick="switchDemoProfile('mixed',this)">Mixed</button>
+          <button class="demo-profile-btn" onclick="switchDemoProfile('phonological',this)">Phonological</button>
           <button class="demo-profile-btn" onclick="switchDemoProfile('visual',this)">Visual Stress</button>
           <button class="demo-profile-btn" onclick="switchDemoProfile('memory',this)">Working Memory</button>
-          <button class="demo-profile-btn" onclick="switchDemoProfile('mixed',this)">Mixed</button>
         </div>
         <button class="demo-close" onclick="closeDemo()">✕</button>
       </div>
@@ -1839,7 +1839,7 @@ const demoClearread = {
 </details>`
 };
 
-let currentDemoProfile = 'phonological';
+let currentDemoProfile = 'mixed';
 
 function openDemo() {
   document.getElementById('demo-original').innerHTML = demoOriginal;
@@ -1932,6 +1932,12 @@ function expandToggle(id, btn) {
   el.classList.toggle('open');
   btn.classList.toggle('open');
 }
+
+// Auto-select Mixed on load
+document.addEventListener('DOMContentLoaded', () => {
+  const mixedCard = document.querySelector(".profile-card[onclick*=\"'mixed'\"]");
+  if (mixedCard) selectProfile('mixed', mixedCard);
+});
 </script>
 
 </body>
