@@ -153,11 +153,18 @@ CRITICAL RULE: Never remove, simplify, or summarise the original content. Every 
 
 ${profilePrompt}
 
-Output format: Return clean semantic HTML only. No markdown. No code fences. No commentary.
-Use: <h1>, <h2>, <h3>, <p>, <ul>, <ol>, <li>, <strong>, <details>, <summary>, <blockquote>, <hr>
-Do not include <html>, <head>, <body>, or <style> tags.`;
+Input format: The content uses markdown-style structure:
+- # ## ### mark headings — preserve as <h1> <h2> <h3>
+- [link text](url) marks links — preserve as <a href="url">link text</a>
+- **text** marks bold — preserve as <strong>text</strong>
+- • marks list items — use <ul><li> for these
 
-  const userMessage = `Reformat the following web page content according to the formatting rules above. Preserve every piece of information.
+Output format: Return clean semantic HTML only. No markdown. No code fences. No commentary.
+Allowed tags: <h1> <h2> <h3> <p> <ul> <ol> <li> <strong> <a href=""> <details> <summary> <blockquote> <hr>
+Do not include <html> <head> <body> or <style> tags.
+Always preserve every <a href=""> link from the original content.`;
+
+  const userMessage = `Reformat the following web page content. Preserve every fact, link, and detail. Only change structure and presentation.
 
 Page title: ${title}
 
@@ -212,33 +219,109 @@ ${truncatedText}`;
 }
 
 /**
- * Extract readable text content from HTML
- * Strips scripts, styles, nav, footer, ads
+ * Extract readable structured content from HTML.
+ * Preserves headings, links, lists, bold text and paragraph breaks.
+ * Sends structured markdown-style text to Claude so nothing is lost.
  */
-function extractContent(html, url) {
+function extractContent(html, baseUrl) {
   // Extract title
   const titleMatch = html.match(/<title[^>]*>([^<]+)<\/title>/i);
-  const title = titleMatch ? titleMatch[1].replace(/\s+/g, ' ').trim() : url;
+  const title = titleMatch ? decodeEntities(titleMatch[1]).trim() : baseUrl;
 
-  // Remove unwanted elements
+  // Step 1 — remove entirely useless blocks
   let cleaned = html
-    .replace(/<script\b[^<]*(?:(?!<\/script>)<[^<]*)*<\/script>/gi, '')
-    .replace(/<style\b[^<]*(?:(?!<\/style>)<[^<]*)*<\/style>/gi, '')
-    .replace(/<nav\b[^<]*(?:(?!<\/nav>)<[^<]*)*<\/nav>/gi, '')
-    .replace(/<header\b[^<]*(?:(?!<\/header>)<[^<]*)*<\/header>/gi, '')
-    .replace(/<footer\b[^<]*(?:(?!<\/footer>)<[^<]*)*<\/footer>/gi, '')
-    .replace(/<aside\b[^<]*(?:(?!<\/aside>)<[^<]*)*<\/aside>/gi, '')
-    .replace(/<!--[\s\S]*?-->/g, '')
-    .replace(/<[^>]+>/g, ' ')        // Strip remaining tags
-    .replace(/\s{2,}/g, ' ')          // Collapse whitespace
+    .replace(/<script\b[\s\S]*?<\/script>/gi, '')
+    .replace(/<style\b[\s\S]*?<\/style>/gi, '')
+    .replace(/<noscript\b[\s\S]*?<\/noscript>/gi, '')
+    .replace(/<iframe\b[\s\S]*?<\/iframe>/gi, '')
+    .replace(/<nav\b[\s\S]*?<\/nav>/gi, '')
+    .replace(/<header\b[\s\S]*?<\/header>/gi, '')
+    .replace(/<footer\b[\s\S]*?<\/footer>/gi, '')
+    .replace(/<aside\b[\s\S]*?<\/aside>/gi, '')
+    .replace(/<!--[\s\S]*?-->/g, '');
+
+  // Step 2 — try to isolate main content area
+  const mainMatch =
+    cleaned.match(/<main\b[^>]*>([\s\S]*?)<\/main>/i) ||
+    cleaned.match(/<article\b[^>]*>([\s\S]*?)<\/article>/i) ||
+    cleaned.match(/<div[^>]+(?:id|class)="[^"]*(?:content|article|main|post|body)[^"]*"[^>]*>([\s\S]*?)<\/div>/i);
+  if (mainMatch) cleaned = mainMatch[1];
+
+  // Step 3 — convert semantic elements to structured text before stripping
+
+  // Headings → markdown style
+  cleaned = cleaned
+    .replace(/<h1[^>]*>([\s\S]*?)<\/h1>/gi, (_, t) => `\n\n# ${stripTags(t).trim()}\n\n`)
+    .replace(/<h2[^>]*>([\s\S]*?)<\/h2>/gi, (_, t) => `\n\n## ${stripTags(t).trim()}\n\n`)
+    .replace(/<h3[^>]*>([\s\S]*?)<\/h3>/gi, (_, t) => `\n\n### ${stripTags(t).trim()}\n\n`)
+    .replace(/<h4[^>]*>([\s\S]*?)<\/h4>/gi, (_, t) => `\n\n#### ${stripTags(t).trim()}\n\n`)
+    .replace(/<h5[^>]*>([\s\S]*?)<\/h5>/gi, (_, t) => `\n\n##### ${stripTags(t).trim()}\n\n`)
+    .replace(/<h6[^>]*>([\s\S]*?)<\/h6>/gi, (_, t) => `\n\n###### ${stripTags(t).trim()}\n\n`);
+
+  // Bold
+  cleaned = cleaned
+    .replace(/<strong[^>]*>([\s\S]*?)<\/strong>/gi, '**$1**')
+    .replace(/<b[^>]*>([\s\S]*?)<\/b>/gi, '**$1**');
+
+  // Links — convert to [text](url), skip anchors and javascript
+  cleaned = cleaned.replace(/<a\s[^>]*href="([^"]*)"[^>]*>([\s\S]*?)<\/a>/gi, (_, href, text) => {
+    const linkText = stripTags(text).trim();
+    if (!linkText) return '';
+    // Skip javascript: and empty anchors
+    if (href.startsWith('javascript:') || href === '#') return linkText;
+    // Resolve relative URLs
+    let absUrl = href;
+    try {
+      absUrl = href.startsWith('http') ? href : new URL(href, baseUrl).href;
+    } catch(e) { return linkText; }
+    return `[${linkText}](${absUrl})`;
+  });
+
+  // List items
+  cleaned = cleaned
+    .replace(/<li[^>]*>([\s\S]*?)<\/li>/gi, (_, t) => `\n• ${stripTags(t).trim()}`)
+    .replace(/<\/[uo]l>/gi, '\n');
+
+  // Paragraphs and divs → double newlines
+  cleaned = cleaned
+    .replace(/<p[^>]*>/gi, '\n\n')
+    .replace(/<\/p>/gi, '')
+    .replace(/<br\s*\/?>/gi, '\n')
+    .replace(/<\/div>/gi, '\n')
+    .replace(/<\/section>/gi, '\n\n');
+
+  // Step 4 — strip all remaining tags
+  cleaned = stripTags(cleaned);
+
+  // Step 5 — decode HTML entities
+  cleaned = decodeEntities(cleaned);
+
+  // Step 6 — clean up whitespace
+  cleaned = cleaned
+    .replace(/\n{4,}/g, '\n\n\n')
+    .replace(/[ \t]{2,}/g, ' ')
+    .trim();
+
+  return { title, text: cleaned };
+}
+
+function stripTags(str) {
+  return str.replace(/<[^>]+>/g, ' ');
+}
+
+function decodeEntities(str) {
+  return str
     .replace(/&nbsp;/g, ' ')
     .replace(/&amp;/g, '&')
     .replace(/&lt;/g, '<')
     .replace(/&gt;/g, '>')
     .replace(/&quot;/g, '"')
-    .trim();
-
-  return { title, text: cleaned };
+    .replace(/&#39;/g, "'")
+    .replace(/&mdash;/g, '—')
+    .replace(/&ndash;/g, '–')
+    .replace(/&hellip;/g, '...')
+    .replace(/&#(\d+);/g, (_, code) => String.fromCharCode(parseInt(code)))
+    .replace(/&[a-z]+;/g, ' ');
 }
 
 function errorResponse(message, status, corsHeaders) {
