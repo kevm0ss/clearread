@@ -1,0 +1,372 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>readclear</title>
+<style>
+@import url('https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,300;9..144,600&family=Plus+Jakarta+Sans:wght@400;500;600;700&display=swap');
+
+:root {
+  --bg: #f7f4ee;
+  --ink: #1c1917;
+  --ink-mid: #6b6560;
+  --ink-soft: #a8a29e;
+  --cream: #faf8f3;
+  --amber: #d97706;
+  --amber-soft: rgba(217,119,6,0.1);
+  --border: #ddd8ce;
+  --dark: #1c1917;
+  --dark-border: #3a3530;
+}
+
+* { box-sizing: border-box; margin: 0; padding: 0; }
+html { scroll-behavior: smooth; }
+body {
+  background: var(--bg);
+  color: var(--ink);
+  font-family: 'Plus Jakarta Sans', sans-serif;
+  font-size: 18px;
+  line-height: 1.8;
+  -webkit-font-smoothing: antialiased;
+}
+
+/* TOOLBAR */
+.toolbar {
+  position: sticky;
+  top: 0;
+  z-index: 50;
+  background: var(--dark);
+  border-bottom: 1px solid var(--dark-border);
+  padding: 12px 32px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+  flex-wrap: wrap;
+}
+.toolbar-logo {
+  font-family: 'Monaco', 'Courier New', monospace;
+  font-size: 16px;
+  font-weight: 700;
+  color: #faf8f3;
+  text-decoration: none;
+  flex-shrink: 0;
+}
+.toolbar-meta {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  flex: 1;
+  min-width: 0;
+}
+.toolbar-profile {
+  font-size: 12px;
+  font-weight: 600;
+  padding: 3px 10px;
+  border-radius: 20px;
+  background: var(--amber-soft);
+  color: var(--amber);
+  flex-shrink: 0;
+}
+.toolbar-source {
+  font-size: 12px;
+  color: #5a5550;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+.toolbar-source a { color: #5a5550; text-decoration: none; }
+.toolbar-source a:hover { color: #8a857e; }
+.toolbar-actions {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  flex-shrink: 0;
+}
+.toolbar-btn {
+  font-family: 'Plus Jakarta Sans', sans-serif;
+  font-size: 13px;
+  font-weight: 600;
+  padding: 7px 14px;
+  border-radius: 8px;
+  border: 1.5px solid var(--dark-border);
+  background: none;
+  color: #8a857e;
+  cursor: pointer;
+  text-decoration: none;
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  transition: all 0.15s;
+  white-space: nowrap;
+}
+.toolbar-btn:hover { border-color: #5a5550; color: #faf8f3; }
+.toolbar-btn.primary {
+  background: var(--amber);
+  border-color: var(--amber);
+  color: #1c1917;
+}
+.toolbar-btn.primary:hover { background: #b45309; border-color: #b45309; color: #fff; }
+
+/* READING AREA */
+.reading-wrap {
+  max-width: 720px;
+  margin: 0 auto;
+  padding: 64px 32px 120px;
+}
+
+/* Typography for reformatted content */
+.reading-content {
+  color: var(--ink);
+}
+.reading-content h1, .reading-content h2, .reading-content h3 {
+  font-family: 'Fraunces', serif;
+  font-weight: 600;
+  line-height: 1.2;
+  margin-top: 48px;
+  margin-bottom: 16px;
+  color: var(--ink);
+}
+.reading-content h1 { font-size: clamp(28px, 4vw, 40px); margin-top: 0; }
+.reading-content h2 { font-size: clamp(22px, 3vw, 30px); }
+.reading-content h3 { font-size: clamp(18px, 2.5vw, 24px); }
+.reading-content p {
+  margin-bottom: 20px;
+  max-width: 65ch;
+}
+.reading-content strong { font-weight: 700; color: var(--ink); }
+.reading-content ul, .reading-content ol {
+  padding-left: 28px;
+  margin-bottom: 24px;
+}
+.reading-content li {
+  margin-bottom: 10px;
+  max-width: 65ch;
+}
+.reading-content details {
+  background: var(--cream);
+  border: 1.5px solid var(--border);
+  border-radius: 10px;
+  padding: 16px 20px;
+  margin-bottom: 16px;
+}
+.reading-content details[open] { background: var(--cream); }
+.reading-content summary {
+  font-weight: 700;
+  font-size: 16px;
+  cursor: pointer;
+  list-style: none;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+}
+.reading-content summary::after { content: '↓'; font-size: 14px; color: var(--ink-soft); }
+.reading-content details[open] summary::after { content: '↑'; }
+.reading-content summary::-webkit-details-marker { display: none; }
+.reading-content details > *:not(summary) { margin-top: 12px; }
+.reading-content blockquote {
+  border-left: 3px solid var(--amber);
+  padding-left: 20px;
+  margin: 24px 0;
+  color: var(--ink-mid);
+  font-style: normal;
+}
+.reading-content hr {
+  border: none;
+  border-top: 1px solid var(--border);
+  margin: 40px 0;
+}
+.reading-content a { color: var(--amber); }
+.reading-content a:hover { color: #b45309; }
+.reading-content table {
+  width: 100%;
+  border-collapse: collapse;
+  margin-bottom: 24px;
+  font-size: 15px;
+}
+.reading-content th {
+  background: var(--cream);
+  padding: 10px 14px;
+  text-align: left;
+  font-weight: 700;
+  border-bottom: 2px solid var(--border);
+}
+.reading-content td {
+  padding: 10px 14px;
+  border-bottom: 1px solid var(--border);
+}
+
+/* LOADING STATE */
+.loading-state {
+  text-align: center;
+  padding: 80px 32px;
+  color: var(--ink-mid);
+}
+.loading-spinner {
+  width: 40px;
+  height: 40px;
+  border: 3px solid var(--border);
+  border-top-color: var(--amber);
+  border-radius: 50%;
+  animation: spin 0.8s linear infinite;
+  margin: 0 auto 24px;
+}
+@keyframes spin { to { transform: rotate(360deg); } }
+.loading-text { font-size: 16px; color: var(--ink-mid); }
+.loading-sub { font-size: 13px; color: var(--ink-soft); margin-top: 8px; }
+
+/* ERROR STATE */
+.error-state {
+  text-align: center;
+  padding: 80px 32px;
+  max-width: 480px;
+  margin: 0 auto;
+}
+.error-icon { font-size: 48px; margin-bottom: 24px; }
+.error-title {
+  font-family: 'Fraunces', serif;
+  font-size: 26px;
+  font-weight: 600;
+  color: var(--ink);
+  margin-bottom: 16px;
+}
+.error-msg {
+  color: var(--ink-mid);
+  font-size: 16px;
+  line-height: 1.7;
+  margin-bottom: 32px;
+}
+.error-msg a { color: var(--amber); }
+.btn-back {
+  display: inline-block;
+  background: var(--amber);
+  color: #1c1917;
+  font-family: 'Plus Jakarta Sans', sans-serif;
+  font-size: 15px;
+  font-weight: 700;
+  border: none;
+  border-radius: 10px;
+  padding: 14px 28px;
+  cursor: pointer;
+  text-decoration: none;
+  transition: all 0.2s;
+}
+.btn-back:hover { background: #b45309; color: #fff; }
+
+/* RESPONSIVE */
+@media (max-width: 600px) {
+  .toolbar { padding: 10px 16px; }
+  .toolbar-source { display: none; }
+  .reading-wrap { padding: 40px 20px 80px; }
+}
+</style>
+</head>
+<body>
+
+<!-- TOOLBAR -->
+<nav class="toolbar">
+  <a href="index.html" class="toolbar-logo">readclear</a>
+  <div class="toolbar-meta">
+    <span class="toolbar-profile" id="toolbar-profile">Mixed</span>
+    <span class="toolbar-source" id="toolbar-source"></span>
+  </div>
+  <div class="toolbar-actions">
+    <a href="index.html" class="toolbar-btn primary">← Reformat another</a>
+    <a href="prompt.html" class="toolbar-btn">Build AI prompt</a>
+  </div>
+</nav>
+
+<!-- READING AREA -->
+<main class="reading-wrap">
+
+  <!-- Loading -->
+  <div class="loading-state" id="loading-state">
+    <div class="loading-spinner"></div>
+    <div class="loading-text">Reformatting this page…</div>
+    <div class="loading-sub">Content is never reduced. Only reorganised.</div>
+  </div>
+
+  <!-- Error -->
+  <div class="error-state" id="error-state" style="display:none;">
+    <div class="error-icon">😔</div>
+    <div class="error-title">This page couldn't be reformatted.</div>
+    <div class="error-msg" id="error-msg">
+      It's likely behind a paywall or the site has security that prevents access.
+      This isn't something you've done wrong.<br><br>
+      You could let them know this matters —
+      <a href="siteowners.html">read our page for site owners</a>.
+    </div>
+    <a href="index.html" class="btn-back">← Try another URL</a>
+  </div>
+
+  <!-- Content -->
+  <div class="reading-content" id="reading-content" style="display:none;"></div>
+
+</main>
+
+<script>
+const PROFILE_LABELS = {
+  mixed: 'Mixed / Unsure',
+  phonological: 'Phonological',
+  visual: 'Visual Stress',
+  memory: 'Working Memory'
+};
+
+function init() {
+  // Read result from localStorage (set by index.html after Worker call)
+  let result;
+  try {
+    result = JSON.parse(localStorage.getItem('readclear_result'));
+  } catch(e) {}
+
+  if (!result || !result.html) {
+    // No result — check if there's a pending request (Worker not yet connected)
+    let request;
+    try { request = JSON.parse(localStorage.getItem('readclear_request')); } catch(e) {}
+
+    if (request) {
+      showError(
+        `We're still connecting the reformatter engine.<br><br>
+        Come back once the Worker is set up and this will work fully.`
+      );
+    } else {
+      showError('No page to display. Please go back and paste a URL.');
+    }
+    return;
+  }
+
+  // Show the reformatted content
+  const profileLabel = PROFILE_LABELS[result.profile] || result.profile;
+  document.getElementById('toolbar-profile').textContent = profileLabel;
+  document.title = (result.title || 'readclear') + ' — readclear';
+
+  if (result.url) {
+    const sourceEl = document.getElementById('toolbar-source');
+    let domain;
+    try { domain = new URL(result.url).hostname; } catch(e) { domain = result.url; }
+    sourceEl.innerHTML = `Source: <a href="${escHtml(result.url)}" target="_blank" rel="noopener">${escHtml(domain)}</a>`;
+  }
+
+  document.getElementById('loading-state').style.display = 'none';
+  const content = document.getElementById('reading-content');
+  content.innerHTML = result.html;
+  content.style.display = 'block';
+}
+
+function showError(msg) {
+  document.getElementById('loading-state').style.display = 'none';
+  document.getElementById('error-msg').innerHTML = msg;
+  document.getElementById('error-state').style.display = 'block';
+}
+
+function escHtml(str) {
+  return String(str).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
+}
+
+document.addEventListener('DOMContentLoaded', init);
+</script>
+
+</body>
+</html>
