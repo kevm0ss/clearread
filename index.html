@@ -1088,7 +1088,12 @@ function loadHistory() {
   `).join('') + `<button class="clear-history-btn" id="clear-history-btn">Clear history</button>`;
 
   list.querySelectorAll('.history-item').forEach(el => {
-    el.addEventListener('click', () => loadDemo(el.dataset.url));
+    el.addEventListener('click', () => {
+      const input = document.getElementById('url-input');
+      input.value = el.dataset.url;
+      input.scrollIntoView({ behavior: 'smooth', block: 'center' });
+      input.focus();
+    });
   });
   const clearBtn = list.querySelector('#clear-history-btn');
   if (clearBtn) clearBtn.addEventListener('click', clearHistory);
