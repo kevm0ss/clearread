@@ -41,7 +41,9 @@ body {
   display: flex;
   flex-direction: column;
   justify-content: center;
-  padding: 80px 48px;
+  align-items: center;
+  text-align: center;
+  padding: 80px 24px;
   position: relative;
   overflow: hidden;
 }
@@ -55,69 +57,53 @@ body {
 }
 .hero-glow {
   position: absolute;
-  top: -200px; left: -200px;
-  width: 600px; height: 600px;
-  background: radial-gradient(circle, rgba(217,119,6,0.08) 0%, transparent 70%);
+  top: -200px; left: 50%;
+  transform: translateX(-50%);
+  width: 800px; height: 600px;
+  background: radial-gradient(circle, rgba(217,119,6,0.06) 0%, transparent 70%);
   pointer-events: none;
 }
 .hero-inner {
   position: relative;
-  max-width: 760px;
+  max-width: 680px;
   margin: 0 auto;
   width: 100%;
-}
-.hero-top {
   display: flex;
+  flex-direction: column;
   align-items: center;
-  justify-content: space-between;
-  margin-bottom: 56px;
 }
 .hero-logo {
   font-family: 'Monaco', 'Courier New', monospace;
-  font-size: 22px;
+  font-size: 56px;
   font-weight: 700;
   color: #faf8f3;
-  letter-spacing: -0.5px;
+  letter-spacing: -2px;
+  margin-bottom: 12px;
+  line-height: 1;
+}
+.hero-tagline {
+  font-size: 15px;
+  color: #5a5550;
+  margin-bottom: 52px;
+  letter-spacing: 0.01em;
 }
 .hero-nav-link {
+  display: inline-block;
+  margin-top: 28px;
   font-size: 13px;
   font-weight: 600;
-  color: #8a857e;
+  color: #5a5550;
   text-decoration: none;
-  border: 1px solid var(--dark-border);
-  border-radius: 20px;
-  padding: 6px 14px;
-  transition: all 0.2s;
+  transition: color 0.2s;
 }
-.hero-nav-link:hover { color: #faf8f3; border-color: #5a5550; }
-
-h1 {
-  font-family: 'Fraunces', serif;
-  font-size: clamp(36px, 6vw, 64px);
-  font-weight: 600;
-  color: #faf8f3;
-  line-height: 1.1;
-  letter-spacing: -1px;
-  margin-bottom: 24px;
-}
-h1 span { color: var(--amber); }
-
-.hero-sub {
-  font-size: 18px;
-  color: #8a857e;
-  margin-bottom: 48px;
-  display: flex;
-  flex-direction: column;
-  gap: 10px;
-}
-.hero-sub strong { color: #c8c3bc; }
+.hero-nav-link:hover { color: #8a857e; }
 
 /* URL FORM */
 .url-form {
   display: flex;
   flex-direction: column;
   gap: 16px;
-  max-width: 680px;
+  width: 100%;
 }
 .url-row {
   display: flex;
@@ -585,16 +571,83 @@ h1 span { color: var(--amber); }
 .quiz-back-btn:hover { color: #faf8f3; }
 
 /* RESPONSIVE */
+/* SHARE */
+.share-wrap {
+  background: var(--ink);
+  padding: 80px 24px;
+  text-align: center;
+}
+.share-inner {
+  max-width: 560px;
+  margin: 0 auto;
+}
+.share-icon-circle {
+  width: 88px; height: 88px;
+  border-radius: 50%;
+  background: var(--amber);
+  display: flex; align-items: center; justify-content: center;
+  margin: 0 auto 24px;
+}
+.share-stat {
+  font-family: 'Fraunces', serif;
+  font-size: 64px;
+  font-weight: 700;
+  color: var(--amber);
+  line-height: 1;
+  margin-bottom: 12px;
+}
+.share-title {
+  font-family: 'Fraunces', serif;
+  font-size: 28px;
+  font-weight: 600;
+  color: #faf8f3;
+  margin-bottom: 16px;
+  line-height: 1.3;
+}
+.share-sub {
+  font-size: 16px;
+  color: #6a6560;
+  line-height: 1.8;
+  margin-bottom: 40px;
+}
+.share-sub strong { color: #c8c3bc; }
+.share-buttons {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+  justify-content: center;
+}
+.share-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding: 10px 18px;
+  border-radius: 8px;
+  border: 1.5px solid var(--dark-border);
+  background: var(--dark-2);
+  color: #8a857e;
+  font-size: 14px;
+  font-weight: 600;
+  font-family: 'Plus Jakarta Sans', sans-serif;
+  text-decoration: none;
+  cursor: pointer;
+  transition: all 0.15s;
+}
+.share-btn:hover { border-color: var(--amber); color: #faf8f3; }
+.share-btn.primary-share { background: var(--amber); border-color: var(--amber); color: #1c1917; }
+.share-btn.primary-share:hover { background: #b45309; border-color: #b45309; color: #fff; }
+
 @media (max-width: 600px) {
-  .hero, .demo-section, .history-section, .prompt-cta, .footer {
+  .hero, .history-section, .prompt-cta, .footer, .compare-section, .share-wrap {
     padding-left: 24px;
     padding-right: 24px;
   }
   .url-row { flex-direction: column; }
   .btn-reformat { width: 100%; }
-  .hero-top { flex-direction: column; align-items: flex-start; gap: 16px; }
   .history-item { flex-direction: column; align-items: flex-start; }
   .modal { padding: 28px 20px; }
+  .hero-logo { font-size: 40px; }
+  .share-stat { font-size: 48px; }
 }
 </style>
 </head>
@@ -606,18 +659,8 @@ h1 span { color: var(--amber); }
   <div class="hero-glow"></div>
   <div class="hero-inner">
 
-    <div class="hero-top">
-      <div class="hero-logo">readclear</div>
-      <a href="prompt.html" class="hero-nav-link">Build AI prompt →</a>
-    </div>
-
-    <h1>Reformat any webpage<br><span>for how your brain reads.</span></h1>
-
-    <div class="hero-sub">
-      <span><strong>1 in 10 people</strong> have dyslexia.</span>
-      <span>Most websites are hard to read. This changes that.</span>
-      <span>Content is never reduced. Only reorganised.</span>
-    </div>
+    <div class="hero-logo">readclear</div>
+    <p class="hero-tagline">Content is never reduced. Only reorganised.</p>
 
     <!-- URL FORM -->
     <div class="url-form">
@@ -626,11 +669,11 @@ h1 span { color: var(--amber); }
           type="url"
           id="url-input"
           class="url-input"
-          placeholder="Paste a URL — e.g. https://bbc.co.uk/news/..."
+          placeholder="Paste any URL to reformat it"
           autocomplete="off"
           spellcheck="false"
         />
-        <button class="btn-reformat" id="reformat-btn" onclick="startReformat()">Reformat ↓</button>
+        <button class="btn-reformat" id="reformat-btn" onclick="startReformat()">Reformat →</button>
       </div>
 
       <div class="profile-row">
@@ -646,6 +689,8 @@ h1 span { color: var(--amber); }
 
       <div class="status-msg" id="status-msg"></div>
     </div>
+
+    <a href="prompt.html" class="hero-nav-link">Want this in every AI conversation? Build your prompt →</a>
 
   </div>
 </section>
@@ -672,37 +717,6 @@ h1 span { color: var(--amber); }
   <p class="compare-hint">← drag to compare →</p>
 </section>
 
-<!-- DEMO SITES -->
-<section class="demo-section">
-  <div class="section-label">See it in action</div>
-  <div class="section-title">Try it on a real page</div>
-  <div class="section-sub">Three pages chosen to show the difference clearly.</div>
-
-  <div class="demo-cards">
-    <div class="demo-card">
-      <div class="demo-card-icon">📰</div>
-      <div class="demo-card-title">BBC News</div>
-      <div class="demo-card-desc">A news story. Dense paragraphs, no clear structure.</div>
-      <div class="demo-card-url">bbc.co.uk/news</div>
-      <button class="demo-card-btn" onclick="loadDemo('https://www.bbc.co.uk/news/articles/c5yv39zd143o')">Reformat this →</button>
-    </div>
-    <div class="demo-card">
-      <div class="demo-card-icon">🏥</div>
-      <div class="demo-card-title">NHS guidance</div>
-      <div class="demo-card-desc">Important health information buried in dense prose.</div>
-      <div class="demo-card-url">nhs.uk</div>
-      <button class="demo-card-btn" onclick="loadDemo('https://www.nhs.uk/conditions/dyslexia/')">Reformat this →</button>
-    </div>
-    <div class="demo-card">
-      <div class="demo-card-icon">📖</div>
-      <div class="demo-card-title">Wikipedia</div>
-      <div class="demo-card-desc">A long reference article. Key points buried in prose.</div>
-      <div class="demo-card-url">wikipedia.org</div>
-      <button class="demo-card-btn" onclick="loadDemo('https://en.wikipedia.org/wiki/Dyslexia')">Reformat this →</button>
-    </div>
-  </div>
-</section>
-
 <!-- HISTORY -->
 <section class="history-section" id="history-section" style="display:none;">
   <div class="section-label">Recently read</div>
@@ -716,6 +730,46 @@ h1 span { color: var(--amber); }
   Paste it into ChatGPT, Claude, or Copilot settings.<br>
   Every response, reformatted for how your brain reads.</p>
   <a href="prompt.html" class="btn-primary">Build my AI prompt →</a>
+</section>
+
+<!-- SHARE -->
+<section class="share-wrap">
+  <div class="share-inner">
+    <div class="share-icon-circle">
+      <svg width="44" height="44" viewBox="0 0 24 24" fill="none">
+        <path d="M18 8C19.6569 8 21 6.65685 21 5C21 3.34315 19.6569 2 18 2C16.3431 2 15 3.34315 15 5C15 5.12548 15.0077 5.24917 15.0227 5.37061L8.08261 9.84066C7.54305 9.32015 6.80891 9 6 9C4.34315 9 3 10.3431 3 12C3 13.6569 4.34315 15 6 15C6.80891 15 7.54305 14.6798 8.08261 14.1593L15.0227 18.6294C15.0077 18.7508 15 18.8745 15 19C15 20.6569 16.3431 22 18 22C19.6569 22 21 20.6569 21 19C21 17.3431 19.6569 16 18 16C17.1911 16 16.457 16.3202 15.9174 16.8407L8.97733 12.3706C8.99229 12.2492 9 12.1255 9 12C9 11.8745 8.99229 11.7508 8.97733 11.6294L15.9174 7.15934C16.457 7.67985 17.1911 8 18 8Z" fill="white"/>
+      </svg>
+    </div>
+    <div class="share-stat">1 in 10</div>
+    <h2 class="share-title">Someone you know could benefit from this.</h2>
+    <p class="share-sub">
+      Dyslexia affects <strong>around 10% of the population.</strong><br>
+      Most of them have never had a tool like this.<br>
+      Share it — it takes 10 seconds.
+    </p>
+    <div class="share-buttons">
+      <a class="share-btn primary-share" href="https://wa.me/?text=This%20tool%20reformats%20any%20webpage%20so%20it%27s%20easier%20to%20read%20for%20dyslexic%20people.%20Content%20is%20never%20reduced%20%E2%80%94%20only%20reorganised%3A%20https%3A%2F%2Fclearread-7x3.pages.dev" target="_blank" rel="noopener">
+        <svg width="15" height="15" viewBox="0 0 24 24" fill="currentColor"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51a12.8 12.8 0 0 0-.57-.01c-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 0 1-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 0 1-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 0 1 2.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0 0 12.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 0 0 5.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 0 0-3.48-8.413Z"/></svg>
+        WhatsApp
+      </a>
+      <a class="share-btn" href="https://bsky.app/intent/compose?text=readclear%20reformats%20any%20webpage%20for%20dyslexic%20readers.%20Content%20is%20never%20reduced%20%E2%80%94%20only%20reorganised.%20Free%3A%20https%3A%2F%2Fclearread-7x3.pages.dev" target="_blank" rel="noopener">
+        <svg width="15" height="15" viewBox="0 0 24 24" fill="currentColor"><path d="M12 10.8c-1.087-2.114-4.046-6.053-6.798-7.995C2.566.944 1.561 1.266.902 1.565.139 1.908 0 3.08 0 3.768c0 .69.378 5.65.624 6.479.815 2.736 3.713 3.66 6.383 3.364.136-.02.275-.039.415-.056-.138.022-.276.04-.415.056-3.912.58-7.387 2.005-2.83 7.078 5.013 5.19 6.87-1.113 7.823-4.308.953 3.195 2.05 9.271 7.733 4.308 4.267-4.308 1.172-6.498-2.74-7.078a8.741 8.741 0 0 1-.415-.056c.14.017.279.036.415.056 2.67.297 5.568-.628 6.383-3.364.246-.828.624-5.79.624-6.478 0-.69-.139-1.861-.902-2.204-.659-.298-1.664-.62-4.3 1.24C16.046 4.748 13.087 8.687 12 10.8Z"/></svg>
+        BlueSky
+      </a>
+      <a class="share-btn" href="https://www.linkedin.com/shareArticle?mini=true&url=https%3A%2F%2Fclearread-7x3.pages.dev&title=readclear&summary=Reformat%20any%20webpage%20for%20how%20your%20brain%20reads.%20Content%20is%20never%20reduced%20%E2%80%94%20only%20reorganised." target="_blank" rel="noopener">
+        <svg width="15" height="15" viewBox="0 0 24 24" fill="currentColor"><path d="M20.447 20.452h-3.554v-5.569c0-1.328-.027-3.037-1.852-3.037-1.853 0-2.136 1.445-2.136 2.939v5.667H9.351V9h3.414v1.561h.046c.477-.9 1.637-1.85 3.37-1.85 3.601 0 4.267 2.37 4.267 5.455v6.286zM5.337 7.433a2.062 2.062 0 0 1-2.063-2.065 2.064 2.064 0 1 1 2.063 2.065zm1.782 13.019H3.555V9h3.564v11.452zM22.225 0H1.771C.792 0 0 .774 0 1.729v20.542C0 23.227.792 24 1.771 24h20.451C23.2 24 24 23.227 24 22.271V1.729C24 .774 23.2 0 22.222 0h.003z"/></svg>
+        LinkedIn
+      </a>
+      <a class="share-btn" href="https://twitter.com/intent/tweet?text=readclear%20reformats%20any%20webpage%20for%20dyslexic%20readers.%20Content%20is%20never%20reduced%20%E2%80%94%20only%20reorganised.%20Free%3A&url=https%3A%2F%2Fclearread-7x3.pages.dev" target="_blank" rel="noopener">
+        <svg width="15" height="15" viewBox="0 0 24 24" fill="currentColor"><path d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-4.714-6.231-5.401 6.231H2.744l7.73-8.835L1.254 2.25H8.08l4.253 5.622zm-1.161 17.52h1.833L7.084 4.126H5.117z"/></svg>
+        X / Twitter
+      </a>
+      <button class="share-btn" onclick="copyIndexLink()">
+        <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"/><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"/></svg>
+        Copy link
+      </button>
+    </div>
+  </div>
 </section>
 
 <!-- FOOTER -->
@@ -1022,6 +1076,13 @@ function finishQuiz() {
   const profile = (top[0][1] === 0 || top[0][1] === top[1][1]) ? 'mixed' : top[0][0];
   closeQuiz();
   setProfile(profile, null);
+}
+
+function copyIndexLink() {
+  navigator.clipboard.writeText('https://clearread-7x3.pages.dev').then(() => {
+    const btn = document.querySelector('.share-btn[onclick="copyIndexLink()"]');
+    if (btn) { btn.textContent = '✓ Copied!'; setTimeout(() => btn.innerHTML = '<svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"/><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"/></svg> Copy link', 2000); }
+  });
 }
 
 // INIT
