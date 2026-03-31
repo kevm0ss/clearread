@@ -1,0 +1,495 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>readclear — For site owners</title>
+<style>
+@import url('https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,300;9..144,600;9..144,700&family=Plus+Jakarta+Sans:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap');
+
+:root {
+  --bg: #f7f4ee;
+  --ink: #1c1917;
+  --ink-mid: #6b6560;
+  --ink-soft: #a8a29e;
+  --cream: #faf8f3;
+  --amber: #d97706;
+  --amber-soft: rgba(217,119,6,0.1);
+  --teal: #0d9488;
+  --teal-soft: rgba(13,148,136,0.1);
+  --border: #ddd8ce;
+  --dark: #1c1917;
+  --dark-border: #3a3530;
+}
+
+* { box-sizing: border-box; margin: 0; padding: 0; }
+html { scroll-behavior: smooth; }
+body {
+  background: var(--bg);
+  color: var(--ink);
+  font-family: 'Plus Jakarta Sans', sans-serif;
+  font-size: 17px;
+  line-height: 1.8;
+  -webkit-font-smoothing: antialiased;
+}
+
+/* TOOLBAR */
+.toolbar {
+  background: var(--dark);
+  padding: 16px 48px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+.toolbar-logo {
+  font-family: 'Monaco', 'Courier New', monospace;
+  font-size: 18px;
+  font-weight: 700;
+  color: #faf8f3;
+  text-decoration: none;
+}
+.toolbar-link {
+  font-size: 13px;
+  font-weight: 600;
+  color: #8a857e;
+  text-decoration: none;
+  border: 1px solid var(--dark-border);
+  border-radius: 20px;
+  padding: 6px 14px;
+  transition: all 0.2s;
+}
+.toolbar-link:hover { color: #faf8f3; border-color: #5a5550; }
+
+/* HERO */
+.hero {
+  background: var(--dark);
+  padding: 80px 48px;
+  position: relative;
+  overflow: hidden;
+}
+.hero-grid {
+  position: absolute; inset: 0;
+  background-image:
+    linear-gradient(rgba(217,119,6,0.04) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(217,119,6,0.04) 1px, transparent 1px);
+  background-size: 48px 48px;
+  pointer-events: none;
+}
+.hero-inner {
+  position: relative;
+  max-width: 760px;
+  margin: 0 auto;
+}
+.hero-tag {
+  display: inline-block;
+  font-size: 12px;
+  font-weight: 700;
+  letter-spacing: 2px;
+  text-transform: uppercase;
+  color: var(--amber);
+  margin-bottom: 20px;
+}
+h1 {
+  font-family: 'Fraunces', serif;
+  font-size: clamp(32px, 5vw, 56px);
+  font-weight: 600;
+  color: #faf8f3;
+  line-height: 1.1;
+  letter-spacing: -1px;
+  margin-bottom: 24px;
+}
+.hero-sub {
+  font-size: 18px;
+  color: #8a857e;
+  max-width: 600px;
+  line-height: 1.7;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+.hero-sub strong { color: #c8c3bc; }
+
+/* CONTENT */
+.content {
+  max-width: 760px;
+  margin: 0 auto;
+  padding: 80px 48px;
+}
+
+.stat-row {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+  gap: 20px;
+  margin-bottom: 72px;
+}
+.stat-card {
+  background: var(--cream);
+  border: 1.5px solid var(--border);
+  border-radius: 12px;
+  padding: 28px 24px;
+  text-align: center;
+}
+.stat-number {
+  font-family: 'Fraunces', serif;
+  font-size: 40px;
+  font-weight: 700;
+  color: var(--amber);
+  line-height: 1;
+  margin-bottom: 8px;
+}
+.stat-label {
+  font-size: 14px;
+  color: var(--ink-mid);
+  line-height: 1.4;
+}
+
+.section {
+  margin-bottom: 64px;
+}
+.section-tag {
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 2px;
+  text-transform: uppercase;
+  color: var(--ink-soft);
+  margin-bottom: 16px;
+}
+h2 {
+  font-family: 'Fraunces', serif;
+  font-size: clamp(24px, 3.5vw, 36px);
+  font-weight: 600;
+  color: var(--ink);
+  margin-bottom: 16px;
+  line-height: 1.2;
+}
+h3 {
+  font-family: 'Fraunces', serif;
+  font-size: 20px;
+  font-weight: 600;
+  color: var(--ink);
+  margin-bottom: 10px;
+  margin-top: 32px;
+}
+p { margin-bottom: 16px; color: var(--ink-mid); }
+p strong { color: var(--ink); }
+
+.principle {
+  background: var(--cream);
+  border-left: 4px solid var(--amber);
+  padding: 20px 24px;
+  border-radius: 0 8px 8px 0;
+  margin-bottom: 20px;
+  font-size: 16px;
+  color: var(--ink);
+  font-weight: 500;
+}
+
+/* TECHNICAL */
+.code-block {
+  background: var(--dark);
+  border: 1px solid var(--dark-border);
+  border-radius: 10px;
+  padding: 24px;
+  margin: 24px 0;
+  position: relative;
+}
+.code-label {
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 1px;
+  text-transform: uppercase;
+  color: var(--amber);
+  margin-bottom: 12px;
+}
+.code-block pre {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 13px;
+  color: #c8c3bc;
+  white-space: pre-wrap;
+  word-break: break-all;
+  line-height: 1.7;
+}
+.copy-btn {
+  position: absolute;
+  top: 16px;
+  right: 16px;
+  font-family: 'Plus Jakarta Sans', sans-serif;
+  font-size: 12px;
+  font-weight: 600;
+  color: #8a857e;
+  background: none;
+  border: 1px solid var(--dark-border);
+  border-radius: 6px;
+  padding: 4px 10px;
+  cursor: pointer;
+  transition: all 0.15s;
+}
+.copy-btn:hover { color: #faf8f3; border-color: #5a5550; }
+
+/* BADGE */
+.badge-section {
+  background: var(--cream);
+  border: 1.5px solid var(--border);
+  border-radius: 16px;
+  padding: 40px;
+  text-align: center;
+  margin-bottom: 64px;
+}
+.badge-preview {
+  display: inline-flex;
+  align-items: center;
+  gap: 10px;
+  background: var(--dark);
+  color: #faf8f3;
+  padding: 10px 20px;
+  border-radius: 8px;
+  font-size: 14px;
+  font-weight: 600;
+  font-family: 'Plus Jakarta Sans', sans-serif;
+  margin: 24px 0;
+}
+.badge-dot { width: 8px; height: 8px; background: var(--teal); border-radius: 50%; }
+.badge-caption { font-size: 13px; color: var(--ink-soft); }
+
+/* CTA */
+.cta-section {
+  background: var(--dark);
+  padding: 80px 48px;
+  text-align: center;
+}
+.cta-inner { max-width: 560px; margin: 0 auto; }
+.cta-section h2 {
+  font-family: 'Fraunces', serif;
+  font-size: clamp(24px, 3.5vw, 36px);
+  font-weight: 600;
+  color: #faf8f3;
+  margin-bottom: 16px;
+}
+.cta-section p { color: #8a857e; margin-bottom: 32px; }
+.btn-primary {
+  display: inline-block;
+  background: var(--amber);
+  color: #1c1917;
+  font-family: 'Plus Jakarta Sans', sans-serif;
+  font-size: 15px;
+  font-weight: 700;
+  border: none;
+  border-radius: 10px;
+  padding: 14px 28px;
+  cursor: pointer;
+  text-decoration: none;
+  transition: all 0.2s;
+  margin: 6px;
+}
+.btn-primary:hover { background: #b45309; color: #fff; }
+.btn-ghost {
+  display: inline-block;
+  background: none;
+  color: #8a857e;
+  font-family: 'Plus Jakarta Sans', sans-serif;
+  font-size: 15px;
+  font-weight: 600;
+  border: 1.5px solid var(--dark-border);
+  border-radius: 10px;
+  padding: 14px 28px;
+  cursor: pointer;
+  text-decoration: none;
+  transition: all 0.2s;
+  margin: 6px;
+}
+.btn-ghost:hover { color: #faf8f3; border-color: #5a5550; }
+
+/* FOOTER */
+.footer {
+  padding: 32px 48px;
+  text-align: center;
+  font-size: 13px;
+  color: var(--ink-soft);
+  border-top: 1px solid var(--border);
+}
+.footer a { color: var(--ink-mid); text-decoration: none; }
+.footer a:hover { color: var(--ink); }
+
+/* RESPONSIVE */
+@media (max-width: 600px) {
+  .toolbar, .hero, .content, .cta-section, .footer { padding-left: 24px; padding-right: 24px; }
+  .badge-section { padding: 28px 20px; }
+  .code-block { padding: 20px 16px; }
+}
+</style>
+</head>
+<body>
+
+<!-- TOOLBAR -->
+<nav class="toolbar">
+  <a href="index.html" class="toolbar-logo">readclear</a>
+  <a href="index.html" class="toolbar-link">← Try the tool</a>
+</nav>
+
+<!-- HERO -->
+<section class="hero">
+  <div class="hero-grid"></div>
+  <div class="hero-inner">
+    <div class="hero-tag">For site owners &amp; developers</div>
+    <h1>Make your content accessible to 1 in 10 readers.</h1>
+    <div class="hero-sub">
+      <span><strong>Dyslexia affects 1 in 10 people.</strong></span>
+      <span>readclear reformats web pages so they can read your content.</span>
+      <span>Some sites block this. Here's why that matters — and how to fix it.</span>
+    </div>
+  </div>
+</section>
+
+<!-- CONTENT -->
+<div class="content">
+
+  <!-- STATS -->
+  <div class="stat-row">
+    <div class="stat-card">
+      <div class="stat-number">1 in 10</div>
+      <div class="stat-label">people have dyslexia</div>
+    </div>
+    <div class="stat-card">
+      <div class="stat-number">700m</div>
+      <div class="stat-label">people worldwide affected</div>
+    </div>
+    <div class="stat-card">
+      <div class="stat-number">0</div>
+      <div class="stat-label">content is changed or removed</div>
+    </div>
+  </div>
+
+  <!-- WHAT WE DO -->
+  <div class="section">
+    <div class="section-tag">What readclear does</div>
+    <h2>We reorganise. We never reduce.</h2>
+    <p>readclear takes a webpage and reformats it for how a dyslexic person's brain processes text.</p>
+    <p>We don't simplify. We don't summarise. We don't remove anything.</p>
+
+    <div class="principle">Content should never be reduced. Only reorganised.</div>
+
+    <p>The same information. The same facts. The same depth.</p>
+    <p><strong>Just presented in a way that's easier to process.</strong></p>
+    <p>Shorter sentences. Bolder key terms. Clearer structure. More space between ideas.</p>
+  </div>
+
+  <!-- WHO BENEFITS -->
+  <div class="section">
+    <div class="section-tag">Who this helps</div>
+    <h2>Your readers — right now.</h2>
+    <p>If your site has 10,000 monthly readers, around 1,000 of them have dyslexia.</p>
+    <p>Many won't tell you. Many don't know why reading feels hard. They just leave.</p>
+    <p>readclear gives them a way to access your content. The same content — just restructured.</p>
+
+    <h3>Types of dyslexia readclear supports</h3>
+    <p><strong>Phonological</strong> — difficulty decoding words. Long or unfamiliar words cause friction.</p>
+    <p><strong>Visual Stress</strong> — text appears to move or blur. Layout and spacing are critical.</p>
+    <p><strong>Working Memory</strong> — losing the thread mid-sentence. Clear chunking and summaries help.</p>
+    <p><strong>Mixed</strong> — a combination of the above, or still figuring it out.</p>
+  </div>
+
+  <!-- LEGAL -->
+  <div class="section">
+    <div class="section-tag">Accessibility &amp; the law</div>
+    <h2>Accessibility legislation is tightening.</h2>
+    <p>In the UK and EU, digital accessibility is increasingly a legal requirement — not just good practice.</p>
+    <p>The <strong>European Accessibility Act (2025)</strong> requires many digital products and services to meet accessibility standards.</p>
+    <p>Allowing readclear to access your content is a simple step toward a more inclusive site.</p>
+  </div>
+
+  <!-- TECHNICAL -->
+  <div class="section">
+    <div class="section-tag">Technical setup</div>
+    <h2>How to allow readclear on your site.</h2>
+
+    <p>If your site blocks readclear, it's usually one of two things: CORS headers or bot detection. Here's how to fix both.</p>
+
+    <h3>Option 1 — Allow our user agent</h3>
+    <p>readclear identifies itself clearly. Whitelist our user agent in your bot detection rules or CDN settings.</p>
+
+    <div class="code-block">
+      <div class="code-label">Our user agent string</div>
+      <pre>readclear/1.0 (accessibility reformatter; readclear.importantsmallthings.com)</pre>
+      <button class="copy-btn" onclick="copyCode(this, 'readclear/1.0 (accessibility reformatter; readclear.importantsmallthings.com)')">Copy</button>
+    </div>
+
+    <h3>Option 2 — Add CORS headers</h3>
+    <p>If your server blocks cross-origin requests, add readclear to your allowed origins.</p>
+
+    <div class="code-block">
+      <div class="code-label">Nginx</div>
+      <pre>add_header Access-Control-Allow-Origin "https://readclear.importantsmallthings.com";</pre>
+      <button class="copy-btn" onclick="copyCode(this, 'add_header Access-Control-Allow-Origin \"https://readclear.importantsmallthings.com\";')">Copy</button>
+    </div>
+
+    <div class="code-block">
+      <div class="code-label">Cloudflare (Workers or Transform Rules)</div>
+      <pre>Access-Control-Allow-Origin: https://readclear.importantsmallthings.com</pre>
+      <button class="copy-btn" onclick="copyCode(this, 'Access-Control-Allow-Origin: https://readclear.importantsmallthings.com')">Copy</button>
+    </div>
+
+    <div class="code-block">
+      <div class="code-label">Apache (.htaccess)</div>
+      <pre>Header set Access-Control-Allow-Origin "https://readclear.importantsmallthings.com"</pre>
+      <button class="copy-btn" onclick="copyCode(this, 'Header set Access-Control-Allow-Origin \"https://readclear.importantsmallthings.com\"')">Copy</button>
+    </div>
+
+    <p>Not sure which applies to you? <a href="mailto:hello@importantsmallthings.com" style="color:var(--amber);">Get in touch</a> — we're happy to help.</p>
+  </div>
+
+  <!-- BADGE -->
+  <div class="section">
+    <div class="section-tag">Show you care</div>
+    <h2>Display the readclear badge.</h2>
+    <p>Let your readers know your content is accessible with readclear.</p>
+  </div>
+
+  <div class="badge-section">
+    <p style="color:var(--ink-mid);font-size:15px;">Preview</p>
+    <div class="badge-preview">
+      <div class="badge-dot"></div>
+      readclear friendly
+    </div>
+    <p class="badge-caption">Signal that your content is accessible. Build trust with dyslexic readers.</p>
+
+    <div class="code-block" style="text-align:left;margin-top:24px;">
+      <div class="code-label">Embed on your site</div>
+      <pre>&lt;a href="https://readclear.importantsmallthings.com" target="_blank"&gt;
+  &lt;img src="https://readclear.importantsmallthings.com/badge.svg"
+       alt="readclear friendly — accessible for dyslexic readers"
+       height="32"&gt;
+&lt;/a&gt;</pre>
+      <button class="copy-btn" onclick="copyCode(this, '<a href=\'https://readclear.importantsmallthings.com\' target=\'_blank\'><img src=\'https://readclear.importantsmallthings.com/badge.svg\' alt=\'readclear friendly\' height=\'32\'></a>')">Copy</button>
+    </div>
+  </div>
+
+</div>
+
+<!-- CTA -->
+<section class="cta-section">
+  <div class="cta-inner">
+    <h2>Want to work together?</h2>
+    <p>We work with site owners and developers who want to make their content more accessible. Get in touch — we'd love to help.</p>
+    <a href="mailto:hello@importantsmallthings.com" class="btn-primary">Get in touch →</a>
+    <a href="index.html" class="btn-ghost">Try readclear</a>
+  </div>
+</section>
+
+<!-- FOOTER -->
+<footer class="footer">
+  Built by <a href="https://importantsmallthings.com">Important Small Things</a>
+  &nbsp;·&nbsp; <a href="index.html">readclear</a>
+  &nbsp;·&nbsp; Content should never be reduced. Only reorganised.
+</footer>
+
+<script>
+function copyCode(btn, text) {
+  navigator.clipboard.writeText(text).then(() => {
+    btn.textContent = '✓ Copied';
+    setTimeout(() => btn.textContent = 'Copy', 2000);
+  });
+}
+</script>
+
+</body>
+</html>
