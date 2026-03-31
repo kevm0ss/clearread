@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>readclear — Make any website dyslexic friendly</title>
+<title>readclear — Make any webpage dyslexic friendly</title>
 <style>
 @import url('https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,300;0,9..144,600;0,9..144,700;1,9..144,400&family=Plus+Jakarta+Sans:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap');
 
@@ -725,7 +725,7 @@ body {
   <div class="hero-glow"></div>
   <div class="hero-inner">
 
-    <h1 class="hero-headline">Make a website<br><span class="highlight">dyslexic</span> friendly:</h1>
+    <h1 class="hero-headline">Make a webpage<br><span class="highlight">dyslexic</span> friendly:</h1>
 
     <div class="url-form">
       <div class="url-row">
@@ -1030,9 +1030,10 @@ function setCached(url, profile, title, html) {
 // ── END PAGE CACHE ───────────────────────────────────────
 
 function startReformat() {
-  const url = document.getElementById('url-input').value.trim();
+  let url = document.getElementById('url-input').value.trim();
   if (!url) return showStatus('Please paste a URL first.', 'error');
-  if (!url.startsWith('http')) return showStatus('Please include https:// at the start.', 'error');
+  if (!url.startsWith('http://') && !url.startsWith('https://')) url = 'https://' + url;
+  document.getElementById('url-input').value = url;
   loadDemo(url);
 }
 
