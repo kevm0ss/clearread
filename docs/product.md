@@ -96,6 +96,6 @@ Future expansion: Stroke patients, acquired brain injuries, ADHD, processing dis
 
 ## Tagline
 
-> "Content is never reduced. Only reorganised."
+> "Content should never be reduced. Only reorganised."
 
 This must appear prominently and must be lived by across the entire product.

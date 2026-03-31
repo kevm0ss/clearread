@@ -2,7 +2,7 @@
 
 ## The Core Rule
 
-> **"Content is never reduced. Only reorganised."**
+> **"Content should never be reduced. Only reorganised."**
 
 This is the non-negotiable principle of the entire product. It applies to:
 - The demo content on the homepage
@@ -80,7 +80,7 @@ The core rule must always be line 2. It is the product's promise expressed as an
 
 These have been agreed and should not be changed without discussion:
 
-- **Tagline:** "Content is never reduced. Only reorganised."
+- **Tagline:** "Content should never be reduced. Only reorganised."
 - **Hero stat:** "Dyslexia affects 1 in 10 people."
 - **Hero line 2:** "Most AI tools default to dense, hard-to-read text."
 - **Hero line 3:** "This changes that. Build your profile. Get your prompt. Done."

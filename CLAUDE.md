@@ -2,7 +2,7 @@
 
 ## Core Principle (Non-negotiable)
 
-> **"Content is never reduced. Only reorganised."**
+> **"Content should never be reduced. Only reorganised."**
 
 This applies to everything — the product, the demo, the copy, the code. Never simplify content. Only change how it is structured and presented.
 
