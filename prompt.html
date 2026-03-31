@@ -1560,6 +1560,9 @@ function selectProfile(p, el) {
   el.classList.add('active');
   selectedProfile = p;
 
+  // Persist profile across pages
+  try { localStorage.setItem('readclear_profile', JSON.stringify({ type: p })); } catch(e) {}
+
   // Set traits based on profile
   const recommended = new Set(profileTraits[p]);
   activeTraits.clear();
@@ -1968,8 +1971,14 @@ function expandToggle(id, btn) {
 
 // Auto-select Mixed on load
 document.addEventListener('DOMContentLoaded', () => {
-  const mixedCard = document.querySelector(".profile-card[onclick*=\"'mixed'\"]");
-  if (mixedCard) selectProfile('mixed', mixedCard);
+  // Restore saved profile, or default to mixed
+  let startProfile = 'mixed';
+  try {
+    const saved = JSON.parse(localStorage.getItem('readclear_profile'));
+    if (saved && saved.type) startProfile = saved.type;
+  } catch(e) {}
+  const card = document.querySelector(`.profile-card[onclick*="'${startProfile}'"]`);
+  if (card) selectProfile(startProfile, card);
 });
 </script>
 
