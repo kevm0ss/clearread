@@ -216,6 +216,103 @@ h1 span { color: var(--amber); }
   display: block;
 }
 
+/* COMPARE SLIDER */
+.compare-section {
+  background: var(--ink);
+  padding: 80px 48px;
+}
+.compare-section .section-label { color: var(--amber); }
+.compare-section .section-title { color: var(--cream); }
+.compare-section .section-sub { color: #6a6560; margin-bottom: 48px; }
+.compare-wrap {
+  max-width: 900px;
+  margin: 0 auto;
+  position: relative;
+  border-radius: 12px;
+  overflow: hidden;
+  user-select: none;
+  touch-action: none;
+  box-shadow: 0 24px 64px rgba(0,0,0,0.5);
+}
+.compare-img {
+  display: block;
+  width: 100%;
+  height: auto;
+}
+.compare-before {
+  position: relative;
+  display: block;
+}
+.compare-after {
+  position: absolute;
+  top: 0; left: 0;
+  width: 50%;
+  height: 100%;
+  overflow: hidden;
+  border-right: 3px solid var(--amber);
+}
+.compare-after img {
+  width: auto;
+  height: 100%;
+  min-width: 100%;
+  object-fit: cover;
+  object-position: left top;
+}
+.compare-handle {
+  position: absolute;
+  top: 0;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 44px;
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  cursor: ew-resize;
+  z-index: 10;
+  pointer-events: none;
+}
+.compare-handle-knob {
+  width: 44px;
+  height: 44px;
+  background: var(--amber);
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 16px;
+  box-shadow: 0 2px 12px rgba(0,0,0,0.4);
+  color: #fff;
+  font-weight: 700;
+}
+.compare-label {
+  position: absolute;
+  bottom: 16px;
+  font-size: 12px;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  padding: 6px 12px;
+  border-radius: 20px;
+}
+.compare-label-before {
+  right: 16px;
+  background: rgba(0,0,0,0.6);
+  color: #ff6b6b;
+}
+.compare-label-after {
+  left: 16px;
+  background: rgba(0,0,0,0.6);
+  color: #6ee7b7;
+}
+.compare-hint {
+  text-align: center;
+  font-size: 13px;
+  color: #4a4540;
+  margin-top: 16px;
+}
+
 /* DEMO SITES */
 .demo-section {
   padding: 80px 48px;
@@ -551,6 +648,28 @@ h1 span { color: var(--amber); }
     </div>
 
   </div>
+</section>
+
+<!-- COMPARE SLIDER -->
+<section class="compare-section">
+  <div class="section-label">See the difference</div>
+  <div class="section-title">The same page. Reorganised.</div>
+  <div class="section-sub">Drag to compare. Every word is still there — just easier to read.</div>
+
+  <div class="compare-wrap" id="compareWrap">
+    <div class="compare-before">
+      <img class="compare-img" src="images/wikipedia-before.png" alt="Wikipedia page without readclear — dense, hard to read">
+      <span class="compare-label compare-label-before">Without readclear</span>
+    </div>
+    <div class="compare-after" id="compareAfter">
+      <img src="images/wikipedia-after.png" alt="Wikipedia page with readclear — structured, clear">
+      <span class="compare-label compare-label-after">With readclear</span>
+    </div>
+    <div class="compare-handle" id="compareHandle">
+      <div class="compare-handle-knob">⇔</div>
+    </div>
+  </div>
+  <p class="compare-hint">← drag to compare →</p>
 </section>
 
 <!-- DEMO SITES -->
@@ -909,7 +1028,35 @@ function finishQuiz() {
 document.addEventListener('DOMContentLoaded', () => {
   loadProfile();
   loadHistory();
+  initSlider();
 });
+
+// ── COMPARE SLIDER ───────────────────────────────────────
+function initSlider() {
+  const wrap = document.getElementById('compareWrap');
+  const after = document.getElementById('compareAfter');
+  const handle = document.getElementById('compareHandle');
+  if (!wrap || !after || !handle) return;
+
+  let dragging = false;
+
+  function setPosition(clientX) {
+    const rect = wrap.getBoundingClientRect();
+    let pct = (clientX - rect.left) / rect.width;
+    pct = Math.max(0.05, Math.min(0.95, pct));
+    const pctStr = (pct * 100).toFixed(1) + '%';
+    after.style.width = pctStr;
+    handle.style.left = pctStr;
+  }
+
+  wrap.addEventListener('mousedown', e => { dragging = true; setPosition(e.clientX); });
+  window.addEventListener('mousemove', e => { if (dragging) setPosition(e.clientX); });
+  window.addEventListener('mouseup', () => { dragging = false; });
+  wrap.addEventListener('touchstart', e => { dragging = true; setPosition(e.touches[0].clientX); }, { passive: true });
+  window.addEventListener('touchmove', e => { if (dragging) setPosition(e.touches[0].clientX); }, { passive: true });
+  window.addEventListener('touchend', () => { dragging = false; });
+}
+// ── END COMPARE SLIDER ───────────────────────────────────
 </script>
 
 </body>
