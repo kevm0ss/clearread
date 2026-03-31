@@ -1187,9 +1187,25 @@ function updateQuizDots() {
 
 function finishQuiz() {
   const scores = { phonological: 0, visual: 0, memory: 0 };
-  quizAnswers.forEach(a => { if (a && a !== 'none') scores[a]++; });
-  const top = Object.entries(scores).sort((a,b) => b[1]-a[1]);
-  const profile = (top[0][1] === 0 || top[0][1] === top[1][1]) ? 'mixed' : top[0][0];
+  quizAnswers.forEach(a => {
+    if (a && a in scores) scores[a]++;
+  });
+
+  const total = scores.phonological + scores.visual + scores.memory;
+
+  let profile = 'mixed';
+  if (total > 0) {
+    // Find the highest scoring type
+    const sorted = Object.entries(scores).sort((a, b) => b[1] - a[1]);
+    const best = sorted[0];
+    const second = sorted[1];
+    // Only declare a clear winner if it scored more than the second
+    if (best[1] > second[1]) {
+      profile = best[0];
+    }
+    // If tied at top, stay mixed
+  }
+
   closeQuiz();
   setProfile(profile, null);
   // Scroll to profile cards so user sees the change
