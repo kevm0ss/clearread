@@ -273,6 +273,8 @@ body {
     <span class="toolbar-source" id="toolbar-source"></span>
   </div>
   <div class="toolbar-actions">
+    <span id="cache-badge" style="display:none;font-size:11px;font-weight:700;letter-spacing:0.05em;color:#6ee7b7;padding:4px 10px;background:rgba(110,231,183,0.1);border-radius:20px;border:1px solid rgba(110,231,183,0.2);">⚡ Cached</span>
+    <button id="refresh-btn" style="display:none;background:none;border:1px solid #3a3530;color:#8a857e;font-family:inherit;font-size:13px;padding:6px 14px;border-radius:8px;cursor:pointer;" onclick="refreshPage()">↻ Refresh</button>
     <a href="index.html" class="toolbar-btn primary">← Reformat another</a>
     <a href="prompt.html" class="toolbar-btn">Build AI prompt</a>
   </div>
@@ -349,20 +351,49 @@ function init() {
     sourceEl.innerHTML = `Source: <a href="${escHtml(result.url)}" target="_blank" rel="noopener">${escHtml(domain)}</a>`;
   }
 
+  // Show cache badge if served from cache
+  if (result.fromCache) {
+    document.getElementById('cache-badge').style.display = 'inline-flex';
+    document.getElementById('refresh-btn').style.display = 'inline-block';
+  }
+
   document.getElementById('loading-state').style.display = 'none';
   const content = document.getElementById('reading-content');
   content.innerHTML = sanitiseHtml(result.html);
   content.style.display = 'block';
 }
 
+function refreshPage() {
+  // Clear the cache entry for this URL+profile and reformat fresh
+  const result = (() => { try { return JSON.parse(localStorage.getItem('readclear_result')); } catch(e) { return null; } })();
+  if (!result) return;
+  const CACHE_PREFIX = 'rc_pg_';
+  function makeKey(url, profile) {
+    const raw = url + '|' + profile;
+    let h = 0;
+    for (let i = 0; i < raw.length; i++) { h = Math.imul(31, h) + raw.charCodeAt(i) | 0; }
+    return CACHE_PREFIX + Math.abs(h).toString(36);
+  }
+  localStorage.removeItem(makeKey(result.url, result.profile));
+  // Pre-fill the input and go back to reformat fresh
+  localStorage.setItem('readclear_prefill', result.url);
+  window.location.href = 'index.html';
+}
+
 // Sanitise Claude HTML output — allow only safe tags and attributes
 function sanitiseHtml(html) {
   const ALLOWED_TAGS = new Set([
     'h1','h2','h3','h4','h5','h6',
-    'p','ul','ol','li','strong','em','a',
-    'details','summary','blockquote','hr','br'
+    'p','ul','ol','li','strong','em','b','i','a',
+    'div','section','article','span','header',
+    'details','summary','blockquote','hr','br',
+    'code','pre','table','thead','tbody','tr','th','td'
   ]);
-  const ALLOWED_ATTRS = { a: ['href','target','rel'] };
+  const ALLOWED_ATTRS = {
+    a:  ['href','target','rel'],
+    td: ['colspan','rowspan'],
+    th: ['colspan','rowspan','scope']
+  };
 
   const template = document.createElement('template');
   template.innerHTML = html;
@@ -372,23 +403,23 @@ function sanitiseHtml(html) {
       if (child.nodeType === Node.ELEMENT_NODE) {
         const tag = child.tagName.toLowerCase();
         if (!ALLOWED_TAGS.has(tag)) {
-          // Replace disallowed element with its text content
+          // Unwrap — keep children, discard the element itself
           child.replaceWith(...Array.from(child.childNodes));
           return;
         }
-        // Strip disallowed attributes
+        // Strip every attribute not on the allowlist
         Array.from(child.attributes).forEach(attr => {
           const allowed = ALLOWED_ATTRS[tag] || [];
-          if (!allowed.includes(attr.name)) {
-            child.removeAttribute(attr.name);
-          }
+          if (!allowed.includes(attr.name)) child.removeAttribute(attr.name);
         });
-        // Force safe link behaviour
+        // Force safe link behaviour and block javascript: hrefs
         if (tag === 'a') {
           child.setAttribute('target', '_blank');
           child.setAttribute('rel', 'noopener noreferrer');
-          const href = child.getAttribute('href') || '';
-          if (href.startsWith('javascript:')) child.removeAttribute('href');
+          const href = (child.getAttribute('href') || '').trim().toLowerCase();
+          if (href.startsWith('javascript:') || href.startsWith('data:')) {
+            child.removeAttribute('href');
+          }
         }
         clean(child);
       }
@@ -404,7 +435,7 @@ function sanitiseHtml(html) {
 
 function showError(msg) {
   document.getElementById('loading-state').style.display = 'none';
-  document.getElementById('error-msg').innerHTML = msg;
+  document.getElementById('error-msg').textContent = msg;
   document.getElementById('error-state').style.display = 'block';
 }
 

@@ -985,6 +985,50 @@ function setProfile(type, el, save = true) {
 }
 
 // REFORMAT
+// ── PAGE CACHE ───────────────────────────────────────────
+const CACHE_PREFIX   = 'rc_pg_';
+const CACHE_MAX_AGE  = 7 * 24 * 60 * 60 * 1000; // 7 days
+const CACHE_MAX_SIZE = 10; // max cached pages
+
+function makeCacheKey(url, profile) {
+  const raw = url + '|' + profile;
+  let h = 0;
+  for (let i = 0; i < raw.length; i++) { h = Math.imul(31, h) + raw.charCodeAt(i) | 0; }
+  return CACHE_PREFIX + Math.abs(h).toString(36);
+}
+
+function getCached(url, profile) {
+  try {
+    const item = JSON.parse(localStorage.getItem(makeCacheKey(url, profile)));
+    if (!item) return null;
+    if (Date.now() - item.ts > CACHE_MAX_AGE) { localStorage.removeItem(makeCacheKey(url, profile)); return null; }
+    return item;
+  } catch(e) { return null; }
+}
+
+function setCached(url, profile, title, html) {
+  try {
+    // Evict oldest entry if at limit
+    const keys = [];
+    for (let i = 0; i < localStorage.length; i++) {
+      const k = localStorage.key(i);
+      if (k && k.startsWith(CACHE_PREFIX)) keys.push(k);
+    }
+    if (keys.length >= CACHE_MAX_SIZE) {
+      let oldest = null;
+      keys.forEach(k => {
+        try {
+          const item = JSON.parse(localStorage.getItem(k));
+          if (!oldest || item.ts < oldest.ts) oldest = { key: k, ts: item.ts };
+        } catch(e) {}
+      });
+      if (oldest) localStorage.removeItem(oldest.key);
+    }
+    localStorage.setItem(makeCacheKey(url, profile), JSON.stringify({ url, profile, title, html, ts: Date.now() }));
+  } catch(e) {} // fail silently if storage full
+}
+// ── END PAGE CACHE ───────────────────────────────────────
+
 function startReformat() {
   const url = document.getElementById('url-input').value.trim();
   if (!url) return showStatus('Please paste a URL first.', 'error');
@@ -994,6 +1038,20 @@ function startReformat() {
 
 function loadDemo(url) {
   document.getElementById('url-input').value = url;
+
+  // Check cache first — instant load, no API call
+  const cached = getCached(url, currentProfile);
+  if (cached) {
+    localStorage.setItem('readclear_result', JSON.stringify({
+      url: cached.url, profile: cached.profile,
+      title: cached.title, html: cached.html,
+      fromCache: true, timestamp: cached.ts
+    }));
+    addToHistory(url, cached.title, cached.profile);
+    window.location.href = 'read.html';
+    return;
+  }
+
   showStatus('Reformatting — this takes about 10 seconds…', 'loading');
   document.getElementById('reformat-btn').disabled = true;
 
@@ -1018,10 +1076,15 @@ async function callWorker(url, profile) {
     }
 
     const data = await response.json();
+
+    // Cache the result for next time
+    setCached(url, profile, data.title, data.html);
+
     localStorage.setItem('readclear_result', JSON.stringify({
       url, profile,
       title: data.title,
       html: data.html,
+      fromCache: false,
       timestamp: Date.now()
     }));
 
@@ -1230,6 +1293,17 @@ document.addEventListener('DOMContentLoaded', () => {
   loadProfile();
   loadHistory();
   initSlider();
+  // Pre-fill URL if returning from a cache refresh
+  const prefill = localStorage.getItem('readclear_prefill');
+  if (prefill) {
+    localStorage.removeItem('readclear_prefill');
+    const input = document.getElementById('url-input');
+    if (input) {
+      input.value = prefill;
+      input.scrollIntoView({ behavior: 'smooth', block: 'center' });
+      input.focus();
+    }
+  }
 });
 
 // ── COMPARE SLIDER ────────────────────────────────────────
