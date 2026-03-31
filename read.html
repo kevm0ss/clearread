@@ -351,8 +351,55 @@ function init() {
 
   document.getElementById('loading-state').style.display = 'none';
   const content = document.getElementById('reading-content');
-  content.innerHTML = result.html;
+  content.innerHTML = sanitiseHtml(result.html);
   content.style.display = 'block';
+}
+
+// Sanitise Claude HTML output — allow only safe tags and attributes
+function sanitiseHtml(html) {
+  const ALLOWED_TAGS = new Set([
+    'h1','h2','h3','h4','h5','h6',
+    'p','ul','ol','li','strong','em','a',
+    'details','summary','blockquote','hr','br'
+  ]);
+  const ALLOWED_ATTRS = { a: ['href','target','rel'] };
+
+  const template = document.createElement('template');
+  template.innerHTML = html;
+
+  function clean(node) {
+    Array.from(node.childNodes).forEach(child => {
+      if (child.nodeType === Node.ELEMENT_NODE) {
+        const tag = child.tagName.toLowerCase();
+        if (!ALLOWED_TAGS.has(tag)) {
+          // Replace disallowed element with its text content
+          child.replaceWith(...Array.from(child.childNodes));
+          return;
+        }
+        // Strip disallowed attributes
+        Array.from(child.attributes).forEach(attr => {
+          const allowed = ALLOWED_ATTRS[tag] || [];
+          if (!allowed.includes(attr.name)) {
+            child.removeAttribute(attr.name);
+          }
+        });
+        // Force safe link behaviour
+        if (tag === 'a') {
+          child.setAttribute('target', '_blank');
+          child.setAttribute('rel', 'noopener noreferrer');
+          const href = child.getAttribute('href') || '';
+          if (href.startsWith('javascript:')) child.removeAttribute('href');
+        }
+        clean(child);
+      }
+    });
+  }
+
+  clean(template.content);
+
+  const wrapper = document.createElement('div');
+  wrapper.appendChild(template.content);
+  return wrapper.innerHTML;
 }
 
 function showError(msg) {

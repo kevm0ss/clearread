@@ -781,7 +781,7 @@ function loadHistory() {
   if (!history.length) { section.style.display = 'none'; return; }
   section.style.display = 'block';
   list.innerHTML = history.map(item => `
-    <div class="history-item" onclick="loadDemo('${escHtml(item.url)}')">
+    <div class="history-item" data-url="${escAttr(item.url)}">
       <div class="history-item-left">
         <div class="history-item-title">${escHtml(item.title || item.url)}</div>
         <div class="history-item-url">${escHtml(item.url)}</div>
@@ -791,7 +791,14 @@ function loadHistory() {
         <span class="history-time">${timeAgo(item.timestamp)}</span>
       </div>
     </div>
-  `).join('') + `<button class="clear-history-btn" onclick="clearHistory()">Clear history</button>`;
+  `).join('') + `<button class="clear-history-btn" id="clear-history-btn">Clear history</button>`;
+
+  // Attach events safely — no inline onclick
+  list.querySelectorAll('.history-item').forEach(el => {
+    el.addEventListener('click', () => loadDemo(el.dataset.url));
+  });
+  const clearBtn = list.querySelector('#clear-history-btn');
+  if (clearBtn) clearBtn.addEventListener('click', clearHistory);
 }
 
 function getHistory() {
@@ -822,6 +829,9 @@ function timeAgo(ts) {
 
 function escHtml(str) {
   return String(str).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
+}
+function escAttr(str) {
+  return String(str).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;').replace(/'/g,'&#39;');
 }
 
 // QUIZ

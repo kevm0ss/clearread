@@ -13,8 +13,6 @@
 const ALLOWED_ORIGINS = [
   'https://readclear.importantsmallthings.com',
   'https://clearread-7x3.pages.dev',
-  'http://localhost:3000',
-  'http://127.0.0.1:5500',
 ];
 
 const PROFILE_PROMPTS = {
@@ -106,6 +104,26 @@ async function handleReformat(request, env, corsHeaders) {
   const { url, profile = 'mixed' } = body;
 
   if (!url || !url.startsWith('http')) {
+    return errorResponse('A valid URL is required.', 400, corsHeaders);
+  }
+
+  // Block private/internal addresses to prevent SSRF
+  try {
+    const parsed = new URL(url);
+    const host = parsed.hostname.toLowerCase();
+    const blocked = [
+      'localhost', '127.0.0.1', '0.0.0.0', '::1',
+      '169.254.169.254', // cloud metadata
+    ];
+    if (blocked.includes(host)) {
+      return errorResponse('That URL cannot be reformatted.', 400, corsHeaders);
+    }
+    // Block private IP ranges (10.x, 172.16-31.x, 192.168.x)
+    if (/^10\./.test(host) || /^192\.168\./.test(host) ||
+        /^172\.(1[6-9]|2\d|3[01])\./.test(host)) {
+      return errorResponse('That URL cannot be reformatted.', 400, corsHeaders);
+    }
+  } catch {
     return errorResponse('A valid URL is required.', 400, corsHeaders);
   }
 
