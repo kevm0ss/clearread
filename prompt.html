@@ -21,6 +21,10 @@
   --teal-soft: rgba(13,148,136,0.1);
   --plum: #7c3aed;
   --border: #ddd8ce;
+  --dark: #1c1917;
+  --dark-2: #262320;
+  --dark-border: #3a3530;
+  --text-width: 720px;
 }
 
 * { box-sizing: border-box; margin: 0; padding: 0; }
@@ -34,14 +38,54 @@ body {
   -webkit-font-smoothing: antialiased;
 }
 
+/* ── NAV ─────────────────────────────────────────────── */
+.nav {
+  background: var(--dark);
+  border-bottom: 1px solid var(--dark-border);
+  padding: 0 48px;
+  height: 68px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  position: sticky;
+  top: 0;
+  z-index: 50;
+}
+.nav-left {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+}
+.nav-logo {
+  font-family: 'Monaco', 'Courier New', monospace;
+  font-size: 22px;
+  font-weight: 700;
+  color: #faf8f3;
+  letter-spacing: -0.5px;
+  text-decoration: none;
+}
+.beta-badge {
+  font-size: 10px;
+  font-weight: 700;
+  letter-spacing: 0.1em;
+  background: var(--amber);
+  color: #1c1917;
+  padding: 3px 9px;
+  border-radius: 4px;
+  text-transform: uppercase;
+}
+.nav-link {
+  font-size: 13px;
+  color: #8a857e;
+  text-decoration: none;
+  transition: color 0.2s;
+}
+.nav-link:hover { color: #faf8f3; }
+
 /* HERO */
 .hero {
-  background: var(--ink);
-  min-height: 100vh;
-  display: flex;
-  flex-direction: column;
-  justify-content: center;
-  padding: 80px 48px;
+  background: var(--dark);
+  padding: 72px 48px 80px;
   position: relative;
   overflow: hidden;
 }
@@ -61,7 +105,7 @@ body {
   pointer-events: none;
 }
 .hero-inner {
-  max-width: 760px;
+  max-width: var(--text-width);
   margin: 0 auto;
   position: relative;
   z-index: 1;
@@ -291,7 +335,7 @@ body {
   font-size: 11px;
   letter-spacing: 0.18em;
   text-transform: uppercase;
-  color: #5a5550;
+  color: #8a857e;
   margin-bottom: 12px;
 }
 .builder-title {
@@ -577,12 +621,16 @@ body {
 
 /* FOOTER */
 .footer {
-  background: var(--ink);
-  padding: 48px;
+  background: var(--dark);
+  border-top: 1px solid var(--dark-border);
+  padding: 28px 48px;
   text-align: center;
+  font-size: 13px;
+  color: #6a6560;
 }
-.footer-text { font-size: 14px; color: #4a4540; line-height: 1.7; }
-.footer-text a { color: var(--amber); text-decoration: none; }
+.footer-inner { max-width: var(--text-width); margin: 0 auto; }
+.footer a { color: #8a857e; text-decoration: none; }
+.footer a:hover { color: #c8c3bc; }
 
 /* QUIZ MODAL */
 .modal-overlay {
@@ -749,16 +797,6 @@ body {
   padding-right: 100px;
 }
 
-/* HERO LOGO */
-.hero-logo {
-  font-family: Monaco, Menlo, 'JetBrains Mono', monospace;
-  font-size: 28px;
-  color: var(--amber);
-  letter-spacing: -0.02em;
-  margin-bottom: 36px;
-  font-weight: normal;
-}
-
 /* HERO SUB with line spacing */
 .hero-sub-line {
   display: block;
@@ -781,7 +819,7 @@ body {
 .char-count {
   font-family: 'JetBrains Mono', monospace;
   font-size: 11px;
-  color: #5a5550;
+  color: #6a6560;
   letter-spacing: 0.05em;
 }
 .char-count.warn { color: #f59e0b; }
@@ -980,12 +1018,6 @@ body {
   .proof { padding: 24px; }
   .hero-cta { flex-direction: column; }
   .modal { padding: 28px 20px; }
-  .hero-top {
-    padding-right: 0;
-    flex-direction: column;
-    align-items: flex-start;
-    gap: 12px;
-  }
   .demo-columns { flex-direction: column; }
   .demo-col:first-child { border-right: none; border-bottom: 1px solid #ddd8ce; }
 }
@@ -993,17 +1025,20 @@ body {
 </head>
 <body>
 
+<!-- NAV -->
+<nav class="nav">
+  <div class="nav-left">
+    <a href="index.html" class="nav-logo">readclear</a>
+    <span class="beta-badge">Beta</span>
+  </div>
+  <a href="index.html" class="nav-link">← Reformat a webpage</a>
+</nav>
+
 <!-- HERO -->
 <section class="hero">
   <div class="hero-grid"></div>
   <div class="hero-glow"></div>
   <div class="hero-inner">
-    <div class="hero-top">
-      <a href="index.html" class="hero-logo" style="margin-bottom:0;text-decoration:none;color:inherit;">readclear</a>
-      <a href="index.html" class="hero-badge" style="margin-bottom:0;text-decoration:none;">
-        ← Reformat a webpage
-      </a>
-    </div>
     <h1>Build your<br><span style="font-style:normal;">AI prompt.</span></h1>
     <div class="hero-sub" style="margin-bottom:48px;">
       <span class="hero-sub-line">Choose your profile. Copy your prompt.</span>
@@ -1418,11 +1453,11 @@ body {
 
 <!-- FOOTER -->
 <footer class="footer">
-  <p class="footer-text">
-    Built by <a href="https://importantsmallthings.com">Important Small Things</a>.<br>
-    Nothing is stored. Nothing is sent anywhere.<br><br>
-    Content should never be reduced. Only reorganised.
-  </p>
+  <div class="footer-inner">
+    Built by <a href="https://importantsmallthings.com">Important Small Things</a>
+    &nbsp;·&nbsp; <a href="siteowners.html">Site owners</a>
+    &nbsp;·&nbsp; Content should never be reduced. Only reorganised.
+  </div>
 </footer>
 
 <!-- DEMO MODAL -->
