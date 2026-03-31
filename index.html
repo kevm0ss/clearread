@@ -39,7 +39,7 @@ body {
   background: var(--dark);
   border-bottom: 1px solid var(--dark-border);
   padding: 0 48px;
-  height: 52px;
+  height: 68px;
   display: flex;
   align-items: center;
   justify-content: space-between;
@@ -47,26 +47,19 @@ body {
   top: 0;
   z-index: 50;
 }
+.nav-left {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+}
 .nav-logo {
   font-family: 'Monaco', 'Courier New', monospace;
-  font-size: 15px;
+  font-size: 22px;
   font-weight: 700;
   color: #faf8f3;
   letter-spacing: -0.5px;
   text-decoration: none;
 }
-.nav-right {
-  display: flex;
-  align-items: center;
-  gap: 16px;
-}
-.nav-link {
-  font-size: 13px;
-  color: #6a6560;
-  text-decoration: none;
-  transition: color 0.2s;
-}
-.nav-link:hover { color: #c8c3bc; }
 .beta-badge {
   font-size: 10px;
   font-weight: 700;
@@ -77,6 +70,13 @@ body {
   border-radius: 4px;
   text-transform: uppercase;
 }
+.nav-link {
+  font-size: 13px;
+  color: #8a857e;
+  text-decoration: none;
+  transition: color 0.2s;
+}
+.nav-link:hover { color: #faf8f3; }
 
 /* ── HERO ─────────────────────────────────────────────── */
 .hero {
@@ -125,19 +125,19 @@ body {
 .url-row { display: flex; gap: 10px; align-items: stretch; }
 .url-input {
   flex: 1;
-  background: #262320;
-  border: 1.5px solid var(--dark-border);
+  background: #f7f4ee;
+  border: 2px solid #c8c3bc;
   border-radius: 10px;
   padding: 16px 20px;
   font-family: 'Plus Jakarta Sans', sans-serif;
   font-size: 16px;
-  color: #faf8f3;
+  color: var(--ink);
   outline: none;
   transition: border-color 0.2s;
   min-width: 0;
 }
-.url-input::placeholder { color: #4a4540; }
-.url-input:focus { border-color: var(--amber); }
+.url-input::placeholder { color: #9a9590; }
+.url-input:focus { border-color: var(--amber); background: #fff; }
 .btn-reformat {
   background: var(--amber);
   color: #1c1917;
@@ -157,8 +157,8 @@ body {
 
 /* PROFILE MINI CARDS */
 .profile-mini-label {
-  font-size: 12px;
-  color: #4a4540;
+  font-size: 13px;
+  color: #8a857e;
   margin-bottom: 10px;
   letter-spacing: 0.03em;
 }
@@ -184,30 +184,31 @@ body {
 }
 .mini-card-emoji { font-size: 18px; margin-bottom: 8px; display: block; }
 .mini-card-name {
-  font-size: 12px;
+  font-size: 13px;
   font-weight: 700;
-  color: #8a857e;
+  color: #c8c3bc;
   margin-bottom: 3px;
   line-height: 1.2;
 }
 .mini-card.active .mini-card-name { color: var(--amber); }
-.mini-card-desc { font-size: 11px; color: #4a4540; line-height: 1.4; }
+.mini-card-desc { font-size: 11px; color: #8a857e; line-height: 1.4; }
 
 .profile-footer-row {
   display: flex;
   align-items: center;
-  justify-content: space-between;
-  margin-top: 4px;
+  justify-content: flex-start;
+  margin-top: 16px;
 }
 .quiz-link-small {
-  font-size: 12px;
+  font-size: 14px;
+  font-weight: 600;
   color: var(--teal);
   background: none;
   border: none;
   cursor: pointer;
   font-family: 'Plus Jakarta Sans', sans-serif;
   text-decoration: underline;
-  text-underline-offset: 2px;
+  text-underline-offset: 3px;
   padding: 0;
 }
 .quiz-link-small:hover { color: #5eead4; }
@@ -259,11 +260,11 @@ body {
 }
 .why-body {
   font-size: 16px;
-  color: var(--ink-mid);
+  color: var(--ink);
   line-height: 1.9;
   margin-bottom: 18px;
 }
-.why-body strong { color: var(--ink); }
+.why-body strong { color: var(--ink); font-weight: 700; }
 .why-divider {
   border: none;
   border-top: 1px solid var(--border);
@@ -277,7 +278,7 @@ body {
 }
 .why-coffee-body {
   font-size: 15px;
-  color: var(--ink-mid);
+  color: var(--ink);
   line-height: 1.8;
   margin-bottom: 20px;
 }
@@ -389,7 +390,7 @@ body {
   margin-bottom: 8px;
 }
 .section-sub {
-  color: #4a4540;
+  color: #8a857e;
   margin-bottom: 40px;
   font-size: 15px;
 }
@@ -459,7 +460,7 @@ body {
 }
 .compare-label-before { right: 16px; background: rgba(0,0,0,0.6); color: #ff9a9a; }
 .compare-label-after  { left: 16px;  background: rgba(0,0,0,0.6); color: #6ee7b7; }
-.compare-hint { text-align: center; font-size: 13px; color: #3a3530; margin-top: 16px; }
+.compare-hint { text-align: center; font-size: 13px; color: #6a6560; margin-top: 16px; }
 
 /* ── PROMPT CTA ───────────────────────────────────────── */
 .prompt-cta {
@@ -487,7 +488,7 @@ body {
   line-height: 1.2;
 }
 .prompt-cta p {
-  color: var(--ink-mid);
+  color: var(--ink);
   font-size: 16px;
   margin-bottom: 32px;
   line-height: 1.8;
@@ -541,11 +542,11 @@ body {
 }
 .share-sub {
   font-size: 15px;
-  color: #5a5550;
+  color: #8a857e;
   line-height: 1.8;
   margin-bottom: 40px;
 }
-.share-sub strong { color: #8a857e; }
+.share-sub strong { color: #c8c3bc; }
 .share-buttons {
   display: flex;
   flex-wrap: wrap;
@@ -706,11 +707,11 @@ body {
 
 <!-- NAV -->
 <nav class="nav">
-  <a href="/" class="nav-logo">readclear</a>
-  <div class="nav-right">
-    <a href="prompt.html" class="nav-link">Use AI to make any response dyslexic friendly →</a>
+  <div class="nav-left">
+    <a href="/" class="nav-logo">readclear</a>
     <span class="beta-badge">Beta</span>
   </div>
+  <a href="prompt.html" class="nav-link">Use ChatGPT/CoPilot? Make AI dyslexic friendly →</a>
 </nav>
 
 <!-- HERO -->
@@ -759,7 +760,7 @@ body {
           </button>
         </div>
         <div class="profile-footer-row">
-          <button class="quiz-link-small" onclick="openQuiz()">Not sure? Take a quick quiz</button>
+          <button class="quiz-link-small" onclick="openQuiz()">Not sure of your type? Take our quick quiz</button>
         </div>
       </div>
 
@@ -772,17 +773,20 @@ body {
 <!-- WHY SECTION -->
 <section class="why-section">
   <div class="why-inner">
-    <div class="why-stat">1 in 10</div>
-    <h2 class="why-headline">people have dyslexia.<br>Most websites are hard to read.</h2>
+    <h2 class="why-headline">We believe content should never be reduced.<br>Only reorganised.</h2>
 
     <p class="why-body">
-      We believe content should never be reduced. Only reorganised.<br>
       That's our mission — it's not a perfect science, but a place to start.
     </p>
 
     <p class="why-body">
+      <strong>1 in 10 people have dyslexia.</strong><br>
+      Most websites are hard to read for us.
+    </p>
+
+    <p class="why-body">
       readclear takes any webpage and restructures it for how your brain reads.
-      Same words. Same information. <strong>Just easier to get to.</strong>
+      Same words. Same information. <strong>Just easier to digest.</strong>
     </p>
 
     <hr class="why-divider">
@@ -807,9 +811,11 @@ body {
 
 <!-- COMPARE SLIDER -->
 <section class="compare-section">
-  <div class="section-label">Demo</div>
-  <h2 class="section-title">The same page. Reorganised.</h2>
-  <p class="section-sub">Drag to compare. Every word is still there — just easier to read.</p>
+  <div style="max-width:900px; margin:0 auto;">
+    <div class="section-label">Demo</div>
+    <h2 class="section-title">The same page. Reorganised.</h2>
+    <p class="section-sub">Drag to compare. Every word is still there — just easier to read.</p>
+  </div>
 
   <div class="compare-wrap" id="compareWrap">
     <div class="compare-before">
@@ -827,16 +833,17 @@ body {
   <p class="compare-hint">← drag to compare →</p>
 </section>
 
+
 <!-- PROMPT CTA -->
 <section class="prompt-cta">
   <div class="prompt-cta-inner">
-    <p class="prompt-cta-label">AI prompt tool</p>
+    <p class="prompt-cta-label">More dyslexic tools</p>
     <h2>Do you use an AI like ChatGPT or CoPilot?</h2>
     <p>
       We think AI should be more dyslexic friendly — so we made a way for your
       favourite AI to deliver clearer content with a simple prompt you add into settings.
     </p>
-    <a href="prompt.html" class="btn-primary">Build my Prompt →</a>
+    <a href="prompt.html" class="btn-primary">Find out more →</a>
   </div>
 </section>
 
