@@ -218,7 +218,14 @@ ${truncatedText}`;
     return errorResponse('Formatting service unavailable. Please try again.', 502, corsHeaders);
   }
 
-  const reformattedHtml = claudeResponse.content?.[0]?.text || '';
+  let reformattedHtml = claudeResponse.content?.[0]?.text || '';
+
+  // Strip markdown code fences Claude sometimes wraps around HTML output
+  reformattedHtml = reformattedHtml
+    .replace(/^```html\s*/i, '')
+    .replace(/^```\s*/i, '')
+    .replace(/\s*```$/i, '')
+    .trim();
 
   if (!reformattedHtml) {
     return errorResponse('No content returned from formatter.', 500, corsHeaders);
