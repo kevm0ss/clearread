@@ -1152,10 +1152,17 @@ function loadHistory() {
 
   list.querySelectorAll('.history-item').forEach(el => {
     el.addEventListener('click', () => {
-      const input = document.getElementById('url-input');
-      input.value = el.dataset.url;
-      input.scrollIntoView({ behavior: 'smooth', block: 'center' });
-      input.focus();
+      const url = el.dataset.url;
+      // If cached, go straight to read page
+      if (getCached(url, currentProfile)) {
+        loadDemo(url);
+      } else {
+        // Not cached — scroll to URL input to reformat
+        const input = document.getElementById('url-input');
+        input.value = url;
+        input.scrollIntoView({ behavior: 'smooth', block: 'center' });
+        input.focus();
+      }
     });
   });
   const clearBtn = list.querySelector('#clear-history-btn');
