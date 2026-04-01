@@ -32,7 +32,7 @@ Core rule: Never simplify content. Only change how it is structured and presente
 Profile-specific: Use plain, common words. If a technical term is necessary, define it in plain language immediately after. Avoid jargon where a simpler word exists.
 Formatting rules:
 1. Use short sentences. One idea per sentence.
-2. Bold the key term in each sentence for easy scanning.
+2. Use bold sparingly — only for the single most critical term or phrase in a whole section, not every sentence. If everything is bold, nothing stands out.
 3. Leave clear visual gaps between sections and ideas.
 4. Always lead with the most important point. Put detail after.
 5. Use plain language throughout. Define any technical term when first used.
@@ -44,7 +44,7 @@ Core rule: Never simplify content. Only change how it is structured and presente
 Profile-specific: Layout and spacing are critical. Dense text is the main barrier. Collapsed sections dramatically reduce visual overwhelm.
 Formatting rules:
 1. Use short sentences. One idea per sentence.
-2. Bold the key term in each sentence for easy scanning.
+2. Use bold sparingly — only for the single most critical term or phrase in a whole section, not every sentence. If everything is bold, nothing stands out.
 3. Leave generous visual gaps between every section and idea.
 4. Avoid long unbroken paragraphs — break into chunks of 2–3 sentences maximum.
 5. All <details> sections start closed. The reader opens only what they need.
@@ -55,7 +55,7 @@ Core rule: Never simplify content. Only change how it is structured and presente
 Profile-specific: Losing the thread mid-sentence is the main challenge. The progressive structure is essential — seeing the whole document at once causes overwhelm.
 Formatting rules:
 1. Use short sentences. One idea per sentence.
-2. Bold the key term in each sentence for easy scanning.
+2. Use bold sparingly — only for the single most critical term or phrase in a whole section, not every sentence. If everything is bold, nothing stands out.
 3. Number every step or sequential item — never bury steps in prose.
 4. All <details> sections start closed. The summary block gives the full picture first.
 5. Within each open section, use numbered lists wherever there is sequence or process.
@@ -66,7 +66,7 @@ Core rule: Never simplify content. Only change how it is structured and presente
 Profile-specific: Apply a broad set of dyslexia-friendly adjustments. The progressive structure is the most important element — start collapsed, drill into what you need.
 Formatting rules:
 1. Use short sentences. One idea per sentence.
-2. Bold the key term in each sentence for easy scanning.
+2. Use bold sparingly — only for the single most critical term or phrase in a whole section, not every sentence. If everything is bold, nothing stands out.
 3. Leave clear visual gaps between sections and ideas.
 4. Use plain language. Define technical terms when first used.
 5. Number every step or process — never bury steps in prose.
