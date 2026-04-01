@@ -13,6 +13,7 @@
 const ALLOWED_ORIGINS = [
   'https://readclear.importantsmallthings.com',
   'https://clearread-7x3.pages.dev',
+  'https://reformat-v2.clearread-7x3.pages.dev',
 ];
 
 // Shared progressive disclosure instruction used by all profiles
