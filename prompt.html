@@ -618,6 +618,28 @@ body {
 .why-title { font-weight: 700; font-size: 16px; color: var(--ink); margin-bottom: 8px; }
 .why-body { font-size: 14px; color: var(--ink-mid); line-height: 1.6; }
 
+/* COFFEE */
+.coffee-block { margin-top: 40px; padding-top: 32px; border-top: 1px solid var(--border); }
+.coffee-title { font-size: 15px; font-weight: 700; color: var(--ink); margin-bottom: 10px; }
+.coffee-body { font-size: 15px; color: var(--ink-mid); line-height: 1.8; margin-bottom: 20px; }
+.coffee-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  background: none;
+  border: 1.5px solid var(--border);
+  border-radius: 8px;
+  padding: 10px 20px;
+  font-size: 14px;
+  font-weight: 600;
+  color: var(--ink-mid);
+  cursor: pointer;
+  text-decoration: none;
+  font-family: 'Plus Jakarta Sans', sans-serif;
+  transition: all 0.15s;
+}
+.coffee-btn:hover { border-color: var(--amber); color: var(--amber); }
+
 /* FOOTER */
 .footer {
   background: var(--dark);
@@ -1403,6 +1425,13 @@ body {
         <div class="why-title">The bigger picture</div>
         <div class="why-body">Imagine schoolwork, letters, reports reformatted this way. The content stays the same. The access changes entirely.</div>
       </div>
+    </div>
+    <div class="coffee-block">
+      <p class="coffee-title">Help keep readclear free</p>
+      <p class="coffee-body">readclear is free to use. If it helps you, please consider buying us a coffee — it helps cover the AI costs and keeps the tool running.</p>
+      <a href="https://buymeacoffee.com/readclear" target="_blank" rel="noopener" class="coffee-btn">
+        ☕ Buy us a coffee
+      </a>
     </div>
   </div>
 </section>
