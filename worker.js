@@ -83,9 +83,14 @@ export default {
       });
     }
 
-    // Main reformat endpoint
+    // Main reformat endpoint (URL)
     if (url.pathname === '/reformat' && request.method === 'POST') {
       return handleReformat(request, env, corsHeaders);
+    }
+
+    // Image/scan reformat endpoint
+    if (url.pathname === '/reformat-image' && request.method === 'POST') {
+      return handleReformatImage(request, env, corsHeaders);
     }
 
     return new Response('Not found', { status: 404, headers: corsHeaders });
@@ -240,6 +245,110 @@ ${truncatedText}`;
   }), {
     status: 200,
     headers: { ...corsHeaders, 'Content-Type': 'application/json' }
+  });
+}
+
+async function handleReformatImage(request, env, corsHeaders) {
+  let body;
+  try {
+    body = await request.json();
+  } catch {
+    return errorResponse('Invalid request body.', 400, corsHeaders);
+  }
+
+  const { imageData, mediaType = 'image/jpeg', profile = 'mixed' } = body;
+
+  if (!imageData) {
+    return errorResponse('No image data provided.', 400, corsHeaders);
+  }
+
+  // Sanity check media type
+  const allowedTypes = ['image/jpeg', 'image/png', 'image/gif', 'image/webp'];
+  if (!allowedTypes.includes(mediaType)) {
+    return errorResponse('Unsupported image type.', 400, corsHeaders);
+  }
+
+  const profilePrompt = PROFILE_PROMPTS[profile] || PROFILE_PROMPTS.mixed;
+
+  const systemPrompt = `You are an accessibility formatter. You read text from images of documents and reformat it for people with dyslexia.
+
+CRITICAL RULE: Transcribe and include every word of text you can see in the image. Never remove, simplify, or summarise content. Only change the structure and presentation.
+
+${profilePrompt}
+
+Output format: Return clean semantic HTML only. No markdown. No code fences. No commentary.
+Allowed tags: <h1> <h2> <h3> <p> <ul> <ol> <li> <strong> <a href=""> <details> <summary> <blockquote> <hr>
+Do not include <html> <head> <body> or <style> tags.
+Start your response with a <h1> containing the document title or type (e.g. "Appointment Letter", "Prescription Notice").`;
+
+  let claudeResponse;
+  try {
+    const apiRes = await fetch('https://api.anthropic.com/v1/messages', {
+      method: 'POST',
+      headers: {
+        'x-api-key': env.ANTHROPIC_API_KEY,
+        'anthropic-version': '2023-06-01',
+        'content-type': 'application/json',
+      },
+      body: JSON.stringify({
+        model: 'claude-haiku-4-5',
+        max_tokens: 4096,
+        system: systemPrompt,
+        messages: [{
+          role: 'user',
+          content: [
+            {
+              type: 'image',
+              source: {
+                type: 'base64',
+                media_type: mediaType,
+                data: imageData,
+              },
+            },
+            {
+              type: 'text',
+              text: 'Please read all the text in this document image and reformat it to be more accessible for someone with dyslexia. Include every piece of text you can see.',
+            },
+          ],
+        }],
+      }),
+    });
+
+    if (!apiRes.ok) {
+      const errBody = await apiRes.text();
+      console.error('Claude API error:', apiRes.status, errBody);
+      return errorResponse('Formatting service unavailable. Please try again.', 502, corsHeaders);
+    }
+
+    claudeResponse = await apiRes.json();
+  } catch (err) {
+    return errorResponse('Formatting service unavailable. Please try again.', 502, corsHeaders);
+  }
+
+  let reformattedHtml = claudeResponse.content?.[0]?.text || '';
+
+  // Strip any accidental markdown code fences
+  reformattedHtml = reformattedHtml
+    .replace(/^```html\s*/i, '')
+    .replace(/^```\s*/i, '')
+    .replace(/\s*```$/i, '')
+    .trim();
+
+  if (!reformattedHtml) {
+    return errorResponse('No content returned from formatter.', 500, corsHeaders);
+  }
+
+  // Extract a title from the first <h1> if present
+  const titleMatch = reformattedHtml.match(/<h1[^>]*>([^<]+)<\/h1>/i);
+  const title = titleMatch ? titleMatch[1].trim() : 'Scanned document';
+
+  return new Response(JSON.stringify({
+    html: reformattedHtml,
+    title,
+    profile,
+  }), {
+    status: 200,
+    headers: { ...corsHeaders, 'Content-Type': 'application/json' },
   });
 }
 

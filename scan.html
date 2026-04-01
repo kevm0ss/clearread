@@ -1,0 +1,664 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>readclear — Read any letter or document</title>
+<style>
+@import url('https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,300;0,9..144,600;0,9..144,700;1,9..144,400&family=Plus+Jakarta+Sans:wght@400;500;600;700&display=swap');
+
+:root {
+  --bg: #f7f4ee;
+  --ink: #1c1917;
+  --ink-mid: #6b6560;
+  --ink-soft: #a8a29e;
+  --ink-faint: #e8e4dc;
+  --cream: #faf8f3;
+  --amber: #d97706;
+  --amber-soft: rgba(217,119,6,0.1);
+  --teal: #0d9488;
+  --border: #ddd8ce;
+  --dark: #1c1917;
+  --dark-2: #262320;
+  --dark-border: #3a3530;
+  --text-width: 720px;
+}
+
+* { box-sizing: border-box; margin: 0; padding: 0; }
+html { scroll-behavior: smooth; }
+body {
+  background: var(--bg);
+  color: var(--ink);
+  font-family: 'Plus Jakarta Sans', sans-serif;
+  font-size: 17px;
+  line-height: 1.7;
+  -webkit-font-smoothing: antialiased;
+}
+
+/* ── NAV ───────────────────────────────────────────────── */
+.nav {
+  background: var(--dark);
+  border-bottom: 1px solid var(--dark-border);
+  padding: 0 48px;
+  height: 68px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  position: sticky;
+  top: 0;
+  z-index: 50;
+}
+.nav-left { display: flex; align-items: center; gap: 14px; }
+.nav-logo {
+  font-family: 'Monaco', 'Courier New', monospace;
+  font-size: 22px;
+  font-weight: 700;
+  color: #faf8f3;
+  letter-spacing: -0.5px;
+  text-decoration: none;
+}
+.beta-badge {
+  font-size: 10px;
+  font-weight: 700;
+  letter-spacing: 0.1em;
+  background: var(--amber);
+  color: #1c1917;
+  padding: 3px 9px;
+  border-radius: 4px;
+  text-transform: uppercase;
+}
+.nav-link {
+  font-size: 13px;
+  color: #8a857e;
+  text-decoration: none;
+  transition: color 0.2s;
+}
+.nav-link:hover { color: #faf8f3; }
+
+/* ── HERO ──────────────────────────────────────────────── */
+.hero {
+  background: var(--dark);
+  padding: 72px 48px 80px;
+  position: relative;
+  overflow: hidden;
+}
+.hero-grid {
+  position: absolute; inset: 0;
+  background-image:
+    linear-gradient(rgba(217,119,6,0.03) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(217,119,6,0.03) 1px, transparent 1px);
+  background-size: 48px 48px;
+  pointer-events: none;
+}
+.hero-glow {
+  position: absolute;
+  top: -100px; right: -100px;
+  width: 600px; height: 500px;
+  background: radial-gradient(circle, rgba(217,119,6,0.07) 0%, transparent 70%);
+  pointer-events: none;
+}
+.hero-inner {
+  position: relative;
+  max-width: var(--text-width);
+  margin: 0 auto;
+  width: 100%;
+}
+.hero-headline {
+  font-family: 'Fraunces', serif;
+  font-size: clamp(38px, 6vw, 62px);
+  font-weight: 600;
+  color: #faf8f3;
+  line-height: 1.08;
+  letter-spacing: -1.5px;
+  margin-bottom: 16px;
+}
+.hero-headline .highlight { color: var(--amber); font-weight: 700; }
+.hero-sub {
+  font-size: 17px;
+  color: #8a857e;
+  margin-bottom: 48px;
+  line-height: 1.6;
+}
+
+/* ── PROFILE MINI CARDS ────────────────────────────────── */
+.profile-mini-label {
+  font-size: 13px;
+  color: #8a857e;
+  margin-bottom: 10px;
+  letter-spacing: 0.03em;
+}
+.profile-mini-row {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 10px;
+  margin-bottom: 40px;
+}
+.mini-card {
+  background: #262320;
+  border: 1.5px solid var(--dark-border);
+  border-radius: 10px;
+  padding: 14px 12px;
+  cursor: pointer;
+  transition: all 0.15s;
+  text-align: left;
+  font-family: 'Plus Jakarta Sans', sans-serif;
+}
+.mini-card:hover { border-color: var(--amber); }
+.mini-card.active {
+  border-color: var(--amber);
+  background: rgba(217,119,6,0.08);
+}
+.mini-card-emoji { font-size: 18px; margin-bottom: 8px; display: block; }
+.mini-card-name {
+  font-size: 13px;
+  font-weight: 700;
+  color: #c8c3bc;
+  margin-bottom: 3px;
+  line-height: 1.2;
+}
+.mini-card.active .mini-card-name { color: var(--amber); }
+.mini-card-desc { font-size: 11px; color: #8a857e; line-height: 1.4; }
+.profile-footer-row {
+  display: flex;
+  align-items: center;
+  margin-top: 16px;
+  margin-bottom: 40px;
+}
+.quiz-link-small {
+  font-size: 14px;
+  font-weight: 600;
+  color: var(--teal);
+  background: none;
+  border: none;
+  cursor: pointer;
+  font-family: 'Plus Jakarta Sans', sans-serif;
+  text-decoration: underline;
+  text-underline-offset: 3px;
+  padding: 0;
+}
+.quiz-link-small:hover { color: #5eead4; }
+
+/* ── UPLOAD ZONE ───────────────────────────────────────── */
+.upload-zone {
+  border: 2px dashed var(--dark-border);
+  border-radius: 16px;
+  padding: 56px 32px;
+  text-align: center;
+  cursor: pointer;
+  transition: all 0.2s;
+  background: rgba(255,255,255,0.015);
+  margin-bottom: 24px;
+}
+.upload-zone:hover, .upload-zone.drag-over {
+  border-color: var(--amber);
+  background: rgba(217,119,6,0.04);
+}
+.upload-icon { font-size: 48px; margin-bottom: 16px; display: block; }
+.upload-title {
+  font-size: 17px;
+  font-weight: 700;
+  color: #c8c3bc;
+  margin-bottom: 8px;
+}
+.upload-hint {
+  font-size: 14px;
+  color: #6a6560;
+  margin-bottom: 32px;
+}
+
+/* Action buttons inside zone */
+.upload-actions {
+  display: flex;
+  gap: 12px;
+  justify-content: center;
+  flex-wrap: wrap;
+}
+.upload-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding: 14px 24px;
+  border-radius: 10px;
+  font-family: 'Plus Jakarta Sans', sans-serif;
+  font-size: 15px;
+  font-weight: 700;
+  cursor: pointer;
+  transition: all 0.15s;
+  border: none;
+}
+.upload-btn-primary {
+  background: var(--amber);
+  color: #1c1917;
+}
+.upload-btn-primary:hover { background: #b45309; color: #fff; }
+.upload-btn-secondary {
+  background: #262320;
+  border: 1.5px solid var(--dark-border);
+  color: #c8c3bc;
+}
+.upload-btn-secondary:hover { border-color: var(--amber); color: #faf8f3; }
+
+/* ── IMAGE PREVIEW ─────────────────────────────────────── */
+.preview-wrap {
+  display: none;
+  margin-bottom: 24px;
+  text-align: center;
+}
+.preview-img {
+  max-width: 100%;
+  max-height: 360px;
+  border-radius: 12px;
+  border: 1.5px solid var(--dark-border);
+  object-fit: contain;
+  background: #0a0908;
+}
+.change-btn {
+  display: inline-block;
+  margin-top: 14px;
+  font-size: 13px;
+  color: #6a6560;
+  background: none;
+  border: none;
+  cursor: pointer;
+  font-family: 'Plus Jakarta Sans', sans-serif;
+  text-decoration: underline;
+  text-underline-offset: 3px;
+}
+.change-btn:hover { color: #8a857e; }
+
+/* ── REFORMAT BUTTON ───────────────────────────────────── */
+.btn-reformat {
+  width: 100%;
+  background: var(--amber);
+  color: #1c1917;
+  font-family: 'Plus Jakarta Sans', sans-serif;
+  font-size: 16px;
+  font-weight: 700;
+  border: none;
+  border-radius: 10px;
+  padding: 18px 28px;
+  cursor: pointer;
+  transition: all 0.2s;
+  margin-bottom: 20px;
+}
+.btn-reformat:hover { background: #b45309; color: #fff; }
+.btn-reformat:disabled { opacity: 0.35; cursor: not-allowed; }
+
+/* ── STATUS MESSAGE ────────────────────────────────────── */
+.status-msg {
+  display: none;
+  font-size: 14px;
+  padding: 14px 18px;
+  border-radius: 8px;
+  line-height: 1.6;
+  margin-bottom: 16px;
+}
+.status-msg.error {
+  background: rgba(239,68,68,0.08);
+  border: 1px solid rgba(239,68,68,0.2);
+  color: #fca5a5;
+  display: block;
+}
+.status-msg.loading {
+  background: var(--amber-soft);
+  border: 1px solid rgba(217,119,6,0.2);
+  color: #fcd34d;
+  display: block;
+}
+
+/* ── PRIVACY NOTE ──────────────────────────────────────── */
+.privacy-note {
+  font-size: 12px;
+  color: #4a4540;
+  line-height: 1.6;
+  text-align: center;
+  margin-top: 8px;
+}
+.privacy-note a { color: #6a6560; text-decoration: underline; text-underline-offset: 2px; }
+
+/* ── INFO SECTION ──────────────────────────────────────── */
+.info-section {
+  background: var(--cream);
+  padding: 64px 48px;
+}
+.info-inner {
+  max-width: var(--text-width);
+  margin: 0 auto;
+}
+.info-headline {
+  font-family: 'Fraunces', serif;
+  font-size: clamp(22px, 3vw, 30px);
+  font-weight: 600;
+  color: var(--ink);
+  margin-bottom: 24px;
+  line-height: 1.3;
+}
+.info-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 24px;
+  margin-top: 32px;
+}
+.info-card {
+  background: #fff;
+  border: 1px solid var(--border);
+  border-radius: 12px;
+  padding: 24px;
+}
+.info-card-icon { font-size: 28px; margin-bottom: 12px; display: block; }
+.info-card-title {
+  font-size: 15px;
+  font-weight: 700;
+  color: var(--ink);
+  margin-bottom: 8px;
+}
+.info-card-body {
+  font-size: 14px;
+  color: var(--ink-mid);
+  line-height: 1.7;
+}
+
+/* ── FOOTER ────────────────────────────────────────────── */
+.footer {
+  background: var(--dark);
+  border-top: 1px solid var(--dark-border);
+  padding: 28px 48px;
+  text-align: center;
+  font-size: 13px;
+  color: #6a6560;
+}
+.footer-inner { max-width: var(--text-width); margin: 0 auto; }
+.footer a { color: #8a857e; text-decoration: none; }
+.footer a:hover { color: #c8c3bc; }
+
+/* ── RESPONSIVE ────────────────────────────────────────── */
+@media (max-width: 700px) {
+  .nav { padding: 0 20px; }
+  .hero { padding: 48px 20px 60px; }
+  .info-section { padding: 48px 20px; }
+  .footer { padding: 24px 20px; }
+  .profile-mini-row { grid-template-columns: repeat(2, 1fr); }
+  .info-grid { grid-template-columns: 1fr; }
+  .upload-zone { padding: 40px 20px; }
+  .upload-actions { flex-direction: column; align-items: stretch; }
+  .upload-btn { justify-content: center; }
+}
+</style>
+</head>
+<body>
+
+<nav class="nav">
+  <div class="nav-left">
+    <a href="index.html" class="nav-logo">readclear</a>
+    <span class="beta-badge">BETA</span>
+  </div>
+  <a href="index.html" class="nav-link">← Reformat a webpage</a>
+</nav>
+
+<section class="hero">
+  <div class="hero-grid"></div>
+  <div class="hero-glow"></div>
+  <div class="hero-inner">
+
+    <h1 class="hero-headline">Read any letter<br>or <span class="highlight">document</span></h1>
+    <p class="hero-sub">Take a photo or upload a scan. We'll reformat it to be easier to read. Content is never reduced. Only reorganised.</p>
+
+    <!-- Profile selector -->
+    <p class="profile-mini-label">Your dyslexia profile</p>
+    <div class="profile-mini-row" id="profileRow">
+      <button class="mini-card active" data-profile="mixed" onclick="setProfile('mixed', this)">
+        <span class="mini-card-emoji">🔀</span>
+        <div class="mini-card-name">Mixed / Unsure</div>
+        <div class="mini-card-desc">General dyslexia-friendly formatting</div>
+      </button>
+      <button class="mini-card" data-profile="phonological" onclick="setProfile('phonological', this)">
+        <span class="mini-card-emoji">🔤</span>
+        <div class="mini-card-name">Phonological</div>
+        <div class="mini-card-desc">Plain words, clear structure</div>
+      </button>
+      <button class="mini-card" data-profile="visual" onclick="setProfile('visual', this)">
+        <span class="mini-card-emoji">👁️</span>
+        <div class="mini-card-name">Visual Stress</div>
+        <div class="mini-card-desc">Spacing and layout focus</div>
+      </button>
+      <button class="mini-card" data-profile="memory" onclick="setProfile('memory', this)">
+        <span class="mini-card-emoji">🧠</span>
+        <div class="mini-card-name">Working Memory</div>
+        <div class="mini-card-desc">Summaries, numbered steps</div>
+      </button>
+    </div>
+    <div class="profile-footer-row">
+      <button class="quiz-link-small" onclick="window.location.href='index.html#quiz'">Not sure which profile? Take the quick quiz →</button>
+    </div>
+
+    <!-- Hidden file inputs -->
+    <input type="file" id="cameraInput" accept="image/*" capture="environment" style="display:none">
+    <input type="file" id="fileInput" accept="image/*" style="display:none">
+
+    <!-- Upload zone -->
+    <div class="upload-zone" id="uploadZone">
+      <span class="upload-icon">📄</span>
+      <p class="upload-title">Take a photo or upload a file</p>
+      <p class="upload-hint">Letters, leaflets, prescription notes, appointment letters — anything with text</p>
+      <div class="upload-actions">
+        <button class="upload-btn upload-btn-primary" onclick="document.getElementById('cameraInput').click()">
+          📷 Take a photo
+        </button>
+        <button class="upload-btn upload-btn-secondary" onclick="document.getElementById('fileInput').click()">
+          📁 Upload a file
+        </button>
+      </div>
+    </div>
+
+    <!-- Preview -->
+    <div class="preview-wrap" id="previewWrap">
+      <img id="previewImg" class="preview-img" alt="Preview of your document">
+      <br>
+      <button class="change-btn" onclick="clearSelection()">Choose a different image</button>
+    </div>
+
+    <!-- Status message -->
+    <div class="status-msg" id="statusMsg"></div>
+
+    <!-- Submit -->
+    <button class="btn-reformat" id="reformatBtn" onclick="handleReformat()" disabled>
+      Reformat this document →
+    </button>
+
+    <p class="privacy-note">
+      Your image is sent securely to our AI to read and reformat. It is not stored or used for training.<br>
+      Avoid uploading anything with passwords, bank details, or other sensitive information.
+    </p>
+
+  </div>
+</section>
+
+<section class="info-section">
+  <div class="info-inner">
+    <h2 class="info-headline">Works best with</h2>
+    <div class="info-grid">
+      <div class="info-card">
+        <span class="info-card-icon">📬</span>
+        <div class="info-card-title">Official letters</div>
+        <div class="info-card-body">NHS appointment letters, council notices, utility bills, insurance documents.</div>
+      </div>
+      <div class="info-card">
+        <span class="info-card-icon">📋</span>
+        <div class="info-card-title">Leaflets &amp; forms</div>
+        <div class="info-card-body">Medical leaflets, benefits forms, school communications, instruction sheets.</div>
+      </div>
+      <div class="info-card">
+        <span class="info-card-icon">📰</span>
+        <div class="info-card-title">Printed articles</div>
+        <div class="info-card-body">Newspaper or magazine clippings, printed reports, handouts, booklets.</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<footer class="footer">
+  <div class="footer-inner">
+    Built by <a href="https://importantsmallthings.com">Important Small Things</a>
+    &nbsp;·&nbsp; <a href="siteowners.html">Site owners</a>
+    &nbsp;·&nbsp; Content should never be reduced. Only reorganised.
+    &nbsp;·&nbsp; If you can, please drop us a coffee and help us keep readclear free, use our <a href="https://buymeacoffee.com/catmosonic" target="_blank" rel="noopener">catmosonic tip page</a>.
+  </div>
+</footer>
+
+<script>
+const WORKER_URL = 'https://readclear-worker.kev-958.workers.dev';
+
+let selectedFile = null;
+
+// ── Profile ──────────────────────────────────────────────
+function setProfile(profile, cardEl) {
+  localStorage.setItem('readclear_profile', profile);
+  document.querySelectorAll('.mini-card').forEach(c => c.classList.remove('active'));
+  if (cardEl) cardEl.classList.add('active');
+}
+
+function loadSavedProfile() {
+  const saved = localStorage.getItem('readclear_profile') || 'mixed';
+  const card = document.querySelector(`.mini-card[data-profile="${saved}"]`);
+  if (card) {
+    document.querySelectorAll('.mini-card').forEach(c => c.classList.remove('active'));
+    card.classList.add('active');
+  }
+}
+
+// ── File handling ─────────────────────────────────────────
+document.getElementById('cameraInput').addEventListener('change', e => {
+  if (e.target.files[0]) handleFile(e.target.files[0]);
+});
+document.getElementById('fileInput').addEventListener('change', e => {
+  if (e.target.files[0]) handleFile(e.target.files[0]);
+});
+
+// Drag and drop
+const uploadZone = document.getElementById('uploadZone');
+uploadZone.addEventListener('dragover', e => {
+  e.preventDefault();
+  uploadZone.classList.add('drag-over');
+});
+uploadZone.addEventListener('dragleave', () => uploadZone.classList.remove('drag-over'));
+uploadZone.addEventListener('drop', e => {
+  e.preventDefault();
+  uploadZone.classList.remove('drag-over');
+  const file = e.dataTransfer.files[0];
+  if (file && file.type.startsWith('image/')) handleFile(file);
+  else showStatus('Please drop an image file.', 'error');
+});
+
+function handleFile(file) {
+  if (!file.type.startsWith('image/')) {
+    showStatus('Please choose an image file (JPG, PNG, HEIC, etc.)', 'error');
+    return;
+  }
+  selectedFile = file;
+  clearStatus();
+
+  // Show preview
+  const url = URL.createObjectURL(file);
+  document.getElementById('previewImg').src = url;
+  document.getElementById('previewWrap').style.display = 'block';
+  uploadZone.style.display = 'none';
+  document.getElementById('reformatBtn').disabled = false;
+}
+
+function clearSelection() {
+  selectedFile = null;
+  document.getElementById('previewWrap').style.display = 'none';
+  uploadZone.style.display = 'block';
+  document.getElementById('reformatBtn').disabled = true;
+  document.getElementById('cameraInput').value = '';
+  document.getElementById('fileInput').value = '';
+  clearStatus();
+}
+
+// ── Image resize ──────────────────────────────────────────
+function resizeImage(file) {
+  return new Promise((resolve) => {
+    const img = new Image();
+    const objUrl = URL.createObjectURL(file);
+    img.onload = () => {
+      URL.revokeObjectURL(objUrl);
+      const MAX = 1600;
+      const scale = Math.min(MAX / img.width, MAX / img.height, 1);
+      const canvas = document.createElement('canvas');
+      canvas.width = Math.round(img.width * scale);
+      canvas.height = Math.round(img.height * scale);
+      canvas.getContext('2d').drawImage(img, 0, 0, canvas.width, canvas.height);
+      canvas.toBlob(resolve, 'image/jpeg', 0.85);
+    };
+    img.onerror = () => resolve(file); // fall back to original if resize fails
+    img.src = objUrl;
+  });
+}
+
+function blobToBase64(blob) {
+  return new Promise((resolve, reject) => {
+    const reader = new FileReader();
+    reader.onload = e => resolve(e.result.split(',')[1]);
+    reader.onerror = reject;
+    reader.readAsDataURL(blob);
+  });
+}
+
+// ── Reformat ──────────────────────────────────────────────
+async function handleReformat() {
+  if (!selectedFile) return;
+
+  const profile = localStorage.getItem('readclear_profile') || 'mixed';
+  const btn = document.getElementById('reformatBtn');
+
+  btn.disabled = true;
+  showStatus('Reading your document… this takes around 10 seconds.', 'loading');
+
+  try {
+    const resized = await resizeImage(selectedFile);
+    const imageData = await blobToBase64(resized);
+
+    const res = await fetch(`${WORKER_URL}/reformat-image`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ imageData, mediaType: 'image/jpeg', profile }),
+    });
+
+    const data = await res.json();
+
+    if (!res.ok || data.error) {
+      throw new Error(data.error || 'Something went wrong. Please try again.');
+    }
+
+    // Store and navigate to read page
+    localStorage.setItem('readclear_result', JSON.stringify({
+      html: data.html,
+      title: data.title || 'Scanned document',
+      profile,
+      source: 'scan',
+    }));
+    window.location.href = 'read.html';
+
+  } catch (err) {
+    showStatus(err.message || 'Something went wrong. Please try again.', 'error');
+    btn.disabled = false;
+  }
+}
+
+// ── Status helpers ────────────────────────────────────────
+function showStatus(msg, type) {
+  const el = document.getElementById('statusMsg');
+  el.textContent = msg;
+  el.className = `status-msg ${type}`;
+}
+function clearStatus() {
+  const el = document.getElementById('statusMsg');
+  el.textContent = '';
+  el.className = 'status-msg';
+}
+
+// ── Init ──────────────────────────────────────────────────
+loadSavedProfile();
+</script>
+</body>
+</html>
