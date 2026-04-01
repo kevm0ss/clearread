@@ -19,7 +19,7 @@ const ALLOWED_ORIGINS = [
 // Shared progressive disclosure instruction used by all profiles
 const DISCLOSURE_RULES = `
 Structure rules — progressive disclosure:
-- Start with a <div class="doc-summary"><h2>Key points</h2><ul>...</ul></div> containing 3–5 bullet points covering the most important facts from the entire document. This is ALWAYS visible — do not wrap it in <details>.
+- Start with a <div class="doc-summary"><h2>Key points</h2><ul>...</ul></div> containing 3–5 bullet points covering the most important facts from the entire document. This is ALWAYS visible — do not wrap it in <details>. Each bullet must be short — maximum 8 words. Write them as plain labels or phrases, not full sentences. Example: "Affects 1 in 10 people" not "Research has shown that dyslexia affects approximately one in ten people worldwide."
 - After the summary, wrap EVERY major section in: <details><summary>One sentence — the single most important point from this section</summary>[full section content here]</details>
 - The <summary> must be one plain sentence. It should tell the reader what they will find if they open it.
 - For long sections with distinct sub-topics, nest a second level of <details> inside the outer one.
@@ -32,7 +32,7 @@ Core rule: Never simplify content. Only change how it is structured and presente
 Profile-specific: Use plain, common words. If a technical term is necessary, define it in plain language immediately after. Avoid jargon where a simpler word exists.
 Formatting rules:
 1. Use short sentences. One idea per sentence.
-2. Use bold sparingly — only for the single most critical term or phrase in a whole section, not every sentence. If everything is bold, nothing stands out.
+2. Do not use bold or <strong> tags in body text at all. Let structure — headings, bullets, and collapsible sections — create hierarchy. Bold is not needed.
 3. Leave clear visual gaps between sections and ideas.
 4. Always lead with the most important point. Put detail after.
 5. Use plain language throughout. Define any technical term when first used.
@@ -44,7 +44,7 @@ Core rule: Never simplify content. Only change how it is structured and presente
 Profile-specific: Layout and spacing are critical. Dense text is the main barrier. Collapsed sections dramatically reduce visual overwhelm.
 Formatting rules:
 1. Use short sentences. One idea per sentence.
-2. Use bold sparingly — only for the single most critical term or phrase in a whole section, not every sentence. If everything is bold, nothing stands out.
+2. Do not use bold or <strong> tags in body text at all. Let structure — headings, bullets, and collapsible sections — create hierarchy. Bold is not needed.
 3. Leave generous visual gaps between every section and idea.
 4. Avoid long unbroken paragraphs — break into chunks of 2–3 sentences maximum.
 5. All <details> sections start closed. The reader opens only what they need.
@@ -55,7 +55,7 @@ Core rule: Never simplify content. Only change how it is structured and presente
 Profile-specific: Losing the thread mid-sentence is the main challenge. The progressive structure is essential — seeing the whole document at once causes overwhelm.
 Formatting rules:
 1. Use short sentences. One idea per sentence.
-2. Use bold sparingly — only for the single most critical term or phrase in a whole section, not every sentence. If everything is bold, nothing stands out.
+2. Do not use bold or <strong> tags in body text at all. Let structure — headings, bullets, and collapsible sections — create hierarchy. Bold is not needed.
 3. Number every step or sequential item — never bury steps in prose.
 4. All <details> sections start closed. The summary block gives the full picture first.
 5. Within each open section, use numbered lists wherever there is sequence or process.
@@ -66,7 +66,7 @@ Core rule: Never simplify content. Only change how it is structured and presente
 Profile-specific: Apply a broad set of dyslexia-friendly adjustments. The progressive structure is the most important element — start collapsed, drill into what you need.
 Formatting rules:
 1. Use short sentences. One idea per sentence.
-2. Use bold sparingly — only for the single most critical term or phrase in a whole section, not every sentence. If everything is bold, nothing stands out.
+2. Do not use bold or <strong> tags in body text at all. Let structure — headings, bullets, and collapsible sections — create hierarchy. Bold is not needed.
 3. Leave clear visual gaps between sections and ideas.
 4. Use plain language. Define technical terms when first used.
 5. Number every step or process — never bury steps in prose.
