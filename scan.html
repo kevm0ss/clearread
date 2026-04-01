@@ -518,7 +518,17 @@ function setProfile(profile, cardEl) {
 }
 
 function loadSavedProfile() {
-  const saved = localStorage.getItem('readclear_profile') || 'mixed';
+  let saved = localStorage.getItem('readclear_profile') || 'mixed';
+  // Guard against malformed values stored as JSON objects
+  try {
+    const parsed = JSON.parse(saved);
+    saved = typeof parsed === 'string' ? parsed : 'mixed';
+  } catch(e) {
+    // Already a plain string — fine
+  }
+  const valid = ['mixed', 'phonological', 'visual', 'memory'];
+  if (!valid.includes(saved)) saved = 'mixed';
+
   const card = document.querySelector(`.mini-card[data-profile="${saved}"]`);
   if (card) {
     document.querySelectorAll('.mini-card').forEach(c => c.classList.remove('active'));
@@ -588,7 +598,7 @@ function resizeImage(file) {
       canvas.width = Math.round(img.width * scale);
       canvas.height = Math.round(img.height * scale);
       canvas.getContext('2d').drawImage(img, 0, 0, canvas.width, canvas.height);
-      canvas.toBlob(resolve, 'image/jpeg', 0.85);
+      canvas.toBlob(blob => resolve(blob || file), 'image/jpeg', 0.85);
     };
     img.onerror = () => resolve(file); // fall back to original if resize fails
     img.src = objUrl;
