@@ -15,7 +15,7 @@
 | GitHub → Cloudflare Pages pipeline | ✅ | Auto-deploys on push to main |
 | Cloudflare Worker | ✅ | readclear-worker.kev-958.workers.dev |
 | Custom domain | ✅ | readclear.importantsmallthings.com |
-| Buy Me a Coffee link | ✅ | catmosonic tip page in all footers |
+| Buy Me a Coffee link | ✅ | readclear tip page in all footers |
 
 ---
 
