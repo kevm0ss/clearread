@@ -3,71 +3,102 @@
 ## Status Key
 - ✅ Done
 - 🔨 In progress
-- 📋 Planned (MVP)
-- 🔮 Future
+- 📋 Planned
+- 🔮 Future / deferred
 
 ---
 
-## MVP — Launch Features
+## Core Infrastructure
 
 | Feature | Status | Notes |
 |---|---|---|
-| Core HTML page | ✅ | index.html — do not use as template |
-| Profile selector (4 types) | ✅ | Cards with icons |
-| Profile → smart trait defaults | ✅ | Selecting a profile pre-sets relevant traits |
-| Preference toggles | ✅ | User can override any trait |
-| Prompt generator | ✅ | Updates live as user makes selections |
-| Copy prompt button | ✅ | |
+| GitHub → Cloudflare Pages pipeline | ✅ | Auto-deploys on push to main |
+| Cloudflare Worker | ✅ | readclear-worker.kev-958.workers.dev |
+| Custom domain | ✅ | readclear.importantsmallthings.com |
+| Buy Me a Coffee link | ✅ | catmosonic tip page in all footers |
+
+---
+
+## URL Reformatter (index.html)
+
+| Feature | Status | Notes |
+|---|---|---|
+| URL input + submit | ✅ | Auto-adds https:// if missing |
+| Profile selector (4 types) | ✅ | Mini-cards, persists in localStorage |
+| Profile quiz | ✅ | One question at a time, emoji anchors |
+| Worker backend | ✅ | Fetch + extract + Claude reformat |
+| Claude Haiku model | ✅ | ~£0.01/reformat |
+| Content extraction | ✅ | Preserves headings, links, lists, bold |
+| SSRF protection | ✅ | Blocks private IPs and localhost |
+| XSS sanitisation (read.html) | ✅ | Allowlist-based tag/attribute filter |
+| localStorage page cache | ✅ | 7-day expiry, max 10 entries, LRU eviction |
+| Recently read history | ✅ | Loads from cache or scrolls to URL input |
+| Before/after slider demo | ✅ | Real Wikipedia screenshots |
+| Share section | ✅ | LinkedIn, X, BlueSky, copy link |
+| Cache badge + refresh button | ✅ | Shown on read.html for cached results |
+
+---
+
+## Prompt Builder (prompt.html)
+
+| Feature | Status | Notes |
+|---|---|---|
+| Profile selector | ✅ | |
+| Trait toggles | ✅ | |
+| Live prompt generator | ✅ | |
+| Copy button | ✅ | |
 | AI install guide | ✅ | ChatGPT, Claude, Gemini, Copilot |
-| Demo (4 profiles, same content) | ✅ | Business plan document |
-| Profile quiz | ✅ | Modal, one question at a time |
-| Share section | ✅ | LinkedIn, Twitter/X, BlueSky, copy link |
-| Mobile responsive | ✅ | Tested on iPhone |
-| GitHub → Cloudflare pipeline | ✅ | Auto-deploys on push |
-| SEO / GEO meta tags | 📋 | Waiting on domain decision |
-| robots.txt | 📋 | Waiting on domain decision |
-| llms.txt | 📋 | Waiting on domain decision |
-| Domain setup | 📋 | readclear.ai or importantsmallthings.com/readclear |
-| URL Reformatter (reformat.html) | 📋 | Lead tool — see architecture.md |
-| Cloudflare Worker (backend API) | 📋 | Required for URL reformatter |
-| Clean reading page (read.html) | 📋 | Output of URL reformatter |
-| Profile persistence (localStorage) | 📋 | Share profile between pages |
+| Design aligned with index.html | ✅ | Same nav, footer, CSS variables |
 
 ---
 
-## Post-Launch
+## Scan Tool (scan.html)
 
 | Feature | Status | Notes |
 |---|---|---|
-| Chrome extension | 🔮 | Reformat any page while browsing — no URL copy needed |
-| PDF / image reformatter | 🔮 | Kevin has flagged this. People sent letters and documents need this. |
-| Stroke / brain injury profiles | 🔮 | Same trait system, different profile framing |
-| ADHD profile | 🔮 | |
-| ESL profile | 🔮 | English as a second language |
-| User-provided API keys | 🔮 | Needs careful security and UX thinking before building |
-| Full site reformatting (not just pages) | 🔮 | Much more complex than single-page reformatting |
-| Analytics | 🔮 | Add after launch when there's something to measure |
+| Camera + file upload | ✅ | Separate inputs for camera vs file |
+| Drag and drop (desktop) | ✅ | |
+| Client-side image resize | ✅ | 800px max, JPEG 0.85 |
+| Worker vision endpoint | ✅ | /reformat-image, claude-haiku-4-5 |
+| Profile carry-through | ✅ | Reads from same localStorage key |
+| Privacy notice | ✅ | Honest, not scary |
+| Public linking | 📋 | Wait until tested and cost is understood |
 
 ---
 
-## Domain Decision (Pending)
+## Site Owner Page (siteowners.html)
 
-Two options under consideration:
-
-| Option | Pros | Cons |
+| Feature | Status | Notes |
 |---|---|---|
-| `readclear.ai` | Standalone, credible .ai TLD, own identity, easier to spin out | ~£12/year cost, new domain to manage |
-| `importantsmallthings.com/readclear` | Free, builds on existing domain authority | Tied to IST brand, harder to spin out later |
-
-Decision needed before SEO/GEO work begins.
+| Soft sales message | ✅ | |
+| Contact link | ✅ | importantsmallthings.com/#contact |
+| LinkedIn link | ✅ | linkedin.com/company/108339431 |
 
 ---
 
-## Next Build Session
+## SEO / Discoverability
 
-1. Decide and set up domain
-2. Add SEO/GEO meta tags, robots.txt, llms.txt
-3. Build reformat.html (URL input + saved profile)
-4. Set up Cloudflare Worker
-5. Build read.html (reformatted reading view)
-6. Wire them together end-to-end
+| Feature | Status | Notes |
+|---|---|---|
+| Meta description | 📋 | Domain confirmed — implement when priorities allow |
+| Open Graph tags | 📋 | |
+| robots.txt | 📋 | |
+| llms.txt | 📋 | For AI crawler discoverability |
+| JSON-LD structured data | 📋 | |
+
+---
+
+## Future Features
+
+| Feature | Status | Notes |
+|---|---|---|
+| Chrome extension | 🔮 | Reformat any page while browsing |
+| PDF reformatter | 🔮 | Separate from image scan — needs Worker PDF parsing |
+| Image reformatter (public) | 🔮 | Currently private beta |
+| Stroke / brain injury profiles | 🔮 | Same trait system, different framing |
+| ADHD profile | 🔮 | |
+| ESL profile | 🔮 | |
+| User-provided API keys | 🔮 | Needs careful security thinking |
+| Analytics | 🔮 | Add when there is something to measure |
+| User accounts | 🔮 | Cloudflare D1 if needed |
+| Full site reformatting | 🔮 | Much more complex than single pages |

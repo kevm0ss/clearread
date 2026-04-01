@@ -10,64 +10,68 @@ Keep it simple. Add complexity only when needed. Kevin is learning as he builds 
 
 | Layer | Tool | Why |
 |---|---|---|
-| Frontend | Vanilla HTML / CSS / JS | No build step, easy to understand, Cloudflare serves static files perfectly |
-| Fonts | Google Fonts (Monaco, Fraunces, Plus Jakarta Sans, JetBrains Mono) | Free, fast, no self-hosting needed yet |
+| Frontend | Vanilla HTML / CSS / JS | No build step, easy to understand |
+| Fonts | Google Fonts (Monaco, Fraunces, Plus Jakarta Sans) | Free, fast |
 | Hosting | Cloudflare Pages | Free tier, global CDN, auto-deploys from GitHub |
-| Version control | GitHub (kevm0ss/clearread) | Standard, integrates with Cloudflare Pages |
-| Code editor | VS Code | Kevin's editor, already installed |
+| Backend API | Cloudflare Workers | Keeps API key secure, same Cloudflare ecosystem |
+| AI model (text) | claude-haiku-4-5 | Fast, cheap (~£0.01/reformat), available on Kevin's API key |
+| AI model (image) | claude-haiku-4-5 | Same model — supports vision inputs |
+| Secret management | Cloudflare Worker Secrets | API key stored here — never in frontend |
+| Version control | GitHub (kevm0ss/clearread) | Auto-deploys to Cloudflare Pages |
+| Code editor | VS Code | Kevin's editor |
 
 ---
 
-## Planned Stack (Service 2)
+## AI Model Notes
 
-| Layer | Tool | Why |
+The Anthropic API key available on this account supports `claude-haiku-4-5`.
+
+**Known unavailable models on this API key:**
+- `claude-3-haiku-20240307` — rejected
+- `claude-3-5-haiku-20241022` — rejected
+
+Always use `claude-haiku-4-5` for both text and image endpoints. If a new model is needed, test against the Worker `/health` endpoint first.
+
+`claude-haiku-4-5` supports vision (image) inputs — confirmed working with the `/reformat-image` endpoint.
+
+---
+
+## Fonts
+
+| Font | Usage | Notes |
 |---|---|---|
-| Backend API | Cloudflare Workers | Already in the Cloudflare ecosystem, generous free tier (100k req/day), keeps API key secure |
-| Content extraction | Mozilla Readability.js | Same library Firefox uses for Reader View, battle-tested |
-| AI model | Anthropic Claude API | Kevin already has an account and API key |
-| Secret management | Cloudflare Worker Secrets | API key stored here — never in frontend code |
+| Monaco | Logo/wordmark only | System monospace fallback: 'Courier New' |
+| Fraunces | Headings | Weight 600–700. **Never italic** |
+| Plus Jakarta Sans | Body text | Weight 400–700 |
 
 ---
 
-## Accounts and Access
+## Accounts
 
 | Service | Account | Notes |
 |---|---|---|
 | GitHub | kevm0ss | Kevin's personal account |
 | Cloudflare | Kevin's personal account | Separate from Aaron's business account — intentional |
-| Anthropic | Kevin's account | API key ready |
-| Domain registrar | TBD | Decision pending: readclear.ai or importantsmallthings.com/readclear |
+| Anthropic | Kevin's account | API key in Worker Secrets as ANTHROPIC_API_KEY |
+| Domain | importantsmallthings.com | readclear lives at /readclear subdirectory redirect |
 
 ---
 
 ## What We Are Not Using (and Why)
 
-| Tool | Reason not used |
+| Tool | Reason |
 |---|---|
-| React / Vue / Svelte | Adds complexity and a build step — not needed for this scope |
-| Node.js / Express | Cloudflare Workers handles the backend — no server to manage |
+| React / Vue / Svelte | Adds complexity — not needed |
+| Node.js / Express | Cloudflare Workers handles backend |
 | Database | No user accounts in MVP — localStorage is sufficient |
-| Analytics | Not set up yet — add after domain decision |
-| CMS | Static HTML is fine for now |
+| Analytics | Not set up yet |
+| Local dev server | Editing and pushing to see live changes |
 
 ---
 
 ## Future Stack Considerations
 
-- **Chrome Extension:** Will require a separate manifest.json + extension build process. Different from the web app.
-- **PDF tool:** May need a PDF parsing library in the Worker (e.g., pdf-parse).
-- **User accounts:** If added, would need a database (Cloudflare D1 is the natural choice in this ecosystem).
-- **User API keys:** Security implications need careful thought before implementation.
-
----
-
-## Local Development
-
-Kevin's setup:
-- Mac (MacBook Air)
-- Git: version 2.39.5 (Apple Git-154)
-- VS Code with shell command installed (`code .` works)
-- `code .` opens repo in VS Code from Terminal
-- Push to GitHub via Terminal git commands
-
-No local dev server currently — editing files and pushing to see changes on the live Cloudflare URL. When the project grows, a local server may be helpful (VS Code Live Server extension is the easiest option).
+- **Chrome Extension:** Requires a separate manifest.json and extension build process
+- **PDF tool:** May need a PDF parsing library in the Worker
+- **User accounts:** Cloudflare D1 is the natural choice in this ecosystem
+- **User-provided API keys:** Security implications need careful thought

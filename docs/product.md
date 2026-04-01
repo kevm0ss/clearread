@@ -1,96 +1,72 @@
-# Product Decisions
+# Product
 
-## What ClearRead Is
+## What readclear Is
 
-One reading profile. Used everywhere.
+A tool that reformats content to be easier to read for people with dyslexia.
 
-ClearRead is not two separate tools. It is one profile that powers multiple surfaces:
-- Reformat any web page right now (URL tool)
-- Take your preferences to any AI tool (prompt builder)
-- Future: Chrome extension, PDF tool, other surfaces
+**Core promise:** Content should never be reduced. Only reorganised.
 
-The profile is the product. The tools are where it gets applied.
-
----
-
-## The Two Services (MVP)
-
-### Service 1 — Prompt Builder (built)
-- User selects their dyslexia profile
-- Selects/adjusts preferences
-- Gets a formatted prompt to paste into their AI tool's system settings
-- Explains how to install in ChatGPT, Claude, Gemini, Copilot
-
-### Service 2 — URL Reformatter (planned)
-- User pastes a URL
-- Backend fetches and extracts the article content
-- Sends it to Claude API with the user's profile prompt
-- Returns a clean reformatted reading page
-- This is the lead tool — higher wow factor, immediately useful
+The profile is the product. The tools are surfaces where the profile gets applied:
+- **URL reformatter** (lead tool) — paste a URL, get a dyslexia-friendly version instantly
+- **Prompt builder** (secondary tool) — generate a system prompt for ChatGPT, Claude, etc.
+- **Scan tool** (private beta) — photograph a letter or document, get it reformatted
 
 ---
 
 ## User Flow
 
 ```
-URL Reformatter (lead — immediate value)
-↓
-"Want this on every AI conversation?"
-↓
-Prompt Builder (take it everywhere)
-↓
-Future surfaces (Chrome extension, PDF, etc.)
+URL Reformatter (lead — immediate value, index.html)
+    ↓
+"Want this everywhere?"
+    ↓
+Prompt Builder (take it to every AI tool, prompt.html)
+    ↓
+Future: Chrome extension (reformat while browsing)
 ```
-
-The reformatter is the entry point. The prompt builder is the power-user follow-through.
-
----
-
-## Scope: MVP
-
-**Included:**
-- Dyslexia profiles only (4 types)
-- URL reformatter
-- Prompt builder
-- Profile saved to localStorage (persists between pages)
-
-**Explicitly excluded from MVP:**
-- Stroke patients and other conditions (future)
-- PDF / image reformatting (future)
-- User-provided API keys (future — needs careful thinking)
-- Chrome extension (future)
-- Full website reformatting, not just single pages (future)
-- Sign-up / accounts
-
----
-
-## Profile Persistence
-
-User's profile is saved in **localStorage**.
-
-- Set when user selects a profile on any page
-- Loaded automatically when visiting any other page
-- Means the user builds their profile once
-- Both services use the same saved profile
-
----
-
-## User-Provided API Keys (Future)
-
-This has been flagged as a future consideration. Needs careful thinking before implementation:
-- Security implications
-- UX complexity
-- Whether to store in localStorage or never store
-- Do not implement without a proper plan
 
 ---
 
 ## Audience
 
-Primary: People with dyslexia.
-Future expansion: Stroke patients, acquired brain injuries, ADHD, processing disorders, ESL readers.
+**Primary:** People with dyslexia.
+**Future:** Stroke patients, acquired brain injury, ADHD, processing disorders, ESL readers.
 
-**Important:** Users should never feel labelled. The language is about reading clearly, not about disability.
+**Important:** Users should never feel labelled. Language is about reading clearly, not about disability.
+
+---
+
+## Scope: Current
+
+**Included:**
+- Four dyslexia profiles
+- URL reformatter
+- AI prompt builder
+- Document scan (private beta)
+- Profile persists across all pages via localStorage
+
+**Explicitly out of scope right now:**
+- Stroke patients and other conditions
+- User-provided API keys
+- Chrome extension
+- PDF reformatter (separate from image scan)
+- Sign-up / accounts
+
+---
+
+## Key Product Decisions
+
+### URL reformatter is the lead tool
+The URL reformatter has higher immediate value than the prompt builder. It was originally the secondary tool but became the lead based on user feedback.
+
+### Image reformatting is kept private during beta
+Image/scan calls cost ~3–5x more than URL reformats. The scan tool is available at `/scan.html` but not linked publicly until quality and cost are better understood.
+
+### Content is never reduced
+This is the product's non-negotiable promise. Claude is instructed to preserve every fact, detail, and nuance. Only structure changes. The system prompt enforces this for every profile.
+
+### Bring your own API key — deferred
+Many users won't understand what an API key is. This feature is deferred until there is a clear, safe, user-friendly approach.
 
 ---
 
@@ -98,4 +74,4 @@ Future expansion: Stroke patients, acquired brain injuries, ADHD, processing dis
 
 > "Content should never be reduced. Only reorganised."
 
-This must appear prominently and must be lived by across the entire product.
+Appears in the footer of every page and in the product copy. Must be lived by across the entire product — in the prompts, the demo, and the site copy.

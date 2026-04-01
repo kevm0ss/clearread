@@ -1,131 +1,113 @@
-# Technical Architecture
+# Architecture
 
-## Current State
-
-```
-GitHub (kevm0ss/clearread)
-    ↓  auto-deploy on every push
-Cloudflare Pages
-    ↓
-clearread-7x3.pages.dev
-```
-
-Single HTML file. No build step. No framework.
-
----
-
-## Planned State (Service 2)
+## Deploy Pipeline
 
 ```
-Browser (reformat.html)
-    ↓  POST { url, profile, traits }
-Cloudflare Worker (/api/reformat)
-    ↓  fetch URL
-Target Website
-    ↓  extract article content (Readability.js)
-Cloudflare Worker
-    ↓  call Claude API with profile prompt
-Anthropic Claude API
-    ↓  return reformatted HTML
-Browser (read.html)
+Developer (local) → git push → GitHub (kevm0ss/clearread, main branch)
+                                    ↓ auto-deploy webhook
+                             Cloudflare Pages
+                                    ↓
+                    https://clearread-7x3.pages.dev
+                    https://readclear.importantsmallthings.com
 ```
+
+**Important:** The Cloudflare Pages webhook occasionally disconnects. If a push to GitHub doesn't appear on the live site, go to the Cloudflare Pages dashboard and click "Retry deployment" or reconnect the GitHub integration. See [gotchas.md](gotchas.md).
+
+The Cloudflare Worker is **deployed separately** — paste updated `worker.js` into the Cloudflare Workers dashboard and click Deploy. It does not auto-deploy.
 
 ---
 
 ## Pages
 
-| File | Purpose |
-|---|---|
-| `index.html` | Prompt builder — DO NOT treat as a template for other pages |
-| `reformat.html` | URL input + profile selector (to build) |
-| `read.html` | Clean reformatted reading view (to build) |
+| File | URL | Purpose | Status |
+|---|---|---|---|
+| `index.html` | `/` | URL reformatter — the lead tool | Live |
+| `read.html` | `/read` | Reformatted content display | Live |
+| `prompt.html` | `/prompt` | AI prompt builder (secondary tool) | Live |
+| `scan.html` | `/scan` | Image/scan reformatter | Live — private beta (not linked) |
+| `siteowners.html` | `/siteowners` | Soft sales page for site owners | Live |
+
+---
+
+## URL Reformatter Data Flow
+
+```
+index.html (user pastes URL + selects profile)
+    ↓ POST { url, profile }
+Worker /reformat
+    ↓ fetch URL with readclear User-Agent
+Target website
+    ↓ raw HTML
+Worker extractContent() — strips nav/ads/scripts, preserves headings/links/lists
+    ↓ markdown-style structured text
+Claude API (claude-haiku-4-5)
+    ↓ reformatted HTML
+Worker → response { html, title, profile, url }
+    ↓ stored in localStorage (readclear_result)
+read.html — sanitises and renders HTML
+```
+
+---
+
+## Image/Scan Data Flow
+
+```
+scan.html (user selects photo/file + profile)
+    ↓ client-side resize to 800px max, JPEG 0.85
+    ↓ convert to base64
+    ↓ POST { imageData, mediaType, profile }
+Worker /reformat-image
+    ↓ send image + profile prompt to Claude API
+Claude API (claude-haiku-4-5) — vision model
+    ↓ reads text from image, reformats for dyslexia profile
+Worker → response { html, title, profile }
+    ↓ stored in localStorage (readclear_result)
+read.html — same display as URL reformat
+```
+
+---
+
+## Worker Endpoints
+
+| Endpoint | Method | Purpose |
+|---|---|---|
+| `/reformat` | POST | URL reformatter — fetches URL, extracts text, calls Claude |
+| `/reformat-image` | POST | Image reformatter — sends base64 image to Claude vision |
+| `/health` | GET | Health check — returns `{"status":"ok"}` |
+
+Worker URL: `https://readclear-worker.kev-958.workers.dev`
+
+ALLOWED_ORIGINS (must update when adding new domains):
+- `https://readclear.importantsmallthings.com`
+- `https://clearread-7x3.pages.dev`
+
+---
+
+## localStorage Keys
+
+| Key | Format | Purpose |
+|---|---|---|
+| `readclear_profile` | `{"type":"mixed"}` | Active dyslexia profile — shared across all pages |
+| `readclear_result` | `{html, title, profile, url, source}` | Last reformatted page — read by read.html |
+| `readclear_prefill` | plain string URL | Pre-fills the URL input after returning from read.html |
+| `rc_pg_[hash]` | `{html, title, profile, url, ts}` | Page cache entries (max 10, 7-day expiry) |
 
 ---
 
 ## Infrastructure
 
-### Cloudflare Pages
-- Hosts all frontend HTML/CSS/JS files
-- Free tier is sufficient for MVP
-- Auto-deploys from GitHub main branch
-- Current URL: clearread-7x3.pages.dev
-- Domain pending: readclear.ai or importantsmallthings.com/readclear
-
-### Cloudflare Workers
-- Handles backend API calls
-- Required for: URL fetching (CORS bypass), Claude API calls (key security)
-- API key stored as a Worker Secret — NEVER in frontend code
-- Free tier: 100k requests/day — sufficient for MVP
-- Must be created in Kevin's own Cloudflare account (separate from Aaron's)
-
-### GitHub
-- Repo: kevm0ss/clearread
-- Branch: main (production)
-- Pipeline: push to main → Cloudflare auto-deploys
+| Service | Account | Notes |
+|---|---|---|
+| GitHub | kevm0ss | Auto-deploys to Cloudflare Pages on push to main |
+| Cloudflare Pages | Kevin's account | Hosts all frontend HTML/CSS/JS |
+| Cloudflare Workers | Kevin's account | Hosts backend — manually deployed |
+| Anthropic | Kevin's account | API key stored as Worker Secret |
 
 ---
 
 ## Why No Framework
 
-- Easier to learn and understand
+- Easier for Kevin to learn and understand
 - No build step, no dependencies, no breaking changes
 - Cloudflare Pages serves static files perfectly
-- Can add a framework later if needed — not before
-
----
-
-## Profile State Management
-
-- Stored in browser `localStorage`
-- Key: `clearread_profile` (object: profile type + active traits)
-- Set on profile selection on any page
-- Read on page load — pre-selects saved profile
-- No server-side storage in MVP
-
----
-
-## Content Extraction (Planned)
-
-When the Worker fetches a URL:
-1. Fetch raw HTML from the target URL
-2. Extract article content using **Mozilla Readability.js** (same library Firefox uses for Reader View)
-3. Strip navigation, ads, footers, sidebars
-4. Send clean text/HTML to Claude API
-
-Readability.js is the right tool — battle-tested, handles most websites well.
-
----
-
-## Claude API Integration (Planned)
-
-- Model: claude-opus-4 or claude-sonnet-4 (decide at build time — balance cost vs quality)
-- System prompt: built from user's profile + active traits (same logic as prompt builder)
-- User message: extracted article content
-- Response: reformatted HTML
-- API key: stored as Cloudflare Worker Secret
-
----
-
-## SEO / GEO (Pending)
-
-Not implemented yet. Wait until domain is decided.
-
-When domain is confirmed, add:
-- `<meta name="description">`
-- Open Graph tags
-- Twitter Card tags
-- JSON-LD structured data (WebApplication)
-- `robots.txt`
-- `llms.txt` (for AI crawler discoverability)
-- Canonical URL
-
-See [docs/roadmap.md](roadmap.md) for timing.
-
----
-
-## Conflicts to Watch
-
-- **CORS:** Browsers cannot fetch other websites directly. All URL fetching MUST go through the Worker. Never attempt client-side URL fetching.
-- **API Key exposure:** Claude API key must never appear in frontend code. Worker Secrets only.
-- **localStorage limits:** Not available in private/incognito browsing. Plan a graceful fallback (just show profile selector).
-- **Domain change:** When domain is set, update canonical URL, all meta tags, and CORS allowed origins in the Worker config.
+- Can add a framework later — not before it is needed
