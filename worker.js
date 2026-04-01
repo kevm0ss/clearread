@@ -291,7 +291,7 @@ Start your response with a <h1> containing the document title or type (e.g. "App
         'content-type': 'application/json',
       },
       body: JSON.stringify({
-        model: 'claude-3-5-haiku-20241022',
+        model: 'claude-3-haiku-20240307',
         max_tokens: 4096,
         system: systemPrompt,
         messages: [{
