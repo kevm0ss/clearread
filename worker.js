@@ -291,7 +291,7 @@ Start your response with a <h1> containing the document title or type (e.g. "App
         'content-type': 'application/json',
       },
       body: JSON.stringify({
-        model: 'claude-haiku-4-5',
+        model: 'claude-3-5-haiku-20241022',
         max_tokens: 4096,
         system: systemPrompt,
         messages: [{
@@ -317,7 +317,9 @@ Start your response with a <h1> containing the document title or type (e.g. "App
     if (!apiRes.ok) {
       const errBody = await apiRes.text();
       console.error('Claude API error:', apiRes.status, errBody);
-      return errorResponse('Formatting service unavailable. Please try again.', 502, corsHeaders);
+      let detail = '';
+      try { detail = JSON.parse(errBody)?.error?.message || ''; } catch(e) {}
+      return errorResponse(`Formatting service error: ${detail || apiRes.status}`, 502, corsHeaders);
     }
 
     claudeResponse = await apiRes.json();

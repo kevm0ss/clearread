@@ -618,13 +618,23 @@ async function handleReformat() {
     const resized = await resizeImage(selectedFile);
     const imageData = await blobToBase64(resized);
 
-    const res = await fetch(`${WORKER_URL}/reformat-image`, {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ imageData, mediaType: 'image/jpeg', profile }),
-    });
+    const controller = new AbortController();
+    const timeout = setTimeout(() => controller.abort(), 45000);
 
-    const data = await res.json();
+    let res;
+    try {
+      res = await fetch(`${WORKER_URL}/reformat-image`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ imageData, mediaType: 'image/jpeg', profile }),
+        signal: controller.signal,
+      });
+    } finally {
+      clearTimeout(timeout);
+    }
+
+    let data;
+    try { data = await res.json(); } catch(e) { throw new Error('Unexpected response from server. Please try again.'); }
 
     if (!res.ok || data.error) {
       throw new Error(data.error || 'Something went wrong. Please try again.');
@@ -640,7 +650,10 @@ async function handleReformat() {
     window.location.href = 'read.html';
 
   } catch (err) {
-    showStatus(err.message || 'Something went wrong. Please try again.', 'error');
+    const msg = err.name === 'AbortError'
+      ? 'This is taking too long — please try a smaller or clearer image.'
+      : (err.message || 'Something went wrong. Please try again.');
+    showStatus(msg, 'error');
     btn.disabled = false;
   }
 }
