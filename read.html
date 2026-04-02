@@ -532,6 +532,73 @@ body[data-width="narrow"] .reading-content li { max-width: 45ch; }
 }
 .refine-cost-note a { color: #5a5550; text-decoration: none; }
 .refine-cost-note a:hover { color: var(--amber); }
+
+/* READING AIDS TOGGLE */
+.refine-aid-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 12px;
+}
+.refine-aid-row:last-child { margin-bottom: 0; }
+.refine-aid-label { font-size: 13px; color: #c8c3bc; }
+.refine-aid-desc { font-size: 11px; color: #5a5550; margin-top: 2px; }
+.refine-toggle {
+  background: #2a2520;
+  border: 1px solid #3a3530;
+  border-radius: 20px;
+  padding: 4px 12px;
+  font-size: 11px;
+  font-weight: 700;
+  color: #6a6560;
+  cursor: pointer;
+  font-family: 'Plus Jakarta Sans', sans-serif;
+  letter-spacing: 0.05em;
+  transition: all 0.15s;
+  min-width: 44px;
+}
+.refine-toggle.active { background: var(--amber); border-color: var(--amber); color: #fff; }
+
+/* READING RULER */
+.reading-ruler {
+  display: none;
+  position: fixed;
+  left: 0;
+  right: 0;
+  height: 2em;
+  background: rgba(217,119,6,0.12);
+  border-top: 1px solid rgba(217,119,6,0.2);
+  border-bottom: 1px solid rgba(217,119,6,0.2);
+  pointer-events: none;
+  z-index: 50;
+  transition: top 0.05s linear;
+}
+body.ruler-active .reading-ruler { display: block; }
+
+/* FOCUS MODE */
+body.focus-active .reading-content p,
+body.focus-active .reading-content li { opacity: 0.25; transition: opacity 0.15s; }
+body.focus-active .reading-content p.focus-highlight,
+body.focus-active .reading-content li.focus-highlight { opacity: 1; }
+body.focus-active .reading-content h1,
+body.focus-active .reading-content h2,
+body.focus-active .reading-content h3 { opacity: 0.4; }
+
+/* SECTION SPEAKER ICONS */
+.section-speak-btn {
+  background: none;
+  border: none;
+  cursor: pointer;
+  font-size: 13px;
+  opacity: 0.35;
+  padding: 0 0 0 8px;
+  vertical-align: middle;
+  transition: opacity 0.15s;
+  line-height: 1;
+}
+.section-speak-btn:hover { opacity: 1; }
+.section-speak-btn.speaking { opacity: 1; }
+
 @media (max-width: 600px) {
   .refine-panel { right: 12px; left: 12px; width: auto; bottom: 68px; }
   .refine-trigger { right: 12px; bottom: 16px; }
@@ -550,6 +617,7 @@ body[data-width="narrow"] .reading-content li { max-width: 45ch; }
   <div class="toolbar-actions">
     <span id="cache-badge" style="display:none;font-size:11px;font-weight:700;letter-spacing:0.05em;color:#6ee7b7;padding:4px 10px;background:rgba(110,231,183,0.1);border-radius:20px;border:1px solid rgba(110,231,183,0.2);">⚡ Cached</span>
     <button id="refresh-btn" style="display:none;background:none;border:1px solid #3a3530;color:#8a857e;font-family:inherit;font-size:13px;padding:6px 14px;border-radius:8px;cursor:pointer;" onclick="refreshPage()">↻ Refresh</button>
+    <button class="toolbar-btn" id="speak-btn" onclick="handleSpeak()" style="display:none;">🔊 Listen</button>
     <button class="toolbar-btn" id="expand-btn" onclick="expandAll()" style="display:none;">Expand all</button>
     <button class="toolbar-btn" id="collapse-btn" onclick="collapseAll()" style="display:none;">Collapse all</button>
     <a href="index.html" class="toolbar-btn primary">← Reformat another</a>
@@ -590,6 +658,9 @@ body[data-width="narrow"] .reading-content li { max-width: 45ch; }
   <div class="reading-content" id="reading-content" style="display:none;"></div>
 
 </main>
+
+<!-- READING RULER -->
+<div class="reading-ruler" id="reading-ruler"></div>
 
 <!-- REFINE TRIGGER -->
 <button class="refine-trigger" id="refine-trigger" onclick="toggleRefine()" style="display:none;">✦ Refine</button>
@@ -640,6 +711,25 @@ body[data-width="narrow"] .reading-content li { max-width: 45ch; }
         <button class="refine-btn active" data-pref="width" data-val="normal" onclick="setDesignPref('width','normal',this)">Normal</button>
         <button class="refine-btn" data-pref="width" data-val="narrow" onclick="setDesignPref('width','narrow',this)">Narrow</button>
       </div>
+    </div>
+  </div>
+
+  <!-- READING AIDS -->
+  <div class="refine-section">
+    <div class="refine-section-label">Reading Aids</div>
+    <div class="refine-aid-row">
+      <div>
+        <div class="refine-aid-label">Reading ruler</div>
+        <div class="refine-aid-desc">Highlights your current line</div>
+      </div>
+      <button class="refine-toggle" id="ruler-toggle" onclick="toggleRuler()">Off</button>
+    </div>
+    <div class="refine-aid-row">
+      <div>
+        <div class="refine-aid-label">Focus mode</div>
+        <div class="refine-aid-desc">Dims everything except your paragraph</div>
+      </div>
+      <button class="refine-toggle" id="focus-toggle" onclick="toggleFocusMode()">Off</button>
     </div>
   </div>
 
@@ -718,6 +808,10 @@ function init() {
   content.innerHTML = sanitiseHtml(result.html);
   content.style.display = 'block';
   document.getElementById('refine-trigger').style.display = 'block';
+  if ('speechSynthesis' in window) {
+    document.getElementById('speak-btn').style.display = 'inline-flex';
+  }
+  injectSpeakerIcons();
 
   // Show expand/collapse buttons if there are any details elements
   if (content.querySelectorAll('details').length > 0) {
@@ -823,7 +917,130 @@ function escHtml(str) {
   return String(str).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
 }
 
-document.addEventListener('DOMContentLoaded', () => { init(); loadPrefs(); });
+document.addEventListener('DOMContentLoaded', () => { init(); loadPrefs(); initReadingAids(); });
+
+/* ── READING AIDS ──────────────────────────────── */
+
+// ── TEXT TO SPEECH ──
+let ttsState = 'stopped'; // stopped | playing | paused
+let ttsPingTimer = null;
+
+function handleSpeak() {
+  if (ttsState === 'stopped') { speakAll(); }
+  else if (ttsState === 'playing') { pauseSpeech(); }
+  else if (ttsState === 'paused') { resumeSpeech(); }
+}
+
+function speakAll() {
+  const content = document.getElementById('reading-content');
+  if (!content) return;
+  startSpeaking(content.innerText);
+}
+
+function speakSection(text, iconBtn) {
+  document.querySelectorAll('.section-speak-btn.speaking').forEach(b => b.classList.remove('speaking'));
+  if (iconBtn) iconBtn.classList.add('speaking');
+  startSpeaking(text);
+}
+
+function startSpeaking(text) {
+  speechSynthesis.cancel();
+  clearInterval(ttsPingTimer);
+  const utterance = new SpeechSynthesisUtterance(text);
+  utterance.rate = 0.92;
+  utterance.onstart = () => { ttsState = 'playing'; updateSpeakBtn(); };
+  utterance.onpause = () => { ttsState = 'paused'; updateSpeakBtn(); };
+  utterance.onresume = () => { ttsState = 'playing'; updateSpeakBtn(); };
+  utterance.onend = utterance.onerror = () => {
+    ttsState = 'stopped';
+    clearInterval(ttsPingTimer);
+    document.querySelectorAll('.section-speak-btn.speaking').forEach(b => b.classList.remove('speaking'));
+    updateSpeakBtn();
+  };
+  speechSynthesis.speak(utterance);
+  // Chrome bug workaround — pauses after ~15s without this
+  ttsPingTimer = setInterval(() => {
+    if (speechSynthesis.speaking && !speechSynthesis.paused) {
+      speechSynthesis.pause();
+      speechSynthesis.resume();
+    }
+  }, 12000);
+}
+
+function pauseSpeech() { speechSynthesis.pause(); ttsState = 'paused'; updateSpeakBtn(); }
+function resumeSpeech() { speechSynthesis.resume(); ttsState = 'playing'; updateSpeakBtn(); }
+
+function updateSpeakBtn() {
+  const btn = document.getElementById('speak-btn');
+  if (!btn) return;
+  if (ttsState === 'stopped') { btn.textContent = '🔊 Listen'; }
+  else if (ttsState === 'playing') { btn.textContent = '⏸ Pause'; }
+  else if (ttsState === 'paused') { btn.textContent = '▶ Resume'; }
+}
+
+function injectSpeakerIcons() {
+  const content = document.getElementById('reading-content');
+  if (!content || !('speechSynthesis' in window)) return;
+  content.querySelectorAll('h2, h3, summary').forEach(el => {
+    const btn = document.createElement('button');
+    btn.className = 'section-speak-btn';
+    btn.title = 'Read this section aloud';
+    btn.textContent = '🔊';
+    btn.addEventListener('click', e => {
+      e.stopPropagation();
+      // Gather text: from this element to the next heading
+      const parent = el.closest('details') || el.parentElement;
+      speakSection(parent.innerText, btn);
+    });
+    el.appendChild(btn);
+  });
+}
+
+// ── READING RULER ──
+function initReadingAids() {
+  const ruler = document.getElementById('reading-ruler');
+  if (!ruler) return;
+  document.addEventListener('mousemove', e => {
+    if (!document.body.classList.contains('ruler-active')) return;
+    ruler.style.top = (e.clientY - 14) + 'px';
+  });
+  document.addEventListener('touchmove', e => {
+    if (!document.body.classList.contains('ruler-active')) return;
+    ruler.style.top = (e.touches[0].clientY - 14) + 'px';
+  }, { passive: true });
+  // Focus mode hover tracking
+  document.addEventListener('mousemove', e => {
+    if (!document.body.classList.contains('focus-active')) return;
+    const el = document.elementFromPoint(e.clientX, e.clientY);
+    const para = el?.closest('.reading-content p, .reading-content li');
+    document.querySelectorAll('.focus-highlight').forEach(x => x.classList.remove('focus-highlight'));
+    if (para) para.classList.add('focus-highlight');
+  });
+  document.addEventListener('touchstart', e => {
+    if (!document.body.classList.contains('focus-active')) return;
+    const el = document.elementFromPoint(e.touches[0].clientX, e.touches[0].clientY);
+    const para = el?.closest('.reading-content p, .reading-content li');
+    document.querySelectorAll('.focus-highlight').forEach(x => x.classList.remove('focus-highlight'));
+    if (para) para.classList.add('focus-highlight');
+  }, { passive: true });
+}
+
+function toggleRuler() {
+  const active = document.body.classList.toggle('ruler-active');
+  const btn = document.getElementById('ruler-toggle');
+  if (btn) { btn.textContent = active ? 'On' : 'Off'; btn.classList.toggle('active', active); }
+  currentPrefs.ruler = active;
+  try { localStorage.setItem('readclear_prefs', JSON.stringify(currentPrefs)); } catch(e) {}
+}
+
+// ── FOCUS MODE ──
+function toggleFocusMode() {
+  const active = document.body.classList.toggle('focus-active');
+  const btn = document.getElementById('focus-toggle');
+  if (btn) { btn.textContent = active ? 'On' : 'Off'; btn.classList.toggle('active', active); }
+  currentPrefs.focus = active;
+  try { localStorage.setItem('readclear_prefs', JSON.stringify(currentPrefs)); } catch(e) {}
+}
 
 /* ── REFINE PANEL ──────────────────────────────── */
 
