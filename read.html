@@ -951,7 +951,18 @@ function handleSpeak() {
 function speakAll() {
   const content = document.getElementById('reading-content');
   if (!content) return;
-  startSpeaking(content.innerText);
+  // Walk the DOM so we can add a pause-period after headings
+  const HEADING_TAGS = new Set(['H1','H2','H3','H4','H5','H6','SUMMARY']);
+  const parts = [];
+  content.querySelectorAll('h1,h2,h3,h4,h5,h6,p,li,summary').forEach(el => {
+    const text = Array.from(el.childNodes)
+      .filter(n => !(n.nodeType === Node.ELEMENT_NODE && n.classList?.contains('section-speak-btn')))
+      .map(n => n.textContent).join('').trim();
+    if (!text) return;
+    // Headings get a period appended so TTS pauses before the first sentence
+    parts.push(HEADING_TAGS.has(el.tagName) && !/[.!?]$/.test(text) ? text + '.' : text);
+  });
+  startSpeaking(parts.join('\n'));
 }
 
 function speakSection(text, iconBtn) {
@@ -1027,7 +1038,9 @@ function getSectionText(headingEl) {
     .filter(n => !(n.nodeType === Node.ELEMENT_NODE && n.classList.contains('section-speak-btn')))
     .map(n => n.textContent).join('').trim();
 
-  const parts = [headingText];
+  // Add a period so TTS pauses after the heading before reading the first sentence
+  const pausedHeading = /[.!?]$/.test(headingText) ? headingText : headingText + '.';
+  const parts = [pausedHeading];
   let sibling = headingEl.nextElementSibling;
   while (sibling) {
     if (HEADING_TAGS.has(sibling.tagName)) break;
