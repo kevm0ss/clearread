@@ -16,62 +16,60 @@ const ALLOWED_ORIGINS = [
   'https://reformat-v2.clearread-7x3.pages.dev',
 ];
 
-// Shared progressive disclosure instruction used by all profiles
-const DISCLOSURE_RULES = `
-Structure rules — progressive disclosure:
-- Start with a <div class="doc-summary"><h2>Key points</h2><ul>...</ul></div> containing 3–5 bullet points covering the most important facts from the entire document. This is ALWAYS visible — do not wrap it in <details>. Each bullet must be short — maximum 8 words. Write them as plain labels or phrases, not full sentences. Example: "Affects 1 in 10 people" not "Research has shown that dyslexia affects approximately one in ten people worldwide."
-- After the summary, wrap EVERY major section in: <details><summary>One sentence — the single most important point from this section</summary>[full section content here]</details>
-- The <summary> must be one plain sentence. It should tell the reader what they will find if they open it.
-- For long sections with distinct sub-topics, nest a second level of <details> inside the outer one.
-- Never bury the key point inside <details> — always surface it in <summary>.
-- The reader should be able to understand the whole document from just the summary block and the closed <summary> labels, without opening anything.`;
+// Shared rules applied to every profile
+const SHARED_RULES = `
+Universal formatting rules (apply to every profile):
+- Keep sentences to 20 words or fewer. One idea per sentence.
+- Keep paragraphs to 1–3 sentences. Never run more than 3 sentences together.
+- When 3 or more related items appear in prose, convert them to a bullet list.
+- Use a meaningful heading every 3–4 paragraphs to help the reader track their place.
+- Never use ALL CAPS. Never use double negatives (e.g. "not unlikely" → "likely", "not unimportant" → "important").
+- Never use italics.
+- Bold one key term per paragraph — the single most important word or phrase. Use it sparingly so it stands out.
+- Use <details><summary> only for sections that are genuinely long or complex — 4 or more sentences, or sections covering multiple distinct sub-topics. Short sections, single facts, and simple lists must stay open as normal HTML. Do not wrap everything.
+- When you do use <details>, the <summary> must be one plain sentence stating the most important point of that section. The reader should know what they will find before opening it.`;
 
 const PROFILE_PROMPTS = {
   phonological: `Profile: I have phonological dyslexia.
 Core rule: Never simplify content. Only change how it is structured and presented.
-Profile-specific: Use plain, common words. If a technical term is necessary, define it in plain language immediately after. Avoid jargon where a simpler word exists.
+Profile-specific: Long or unfamiliar words are the main barrier. Use plain, common words wherever possible. If a technical term is essential, define it in plain language immediately after in brackets.
 Formatting rules:
-1. Use short sentences. One idea per sentence.
-2. Do not use bold or <strong> tags in body text at all. Let structure — headings, bullets, and collapsible sections — create hierarchy. Bold is not needed.
-3. Leave clear visual gaps between sections and ideas.
-4. Always lead with the most important point. Put detail after.
-5. Use plain language throughout. Define any technical term when first used.
-6. Open the first <details> section by default using the open attribute — phonological readers benefit from seeing the first section immediately.
-${DISCLOSURE_RULES}`,
+1. Use plain language throughout. Swap jargon for everyday words where possible.
+2. Define every technical term when first used — e.g. "photosynthesis (how plants make food from sunlight)".
+3. Lead with the most important point. Put supporting detail after.
+4. Open the first <details> section by default (add the open attribute) so the reader sees content immediately.
+${SHARED_RULES}`,
 
   visual: `Profile: I have visual stress dyslexia.
 Core rule: Never simplify content. Only change how it is structured and presented.
-Profile-specific: Layout and spacing are critical. Dense text is the main barrier. Collapsed sections dramatically reduce visual overwhelm.
+Profile-specific: Dense blocks of text are the main barrier — they can feel visually overwhelming or appear to move. Space and structure are more important than anything else.
 Formatting rules:
-1. Use short sentences. One idea per sentence.
-2. Do not use bold or <strong> tags in body text at all. Let structure — headings, bullets, and collapsible sections — create hierarchy. Bold is not needed.
-3. Leave generous visual gaps between every section and idea.
-4. Avoid long unbroken paragraphs — break into chunks of 2–3 sentences maximum.
-5. All <details> sections start closed. The reader opens only what they need.
-${DISCLOSURE_RULES}`,
+1. Break paragraphs aggressively — 2 sentences maximum per paragraph for this profile.
+2. Prefer bullet lists over prose wherever the content allows.
+3. Leave extra space between sections — use <hr> between major topic shifts.
+4. All <details> sections start closed. The reader opens only what they need, reducing visual clutter.
+${SHARED_RULES}`,
 
   memory: `Profile: I have working memory dyslexia.
 Core rule: Never simplify content. Only change how it is structured and presented.
-Profile-specific: Losing the thread mid-sentence is the main challenge. The progressive structure is essential — seeing the whole document at once causes overwhelm.
+Profile-specific: Losing the thread mid-sentence or mid-section is the main challenge. Structure must make it easy to stop, look away, and find your place again.
 Formatting rules:
-1. Use short sentences. One idea per sentence.
-2. Do not use bold or <strong> tags in body text at all. Let structure — headings, bullets, and collapsible sections — create hierarchy. Bold is not needed.
-3. Number every step or sequential item — never bury steps in prose.
-4. All <details> sections start closed. The summary block gives the full picture first.
-5. Within each open section, use numbered lists wherever there is sequence or process.
-${DISCLOSURE_RULES}`,
+1. Always put the key point at the top of every section — never bury it.
+2. Number every step or sequential process — never leave steps inside prose.
+3. Use a short summary sentence at the start of any section longer than 3 paragraphs.
+4. All <details> sections start closed — the reader controls what they hold in mind at once.
+${SHARED_RULES}`,
 
   mixed: `Profile: I am dyslexic (mixed profile).
 Core rule: Never simplify content. Only change how it is structured and presented.
-Profile-specific: Apply a broad set of dyslexia-friendly adjustments. The progressive structure is the most important element — start collapsed, drill into what you need.
+Profile-specific: Apply the full range of dyslexia-friendly adjustments. Prioritise structure, spacing, and plain language equally.
 Formatting rules:
-1. Use short sentences. One idea per sentence.
-2. Do not use bold or <strong> tags in body text at all. Let structure — headings, bullets, and collapsible sections — create hierarchy. Bold is not needed.
-3. Leave clear visual gaps between sections and ideas.
-4. Use plain language. Define technical terms when first used.
-5. Number every step or process — never bury steps in prose.
-6. All <details> sections start closed.
-${DISCLOSURE_RULES}`,
+1. Lead with the most important point in every section.
+2. Use plain language. Define technical terms when first used.
+3. Number every step or process — never bury steps in prose.
+4. Use a short summary sentence at the start of any section longer than 3 paragraphs.
+5. All <details> sections start closed.
+${SHARED_RULES}`,
 };
 
 export default {
