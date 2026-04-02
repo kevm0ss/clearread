@@ -393,11 +393,13 @@ function extractContent(html, baseUrl) {
     .replace(/<!--[\s\S]*?-->/g, '');
 
   // Step 2 — try to isolate main content area
+  // Note: the div regex uses a lazy match which can stop at the first nested </div>.
+  // Only trust the match if it captured enough content — otherwise fall back to full body.
   const mainMatch =
     cleaned.match(/<main\b[^>]*>([\s\S]*?)<\/main>/i) ||
     cleaned.match(/<article\b[^>]*>([\s\S]*?)<\/article>/i) ||
     cleaned.match(/<div[^>]+(?:id|class)="[^"]*(?:content|article|main|post|body)[^"]*"[^>]*>([\s\S]*?)<\/div>/i);
-  if (mainMatch) cleaned = mainMatch[1];
+  if (mainMatch && mainMatch[1].length > 500) cleaned = mainMatch[1];
 
   // Step 3 — convert semantic elements to structured text before stripping
 
