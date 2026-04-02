@@ -508,6 +508,21 @@ body[data-width="narrow"] .reading-content li { max-width: 45ch; }
 }
 .refine-reformat-btn:hover { background: #b45309; color: #fff; }
 .refine-reformat-btn:disabled { background: #2a2520; color: #5a5550; cursor: not-allowed; }
+.refine-undo-btn {
+  width: 100%;
+  background: none;
+  border: 1px solid #3a3530;
+  border-radius: 8px;
+  padding: 9px;
+  font-size: 12px;
+  font-weight: 600;
+  color: #8a857e;
+  cursor: pointer;
+  font-family: 'Plus Jakarta Sans', sans-serif;
+  margin-top: 8px;
+  transition: all 0.15s;
+}
+.refine-undo-btn:hover { border-color: #8a857e; color: #c8c3bc; }
 .refine-cost-note {
   font-size: 11px;
   color: #8a857e;
@@ -637,6 +652,7 @@ body[data-width="narrow"] .reading-content li { max-width: 45ch; }
     <label class="refine-check"><input type="checkbox" id="pref-bullets"> Convert dense paragraphs to bullets</label>
     <label class="refine-check"><input type="checkbox" id="pref-collapse"> Collapse long sections</label>
     <button class="refine-reformat-btn" id="reformat-prefs-btn" onclick="reformatWithPrefs()">↺ Reformat with these settings</button>
+    <button class="refine-undo-btn" id="undo-reformat-btn" onclick="undoReformat()" style="display:none;">← Undo — back to original</button>
     <p class="refine-cost-note">This costs us to run — please use thoughtfully.<br>
       <a href="https://buymeacoffee.com/readclear" target="_blank" rel="noopener">Buy us a coffee to help ♥</a>
     </p>
@@ -900,6 +916,9 @@ async function reformatWithPrefs() {
     const data = await response.json();
     if (!response.ok || data.error) throw new Error(data.error || 'Reformat failed.');
 
+    // Save original before overwriting so undo is possible
+    try { localStorage.setItem('readclear_result_original', JSON.stringify(result)); } catch(e) {}
+
     // Update reading content
     const content = document.getElementById('reading-content');
     content.innerHTML = sanitiseHtml(data.html);
@@ -918,6 +937,8 @@ async function reformatWithPrefs() {
       }));
     } catch(e) {}
 
+    // Show undo button
+    document.getElementById('undo-reformat-btn').style.display = 'block';
     toggleRefine();
 
   } catch(err) {
@@ -926,6 +947,31 @@ async function reformatWithPrefs() {
     btn.disabled = false;
     btn.textContent = '↺ Reformat with these settings';
   }
+}
+
+function undoReformat() {
+  const original = (() => { try { return JSON.parse(localStorage.getItem('readclear_result_original')); } catch(e) { return null; } })();
+  if (!original) return;
+
+  // Restore original content
+  const content = document.getElementById('reading-content');
+  content.innerHTML = sanitiseHtml(original.html);
+
+  // Restore localStorage result
+  try { localStorage.setItem('readclear_result', JSON.stringify(original)); } catch(e) {}
+  try { localStorage.removeItem('readclear_result_original'); } catch(e) {}
+
+  // Update expand/collapse buttons
+  document.getElementById('expand-btn').style.display   = content.querySelectorAll('details').length > 0 ? 'inline-flex' : 'none';
+  document.getElementById('collapse-btn').style.display = content.querySelectorAll('details').length > 0 ? 'inline-flex' : 'none';
+
+  // Update truncation banner
+  document.getElementById('truncation-banner').style.display = original.truncated ? 'block' : 'none';
+
+  // Hide undo button
+  document.getElementById('undo-reformat-btn').style.display = 'none';
+
+  toggleRefine();
 }
 </script>
 
