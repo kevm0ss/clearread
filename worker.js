@@ -181,7 +181,8 @@ async function handleReformat(request, env, corsHeaders) {
   }
 
   // Limit content length to avoid huge Claude requests
-  const truncatedText = text.length > 12000 ? text.slice(0, 12000) + '\n\n[Content truncated for length]' : text;
+  const wasTruncated = text.length > 12000;
+  const truncatedText = wasTruncated ? text.slice(0, 12000) + '\n\n[Content truncated for length]' : text;
 
   // 3. Build Claude prompt
   const profilePrompt = PROFILE_PROMPTS[profile] || PROFILE_PROMPTS.mixed;
@@ -258,6 +259,7 @@ ${truncatedText}`;
     html: reformattedHtml,
     profile,
     url,
+    truncated: wasTruncated,
   }), {
     status: 200,
     headers: { ...corsHeaders, 'Content-Type': 'application/json' }

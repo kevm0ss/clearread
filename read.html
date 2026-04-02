@@ -109,6 +109,21 @@ body {
 }
 .toolbar-btn.primary:hover { background: #b45309; border-color: #b45309; color: #fff; }
 
+/* TRUNCATION BANNER */
+.truncation-banner {
+  display: none;
+  background: #fef3c7;
+  border: 1px solid #f59e0b;
+  border-radius: 8px;
+  padding: 16px 20px;
+  margin-bottom: 32px;
+  font-size: 14px;
+  line-height: 1.7;
+  color: #1c1917;
+}
+.truncation-banner a { color: #b45309; font-weight: 600; }
+.truncation-banner strong { font-weight: 700; }
+
 /* READING AREA */
 .reading-wrap {
   max-width: 720px;
@@ -376,6 +391,12 @@ body {
     <a href="index.html" class="btn-back">← Try another URL</a>
   </div>
 
+  <!-- Truncation warning -->
+  <div class="truncation-banner" id="truncation-banner">
+    <strong>This page was too long to reformat in full.</strong> readclear is a free service — we currently support up to 2,500 words per page. You're seeing the first part only.<br>
+    Would you pay a small subscription for full-page reformatting? <a href="https://importantsmallthings.com/#contact" target="_blank" rel="noopener">Get in touch and let us know →</a>
+  </div>
+
   <!-- Content -->
   <div class="reading-content" id="reading-content" style="display:none;"></div>
 
@@ -428,6 +449,11 @@ function init() {
   if (result.fromCache) {
     document.getElementById('cache-badge').style.display = 'inline-flex';
     document.getElementById('refresh-btn').style.display = 'inline-block';
+  }
+
+  // Show truncation warning if page was too long
+  if (result.truncated) {
+    document.getElementById('truncation-banner').style.display = 'block';
   }
 
   document.getElementById('loading-state').style.display = 'none';
