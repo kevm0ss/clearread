@@ -1066,7 +1066,7 @@ function loadDemo(url) {
 
 async function callWorker(url, profile) {
   try {
-    const response = await fetch('https://readclear-worker.kev-958.workers.dev/reformat', {
+    const response = await fetch('https://readclear-worker-v2.kev-958.workers.dev/reformat', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({ url, profile })

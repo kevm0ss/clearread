@@ -13,7 +13,17 @@
 const ALLOWED_ORIGINS = [
   'https://readclear.importantsmallthings.com',
   'https://clearread-7x3.pages.dev',
+  'https://reformat-v2.clearread-7x3.pages.dev',
 ];
+
+// Additional rules layered on top of every profile — from the readclear formatting framework
+const SHARED_RULES = `
+Additional rules (apply to every profile):
+- Keep sentences to 20 words or fewer.
+- Keep paragraphs to 1–3 sentences. Never run longer.
+- When 3 or more related items appear in prose, convert them to a bullet list.
+- Never use ALL CAPS. Avoid double negatives — rewrite them positively (e.g. "not unlikely" → "likely").
+- Never use italics.`;
 
 const PROFILE_PROMPTS = {
   phonological: `Profile: I have phonological dyslexia.
@@ -24,17 +34,20 @@ Formatting rules:
 2. Bold the key term in each sentence for easy scanning.
 3. Leave clear visual gaps between sections and ideas.
 4. Always lead with the most important point. Put detail after.
-5. Use plain language throughout. Define any technical term when first used.`,
+5. Use plain language throughout. Define any technical term when first used.
+${SHARED_RULES}`,
 
   visual: `Profile: I have visual stress dyslexia.
 Core rule: Never simplify content. Only change how it is structured and presented.
-Profile-specific: Layout and spacing are critical. Dense text is the main barrier. Use generous whitespace, short line lengths, and strong visual hierarchy.
+Profile-specific: Dense text is the main barrier — it can feel visually overwhelming or appear to move. The goal is to keep the page light. Only the most important content should be immediately visible. Secondary content should be tucked away and opened only when needed.
 Formatting rules:
 1. Use short sentences. One idea per sentence.
 2. Bold the key term in each sentence for easy scanning.
 3. Leave generous visual gaps between every section and idea.
-4. Use diagrams, bullet points, and visual structure wherever possible.
-5. Avoid long unbroken paragraphs — break into chunks of 2-3 sentences maximum.`,
+4. Prefer bullet points over prose wherever possible — dense paragraphs are the main barrier.
+5. Avoid long unbroken paragraphs — break into chunks of 2 sentences maximum.
+6. Use <details><summary> to collapse secondary content only. Secondary content includes: background or context sections, long lists of examples (show 2–3, collapse the rest), methodology or technical detail, historical context, and "further reading" sections. The <summary> label must clearly describe what is inside — e.g. "Background: how this started" or "More examples (8)". Primary content — the main argument, key facts, conclusions, and actions — must always stay open. Do not collapse more than one third of the page.
+${SHARED_RULES}`,
 
   memory: `Profile: I have working memory dyslexia.
 Core rule: Never simplify content. Only change how it is structured and presented.
@@ -42,9 +55,11 @@ Profile-specific: Losing the thread mid-sentence is the main challenge. Number a
 Formatting rules:
 1. Use short sentences. One idea per sentence.
 2. Bold the key term in each sentence for easy scanning.
-3. Always put a summary or key point at the top of each section.
+3. Always put the key point at the top of each section — never bury it.
 4. Number every step or sequential item — never bury steps in prose.
-5. Use clear visual gaps and section headers so the reader always knows where they are.`,
+5. Use clear visual gaps and section headers so the reader always knows where they are.
+6. Add a one-sentence summary at the start of any section longer than 3 paragraphs.
+${SHARED_RULES}`,
 
   mixed: `Profile: I am dyslexic (mixed profile).
 Core rule: Never simplify content. Only change how it is structured and presented.
@@ -56,7 +71,8 @@ Formatting rules:
 4. Always lead with the most important point. Put detail after.
 5. Use plain language. Define technical terms when first used.
 6. Number every step or process — never bury steps in prose.
-7. Use a summary at the top of long sections.`,
+7. Use a one-sentence summary at the top of long sections.
+${SHARED_RULES}`,
 };
 
 export default {
@@ -165,7 +181,8 @@ async function handleReformat(request, env, corsHeaders) {
   }
 
   // Limit content length to avoid huge Claude requests
-  const truncatedText = text.length > 12000 ? text.slice(0, 12000) + '\n\n[Content truncated for length]' : text;
+  const wasTruncated = text.length > 12000;
+  const truncatedText = wasTruncated ? text.slice(0, 12000) + '\n\n[Content truncated for length]' : text;
 
   // 3. Build Claude prompt
   const profilePrompt = PROFILE_PROMPTS[profile] || PROFILE_PROMPTS.mixed;
@@ -242,6 +259,7 @@ ${truncatedText}`;
     html: reformattedHtml,
     profile,
     url,
+    truncated: wasTruncated,
   }), {
     status: 200,
     headers: { ...corsHeaders, 'Content-Type': 'application/json' }
@@ -377,11 +395,13 @@ function extractContent(html, baseUrl) {
     .replace(/<!--[\s\S]*?-->/g, '');
 
   // Step 2 — try to isolate main content area
+  // Note: the div regex uses a lazy match which can stop at the first nested </div>.
+  // Only trust the match if it captured enough content — otherwise fall back to full body.
   const mainMatch =
     cleaned.match(/<main\b[^>]*>([\s\S]*?)<\/main>/i) ||
     cleaned.match(/<article\b[^>]*>([\s\S]*?)<\/article>/i) ||
     cleaned.match(/<div[^>]+(?:id|class)="[^"]*(?:content|article|main|post|body)[^"]*"[^>]*>([\s\S]*?)<\/div>/i);
-  if (mainMatch) cleaned = mainMatch[1];
+  if (mainMatch && mainMatch[1].length > 500) cleaned = mainMatch[1];
 
   // Step 3 — convert semantic elements to structured text before stripping
 

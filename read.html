@@ -109,6 +109,21 @@ body {
 }
 .toolbar-btn.primary:hover { background: #b45309; border-color: #b45309; color: #fff; }
 
+/* TRUNCATION BANNER */
+.truncation-banner {
+  display: none;
+  background: #fef3c7;
+  border: 1px solid #f59e0b;
+  border-radius: 8px;
+  padding: 16px 20px;
+  margin-bottom: 32px;
+  font-size: 14px;
+  line-height: 1.7;
+  color: #1c1917;
+}
+.truncation-banner a { color: #b45309; font-weight: 600; }
+.truncation-banner strong { font-weight: 700; }
+
 /* READING AREA */
 .reading-wrap {
   max-width: 720px;
@@ -144,28 +159,99 @@ body {
   margin-bottom: 10px;
   max-width: 65ch;
 }
-.reading-content details {
+/* Summary block — always visible key points */
+.reading-content .doc-summary {
   background: var(--cream);
-  border: 1.5px solid var(--border);
-  border-radius: 10px;
-  padding: 16px 20px;
-  margin-bottom: 16px;
+  border: 2px solid var(--amber);
+  border-radius: 12px;
+  padding: 24px 28px;
+  margin-bottom: 32px;
 }
-.reading-content details[open] { background: var(--cream); }
-.reading-content summary {
+.reading-content .doc-summary h2 {
+  font-family: 'Plus Jakarta Sans', sans-serif;
+  font-size: 13px;
   font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  color: var(--amber);
+  margin: 0 0 16px 0;
+}
+.reading-content .doc-summary ul {
+  margin: 0;
+  padding-left: 20px;
+}
+.reading-content .doc-summary li {
+  font-size: 16px;
+  font-weight: 400;
+  line-height: 1.7;
+  margin-bottom: 10px;
+  color: var(--ink);
+  max-width: none;
+}
+
+/* Collapsible sections */
+.reading-content details {
+  border: 1.5px solid var(--border);
+  border-radius: 12px;
+  margin-bottom: 12px;
+  overflow: hidden;
+  transition: border-color 0.15s;
+}
+.reading-content details:hover { border-color: var(--amber); }
+.reading-content details[open] {
+  border-color: var(--amber);
+}
+.reading-content summary {
+  font-weight: 500;
   font-size: 16px;
   cursor: pointer;
   list-style: none;
   display: flex;
   align-items: center;
   justify-content: space-between;
-  gap: 8px;
+  gap: 12px;
+  padding: 18px 22px;
+  background: var(--cream);
+  color: var(--ink);
+  user-select: none;
+  line-height: 1.4;
 }
-.reading-content summary::after { content: '↓'; font-size: 14px; color: var(--ink-soft); }
-.reading-content details[open] summary::after { content: '↑'; }
+.reading-content details[open] summary {
+  border-bottom: 1.5px solid var(--border);
+}
+.reading-content summary::after {
+  content: '▶';
+  font-size: 11px;
+  color: var(--ink-soft);
+  flex-shrink: 0;
+  transition: transform 0.2s;
+}
+.reading-content details[open] summary::after {
+  transform: rotate(90deg);
+  color: var(--amber);
+}
 .reading-content summary::-webkit-details-marker { display: none; }
-.reading-content details > *:not(summary) { margin-top: 12px; }
+.reading-content details > *:not(summary) {
+  padding: 20px 22px;
+}
+.reading-content details > p:first-of-type,
+.reading-content details > ul:first-of-type,
+.reading-content details > ol:first-of-type,
+.reading-content details > h3:first-of-type {
+  margin-top: 0;
+}
+
+/* Nested details (second level) */
+.reading-content details details {
+  margin: 12px 0 0 0;
+  border-color: var(--border);
+}
+.reading-content details details summary {
+  font-size: 15px;
+  font-weight: 600;
+  padding: 14px 18px;
+  background: #f0ece4;
+}
 .reading-content blockquote {
   border-left: 3px solid var(--amber);
   padding-left: 20px;
@@ -275,6 +361,8 @@ body {
   <div class="toolbar-actions">
     <span id="cache-badge" style="display:none;font-size:11px;font-weight:700;letter-spacing:0.05em;color:#6ee7b7;padding:4px 10px;background:rgba(110,231,183,0.1);border-radius:20px;border:1px solid rgba(110,231,183,0.2);">⚡ Cached</span>
     <button id="refresh-btn" style="display:none;background:none;border:1px solid #3a3530;color:#8a857e;font-family:inherit;font-size:13px;padding:6px 14px;border-radius:8px;cursor:pointer;" onclick="refreshPage()">↻ Refresh</button>
+    <button class="toolbar-btn" id="expand-btn" onclick="expandAll()" style="display:none;">Expand all</button>
+    <button class="toolbar-btn" id="collapse-btn" onclick="collapseAll()" style="display:none;">Collapse all</button>
     <a href="index.html" class="toolbar-btn primary">← Reformat another</a>
     <a href="prompt.html" class="toolbar-btn">Build AI prompt</a>
   </div>
@@ -301,6 +389,12 @@ body {
       <a href="siteowners.html">read our page for site owners</a>.
     </div>
     <a href="index.html" class="btn-back">← Try another URL</a>
+  </div>
+
+  <!-- Truncation warning -->
+  <div class="truncation-banner" id="truncation-banner">
+    <strong>This page was too long to reformat in full.</strong> readclear is a free service — we currently support up to 2,500 words per page. You're seeing the first part only.<br>
+    Would you pay a small subscription for full-page reformatting? <a href="https://importantsmallthings.com/#contact" target="_blank" rel="noopener">Get in touch and let us know →</a>
   </div>
 
   <!-- Content -->
@@ -357,10 +451,29 @@ function init() {
     document.getElementById('refresh-btn').style.display = 'inline-block';
   }
 
+  // Show truncation warning if page was too long
+  if (result.truncated) {
+    document.getElementById('truncation-banner').style.display = 'block';
+  }
+
   document.getElementById('loading-state').style.display = 'none';
   const content = document.getElementById('reading-content');
   content.innerHTML = sanitiseHtml(result.html);
   content.style.display = 'block';
+
+  // Show expand/collapse buttons if there are any details elements
+  if (content.querySelectorAll('details').length > 0) {
+    document.getElementById('expand-btn').style.display = 'inline-flex';
+    document.getElementById('collapse-btn').style.display = 'inline-flex';
+  }
+}
+
+function expandAll() {
+  document.querySelectorAll('.reading-content details').forEach(d => d.open = true);
+}
+
+function collapseAll() {
+  document.querySelectorAll('.reading-content details').forEach(d => d.open = false);
 }
 
 function refreshPage() {
@@ -390,10 +503,14 @@ function sanitiseHtml(html) {
     'code','pre','table','thead','tbody','tr','th','td'
   ]);
   const ALLOWED_ATTRS = {
-    a:  ['href','target','rel'],
-    td: ['colspan','rowspan'],
-    th: ['colspan','rowspan','scope']
+    a:       ['href','target','rel'],
+    details: ['open'],
+    div:     ['class'],
+    td:      ['colspan','rowspan'],
+    th:      ['colspan','rowspan','scope']
   };
+  // Only allow known safe class names on divs
+  const ALLOWED_CLASSES = new Set(['doc-summary']);
 
   const template = document.createElement('template');
   template.innerHTML = html;
@@ -412,6 +529,11 @@ function sanitiseHtml(html) {
           const allowed = ALLOWED_ATTRS[tag] || [];
           if (!allowed.includes(attr.name)) child.removeAttribute(attr.name);
         });
+        // Sanitise class names on divs — only allow our known safe classes
+        if (tag === 'div') {
+          const cls = child.getAttribute('class') || '';
+          if (!ALLOWED_CLASSES.has(cls.trim())) child.removeAttribute('class');
+        }
         // Force safe link behaviour and block javascript: hrefs
         if (tag === 'a') {
           child.setAttribute('target', '_blank');
