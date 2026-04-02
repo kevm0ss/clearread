@@ -349,7 +349,7 @@ body {
 }
 
 /* DESIGN PREFERENCE STYLES */
-body[data-bg="white"]  { background: #ffffff; }
+body[data-bg="white"]  { background: #d8d4ce; }
 body[data-bg="warm"]   { background: #faf8f3; }
 body[data-bg="yellow"] { background: #fef9e7; }
 body[data-bg="dark"]   { background: #1c1917; }
@@ -357,6 +357,7 @@ body[data-bg="dark"] .reading-content,
 body[data-bg="dark"] .reading-content h1,
 body[data-bg="dark"] .reading-content h2,
 body[data-bg="dark"] .reading-content h3 { color: #faf8f3; }
+body[data-bg="dark"] .reading-content strong { color: #faf8f3; }
 body[data-bg="dark"] .reading-content summary { background: #2a2520; color: #faf8f3; }
 body[data-bg="dark"] .reading-content details { border-color: #3a3530; background: #231f1c; }
 body[data-bg="dark"] .truncation-banner { background: #2a2008; border-color: #78350f; color: #fef3c7; }
@@ -440,7 +441,7 @@ body[data-width="narrow"] .reading-content li { max-width: 45ch; }
   font-size: 10px;
   font-weight: 700;
   letter-spacing: 0.12em;
-  color: #5a5550;
+  color: #8a857e;
   text-transform: uppercase;
   margin-bottom: 12px;
 }
@@ -451,7 +452,7 @@ body[data-width="narrow"] .reading-content li { max-width: 45ch; }
   margin-bottom: 10px;
 }
 .refine-row:last-child { margin-bottom: 0; }
-.refine-row-label { font-size: 12px; color: #8a857e; }
+.refine-row-label { font-size: 12px; color: #c8c3bc; }
 .refine-btn-group { display: flex; gap: 4px; }
 .refine-btn {
   background: #2a2520;
@@ -460,37 +461,37 @@ body[data-width="narrow"] .reading-content li { max-width: 45ch; }
   padding: 5px 9px;
   font-size: 12px;
   font-weight: 600;
-  color: #6a6560;
+  color: #a8a29e;
   cursor: pointer;
   font-family: 'Plus Jakarta Sans', sans-serif;
   transition: all 0.1s;
 }
-.refine-btn:hover { color: #c8c3bc; border-color: #5a5550; }
+.refine-btn:hover { color: #faf8f3; border-color: #5a5550; }
 .refine-btn.active { background: var(--amber); border-color: var(--amber); color: #fff; }
 .refine-swatch {
   width: 26px;
   height: 26px;
   border-radius: 50%;
-  border: 2px solid transparent;
+  border: 1.5px solid #4a4540;
   cursor: pointer;
   transition: all 0.1s;
   outline: 2px solid transparent;
 }
 .refine-swatch:hover { transform: scale(1.1); }
 .refine-swatch.active { outline: 2px solid var(--amber); outline-offset: 2px; }
-.refine-note { font-size: 11px; color: #5a5550; margin-bottom: 12px; line-height: 1.5; }
+.refine-note { font-size: 11px; color: #8a857e; margin-bottom: 12px; line-height: 1.5; }
 .refine-check {
   display: flex;
   align-items: flex-start;
   gap: 10px;
   font-size: 13px;
-  color: #a8a29e;
+  color: #c8c3bc;
   margin-bottom: 10px;
   cursor: pointer;
   line-height: 1.4;
 }
 .refine-check input { accent-color: var(--amber); width: 15px; height: 15px; margin-top: 1px; flex-shrink: 0; }
-.refine-check:hover { color: #c8c3bc; }
+.refine-check:hover { color: #faf8f3; }
 .refine-reformat-btn {
   width: 100%;
   background: var(--amber);
@@ -509,7 +510,7 @@ body[data-width="narrow"] .reading-content li { max-width: 45ch; }
 .refine-reformat-btn:disabled { background: #2a2520; color: #5a5550; cursor: not-allowed; }
 .refine-cost-note {
   font-size: 11px;
-  color: #4a4540;
+  color: #8a857e;
   text-align: center;
   margin-top: 8px;
   line-height: 1.5;
@@ -612,9 +613,9 @@ body[data-width="narrow"] .reading-content li { max-width: 45ch; }
       <span class="refine-row-label">Background</span>
       <div class="refine-btn-group">
         <button class="refine-swatch active" data-pref="bg" data-val="warm"   onclick="setDesignPref('bg','warm',this)"   style="background:#faf8f3;" title="Warm white"></button>
-        <button class="refine-swatch" data-pref="bg" data-val="white"  onclick="setDesignPref('bg','white',this)"  style="background:#ffffff;border:1px solid #ddd;" title="White"></button>
+        <button class="refine-swatch" data-pref="bg" data-val="white"  onclick="setDesignPref('bg','white',this)"  style="background:#d8d4ce;" title="Grey"></button>
         <button class="refine-swatch" data-pref="bg" data-val="yellow" onclick="setDesignPref('bg','yellow',this)" style="background:#fef9e7;" title="Soft yellow"></button>
-        <button class="refine-swatch" data-pref="bg" data-val="dark"   onclick="setDesignPref('bg','dark',this)"   style="background:#1c1917;" title="Dark"></button>
+        <button class="refine-swatch" data-pref="bg" data-val="dark"   onclick="setDesignPref('bg','dark',this)"   style="background:#1c1917;border-color:#6a6560;" title="Dark"></button>
       </div>
     </div>
 
