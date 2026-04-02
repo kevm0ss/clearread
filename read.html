@@ -347,6 +347,179 @@ body {
   .toolbar-source { display: none; }
   .reading-wrap { padding: 40px 20px 80px; }
 }
+
+/* DESIGN PREFERENCE STYLES */
+body[data-bg="white"]  { background: #ffffff; }
+body[data-bg="warm"]   { background: #faf8f3; }
+body[data-bg="yellow"] { background: #fef9e7; }
+body[data-bg="dark"]   { background: #1c1917; }
+body[data-bg="dark"] .reading-content,
+body[data-bg="dark"] .reading-content h1,
+body[data-bg="dark"] .reading-content h2,
+body[data-bg="dark"] .reading-content h3 { color: #faf8f3; }
+body[data-bg="dark"] .reading-content summary { background: #2a2520; color: #faf8f3; }
+body[data-bg="dark"] .reading-content details { border-color: #3a3530; background: #231f1c; }
+body[data-bg="dark"] .truncation-banner { background: #2a2008; border-color: #78350f; color: #fef3c7; }
+
+body[data-fontsize="small"]  .reading-content { font-size: 14px; }
+body[data-fontsize="medium"] .reading-content { font-size: 17px; }
+body[data-fontsize="large"]  .reading-content { font-size: 20px; }
+body[data-fontsize="xl"]     .reading-content { font-size: 24px; }
+
+body[data-spacing="normal"]   .reading-content p,
+body[data-spacing="normal"]   .reading-content li  { line-height: 1.7; }
+body[data-spacing="relaxed"]  .reading-content p,
+body[data-spacing="relaxed"]  .reading-content li  { line-height: 2.1; margin-bottom: 1.2em; }
+body[data-spacing="spacious"] .reading-content p,
+body[data-spacing="spacious"] .reading-content li  { line-height: 2.5; margin-bottom: 1.8em; }
+
+body[data-width="narrow"] .reading-content p,
+body[data-width="narrow"] .reading-content li { max-width: 45ch; }
+
+/* REFINE PANEL */
+.refine-trigger {
+  position: fixed;
+  bottom: 24px;
+  right: 24px;
+  background: var(--ink);
+  color: #c8c3bc;
+  border: 1px solid #3a3530;
+  border-radius: 24px;
+  padding: 11px 20px;
+  font-size: 13px;
+  font-weight: 700;
+  font-family: 'Plus Jakarta Sans', sans-serif;
+  cursor: pointer;
+  z-index: 200;
+  box-shadow: 0 4px 24px rgba(0,0,0,0.35);
+  transition: all 0.15s;
+  letter-spacing: 0.03em;
+}
+.refine-trigger:hover { border-color: var(--amber); color: var(--amber); }
+
+.refine-panel {
+  position: fixed;
+  bottom: 72px;
+  right: 24px;
+  width: 290px;
+  background: #1a1612;
+  border: 1px solid #3a3530;
+  border-radius: 14px;
+  box-shadow: 0 12px 48px rgba(0,0,0,0.5);
+  z-index: 199;
+  max-height: calc(100vh - 100px);
+  overflow-y: auto;
+}
+.refine-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 14px 18px 12px;
+  border-bottom: 1px solid #2a2520;
+}
+.refine-title {
+  font-size: 11px;
+  font-weight: 700;
+  color: #8a857e;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+}
+.refine-close {
+  background: none;
+  border: none;
+  color: #6a6560;
+  cursor: pointer;
+  font-size: 15px;
+  padding: 0;
+  line-height: 1;
+}
+.refine-close:hover { color: #c8c3bc; }
+.refine-section { padding: 14px 18px; border-bottom: 1px solid #2a2520; }
+.refine-section:last-child { border-bottom: none; }
+.refine-section-label {
+  font-size: 10px;
+  font-weight: 700;
+  letter-spacing: 0.12em;
+  color: #5a5550;
+  text-transform: uppercase;
+  margin-bottom: 12px;
+}
+.refine-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 10px;
+}
+.refine-row:last-child { margin-bottom: 0; }
+.refine-row-label { font-size: 12px; color: #8a857e; }
+.refine-btn-group { display: flex; gap: 4px; }
+.refine-btn {
+  background: #2a2520;
+  border: 1px solid #3a3530;
+  border-radius: 6px;
+  padding: 5px 9px;
+  font-size: 12px;
+  font-weight: 600;
+  color: #6a6560;
+  cursor: pointer;
+  font-family: 'Plus Jakarta Sans', sans-serif;
+  transition: all 0.1s;
+}
+.refine-btn:hover { color: #c8c3bc; border-color: #5a5550; }
+.refine-btn.active { background: var(--amber); border-color: var(--amber); color: #fff; }
+.refine-swatch {
+  width: 26px;
+  height: 26px;
+  border-radius: 50%;
+  border: 2px solid transparent;
+  cursor: pointer;
+  transition: all 0.1s;
+  outline: 2px solid transparent;
+}
+.refine-swatch:hover { transform: scale(1.1); }
+.refine-swatch.active { outline: 2px solid var(--amber); outline-offset: 2px; }
+.refine-note { font-size: 11px; color: #5a5550; margin-bottom: 12px; line-height: 1.5; }
+.refine-check {
+  display: flex;
+  align-items: flex-start;
+  gap: 10px;
+  font-size: 13px;
+  color: #a8a29e;
+  margin-bottom: 10px;
+  cursor: pointer;
+  line-height: 1.4;
+}
+.refine-check input { accent-color: var(--amber); width: 15px; height: 15px; margin-top: 1px; flex-shrink: 0; }
+.refine-check:hover { color: #c8c3bc; }
+.refine-reformat-btn {
+  width: 100%;
+  background: var(--amber);
+  border: none;
+  border-radius: 8px;
+  padding: 10px;
+  font-size: 13px;
+  font-weight: 700;
+  color: #1c1917;
+  cursor: pointer;
+  font-family: 'Plus Jakarta Sans', sans-serif;
+  margin-top: 14px;
+  transition: background 0.15s;
+}
+.refine-reformat-btn:hover { background: #b45309; color: #fff; }
+.refine-reformat-btn:disabled { background: #2a2520; color: #5a5550; cursor: not-allowed; }
+.refine-cost-note {
+  font-size: 11px;
+  color: #4a4540;
+  text-align: center;
+  margin-top: 8px;
+  line-height: 1.5;
+}
+.refine-cost-note a { color: #5a5550; text-decoration: none; }
+.refine-cost-note a:hover { color: var(--amber); }
+@media (max-width: 600px) {
+  .refine-panel { right: 12px; left: 12px; width: auto; bottom: 68px; }
+  .refine-trigger { right: 12px; bottom: 16px; }
+}
 </style>
 </head>
 <body>
@@ -401,6 +574,73 @@ body {
   <div class="reading-content" id="reading-content" style="display:none;"></div>
 
 </main>
+
+<!-- REFINE TRIGGER -->
+<button class="refine-trigger" id="refine-trigger" onclick="toggleRefine()" style="display:none;">✦ Refine</button>
+
+<!-- REFINE PANEL -->
+<div class="refine-panel" id="refine-panel" style="display:none;">
+  <div class="refine-header">
+    <span class="refine-title">Refine your reading</span>
+    <button class="refine-close" onclick="toggleRefine()">✕</button>
+  </div>
+
+  <!-- DESIGN -->
+  <div class="refine-section">
+    <div class="refine-section-label">Design</div>
+
+    <div class="refine-row">
+      <span class="refine-row-label">Text size</span>
+      <div class="refine-btn-group">
+        <button class="refine-btn" data-pref="fontsize" data-val="small"   onclick="setDesignPref('fontsize','small',this)">A−</button>
+        <button class="refine-btn active" data-pref="fontsize" data-val="medium" onclick="setDesignPref('fontsize','medium',this)">A</button>
+        <button class="refine-btn" data-pref="fontsize" data-val="large"   onclick="setDesignPref('fontsize','large',this)">A+</button>
+        <button class="refine-btn" data-pref="fontsize" data-val="xl"      onclick="setDesignPref('fontsize','xl',this)">A++</button>
+      </div>
+    </div>
+
+    <div class="refine-row">
+      <span class="refine-row-label">Spacing</span>
+      <div class="refine-btn-group">
+        <button class="refine-btn active" data-pref="spacing" data-val="normal"   onclick="setDesignPref('spacing','normal',this)">Normal</button>
+        <button class="refine-btn" data-pref="spacing" data-val="relaxed"  onclick="setDesignPref('spacing','relaxed',this)">Relaxed</button>
+        <button class="refine-btn" data-pref="spacing" data-val="spacious" onclick="setDesignPref('spacing','spacious',this)">Spacious</button>
+      </div>
+    </div>
+
+    <div class="refine-row">
+      <span class="refine-row-label">Background</span>
+      <div class="refine-btn-group">
+        <button class="refine-swatch active" data-pref="bg" data-val="warm"   onclick="setDesignPref('bg','warm',this)"   style="background:#faf8f3;" title="Warm white"></button>
+        <button class="refine-swatch" data-pref="bg" data-val="white"  onclick="setDesignPref('bg','white',this)"  style="background:#ffffff;border:1px solid #ddd;" title="White"></button>
+        <button class="refine-swatch" data-pref="bg" data-val="yellow" onclick="setDesignPref('bg','yellow',this)" style="background:#fef9e7;" title="Soft yellow"></button>
+        <button class="refine-swatch" data-pref="bg" data-val="dark"   onclick="setDesignPref('bg','dark',this)"   style="background:#1c1917;" title="Dark"></button>
+      </div>
+    </div>
+
+    <div class="refine-row">
+      <span class="refine-row-label">Line width</span>
+      <div class="refine-btn-group">
+        <button class="refine-btn active" data-pref="width" data-val="normal" onclick="setDesignPref('width','normal',this)">Normal</button>
+        <button class="refine-btn" data-pref="width" data-val="narrow" onclick="setDesignPref('width','narrow',this)">Narrow</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- CONTENT -->
+  <div class="refine-section">
+    <div class="refine-section-label">Content</div>
+    <p class="refine-note">These re-run the reformat with new instructions applied.</p>
+    <label class="refine-check"><input type="checkbox" id="pref-simpler"> Use simpler language throughout</label>
+    <label class="refine-check"><input type="checkbox" id="pref-vshort"> Very short sentences (10 words max)</label>
+    <label class="refine-check"><input type="checkbox" id="pref-bullets"> Convert dense paragraphs to bullets</label>
+    <label class="refine-check"><input type="checkbox" id="pref-collapse"> Collapse long sections</label>
+    <button class="refine-reformat-btn" id="reformat-prefs-btn" onclick="reformatWithPrefs()">↺ Reformat with these settings</button>
+    <p class="refine-cost-note">This costs us to run — please use thoughtfully.<br>
+      <a href="https://buymeacoffee.com/readclear" target="_blank" rel="noopener">Buy us a coffee to help ♥</a>
+    </p>
+  </div>
+</div>
 
 <script>
 const PROFILE_LABELS = {
@@ -460,6 +700,7 @@ function init() {
   const content = document.getElementById('reading-content');
   content.innerHTML = sanitiseHtml(result.html);
   content.style.display = 'block';
+  document.getElementById('refine-trigger').style.display = 'block';
 
   // Show expand/collapse buttons if there are any details elements
   if (content.querySelectorAll('details').length > 0) {
@@ -565,7 +806,126 @@ function escHtml(str) {
   return String(str).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
 }
 
-document.addEventListener('DOMContentLoaded', init);
+document.addEventListener('DOMContentLoaded', () => { init(); loadPrefs(); });
+
+/* ── REFINE PANEL ──────────────────────────────── */
+
+const WORKER_URL = 'https://readclear-worker-v2.kev-958.workers.dev';
+
+const PREF_DEFAULTS = { fontsize: 'medium', spacing: 'normal', bg: 'warm', width: 'normal' };
+
+let currentPrefs = { ...PREF_DEFAULTS };
+
+function loadPrefs() {
+  try {
+    const saved = JSON.parse(localStorage.getItem('readclear_prefs'));
+    if (saved) currentPrefs = { ...PREF_DEFAULTS, ...saved };
+  } catch(e) {}
+
+  // Apply design prefs
+  applyDesignPrefs();
+
+  // Restore button active states
+  Object.entries(currentPrefs).forEach(([key, val]) => {
+    document.querySelectorAll(`[data-pref="${key}"]`).forEach(b => {
+      b.classList.toggle('active', b.dataset.val === val);
+    });
+  });
+
+  // Restore content checkbox states
+  try {
+    const contentPrefs = JSON.parse(localStorage.getItem('readclear_content_prefs')) || {};
+    ['simpler','vshort','bullets','collapse'].forEach(k => {
+      const el = document.getElementById('pref-' + k);
+      if (el) el.checked = !!contentPrefs[k];
+    });
+  } catch(e) {}
+}
+
+function applyDesignPrefs() {
+  document.body.setAttribute('data-bg',       currentPrefs.bg);
+  document.body.setAttribute('data-fontsize',  currentPrefs.fontsize);
+  document.body.setAttribute('data-spacing',   currentPrefs.spacing);
+  document.body.setAttribute('data-width',     currentPrefs.width);
+}
+
+function setDesignPref(key, val, btn) {
+  currentPrefs[key] = val;
+  document.querySelectorAll(`[data-pref="${key}"]`).forEach(b => b.classList.remove('active'));
+  btn.classList.add('active');
+  applyDesignPrefs();
+  try { localStorage.setItem('readclear_prefs', JSON.stringify(currentPrefs)); } catch(e) {}
+}
+
+function toggleRefine() {
+  const panel = document.getElementById('refine-panel');
+  panel.style.display = panel.style.display === 'none' ? 'block' : 'none';
+}
+
+async function reformatWithPrefs() {
+  const result = (() => { try { return JSON.parse(localStorage.getItem('readclear_result')); } catch(e) { return null; } })();
+  if (!result || !result.url) return;
+
+  // Save content pref checkbox states
+  const contentPrefs = {};
+  ['simpler','vshort','bullets','collapse'].forEach(k => {
+    contentPrefs[k] = document.getElementById('pref-' + k)?.checked || false;
+  });
+  try { localStorage.setItem('readclear_content_prefs', JSON.stringify(contentPrefs)); } catch(e) {}
+
+  // Build extras string from checked options
+  const extras = [];
+  if (contentPrefs.simpler)   extras.push('Use the simplest possible language. Replace every complex word with a plain everyday alternative. Aim for a reading level that anyone can understand.');
+  if (contentPrefs.vshort)    extras.push('Keep every sentence to 10 words or fewer. Split longer sentences aggressively. One idea per sentence, no exceptions.');
+  if (contentPrefs.bullets)   extras.push('Convert every paragraph of 2 or more sentences into a bullet list. Prose should be the exception, not the rule.');
+  if (contentPrefs.collapse)  extras.push('Wrap any section with 3 or more paragraphs in <details><summary>[one sentence summary of the section]</summary>...</details>.');
+
+  if (extras.length === 0) {
+    alert('Please select at least one content option to reformat with.');
+    return;
+  }
+
+  const btn = document.getElementById('reformat-prefs-btn');
+  btn.disabled = true;
+  btn.textContent = '↺ Reformatting…';
+
+  try {
+    const response = await fetch(`${WORKER_URL}/reformat`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ url: result.url, profile: result.profile || 'mixed', extras: extras.join('\n') })
+    });
+
+    const data = await response.json();
+    if (!response.ok || data.error) throw new Error(data.error || 'Reformat failed.');
+
+    // Update reading content
+    const content = document.getElementById('reading-content');
+    content.innerHTML = sanitiseHtml(data.html);
+
+    // Update expand/collapse buttons
+    document.getElementById('expand-btn').style.display   = content.querySelectorAll('details').length > 0 ? 'inline-flex' : 'none';
+    document.getElementById('collapse-btn').style.display = content.querySelectorAll('details').length > 0 ? 'inline-flex' : 'none';
+
+    // Update truncation banner
+    document.getElementById('truncation-banner').style.display = data.truncated ? 'block' : 'none';
+
+    // Save updated result to localStorage
+    try {
+      localStorage.setItem('readclear_result', JSON.stringify({
+        ...result, html: data.html, truncated: data.truncated, fromCache: false
+      }));
+    } catch(e) {}
+
+    toggleRefine();
+
+  } catch(err) {
+    alert('Reformat failed. Please try again.');
+  } finally {
+    btn.disabled = false;
+    btn.textContent = '↺ Reformat with these settings';
+  }
+}
 </script>
 
 </body>
