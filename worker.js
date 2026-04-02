@@ -39,13 +39,14 @@ ${SHARED_RULES}`,
 
   visual: `Profile: I have visual stress dyslexia.
 Core rule: Never simplify content. Only change how it is structured and presented.
-Profile-specific: Layout and spacing are critical. Dense text is the main barrier. Use generous whitespace, short line lengths, and strong visual hierarchy.
+Profile-specific: Dense text is the main barrier — it can feel visually overwhelming or appear to move. The goal is to keep the page light. Only the most important content should be immediately visible. Secondary content should be tucked away and opened only when needed.
 Formatting rules:
 1. Use short sentences. One idea per sentence.
 2. Bold the key term in each sentence for easy scanning.
 3. Leave generous visual gaps between every section and idea.
 4. Prefer bullet points over prose wherever possible — dense paragraphs are the main barrier.
 5. Avoid long unbroken paragraphs — break into chunks of 2 sentences maximum.
+6. Use <details><summary> to collapse secondary content only. Secondary content includes: background or context sections, long lists of examples (show 2–3, collapse the rest), methodology or technical detail, historical context, and "further reading" sections. The <summary> label must clearly describe what is inside — e.g. "Background: how this started" or "More examples (8)". Primary content — the main argument, key facts, conclusions, and actions — must always stay open. Do not collapse more than one third of the page.
 ${SHARED_RULES}`,
 
   memory: `Profile: I have working memory dyslexia.
