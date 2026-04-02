@@ -940,6 +940,7 @@ document.addEventListener('DOMContentLoaded', () => { init(); loadPrefs(); initR
 let ttsState = 'stopped'; // stopped | playing | paused
 let ttsPingTimer = null;
 let activeSectionBtn = null;
+let currentUtteranceId = 0;
 
 function handleSpeak() {
   if (ttsState === 'stopped') { speakAll(); }
@@ -976,14 +977,16 @@ function updateSectionBtn() {
 }
 
 function startSpeaking(text) {
+  const myId = ++currentUtteranceId; // increment before cancel so old events are ignored
   speechSynthesis.cancel();
   clearInterval(ttsPingTimer);
   const utterance = new SpeechSynthesisUtterance(text);
   utterance.rate = 0.92;
-  utterance.onstart = () => { ttsState = 'playing'; updateSpeakBtn(); updateSectionBtn(); };
-  utterance.onpause = () => { ttsState = 'paused'; updateSpeakBtn(); updateSectionBtn(); };
-  utterance.onresume = () => { ttsState = 'playing'; updateSpeakBtn(); updateSectionBtn(); };
+  utterance.onstart  = () => { if (currentUtteranceId !== myId) return; ttsState = 'playing'; updateSpeakBtn(); updateSectionBtn(); };
+  utterance.onpause  = () => { if (currentUtteranceId !== myId) return; ttsState = 'paused';  updateSpeakBtn(); updateSectionBtn(); };
+  utterance.onresume = () => { if (currentUtteranceId !== myId) return; ttsState = 'playing'; updateSpeakBtn(); updateSectionBtn(); };
   utterance.onend = utterance.onerror = () => {
+    if (currentUtteranceId !== myId) return; // stale event from a cancelled utterance — ignore
     ttsState = 'stopped';
     clearInterval(ttsPingTimer);
     updateSpeakBtn();
