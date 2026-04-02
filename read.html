@@ -939,6 +939,7 @@ document.addEventListener('DOMContentLoaded', () => { init(); loadPrefs(); initR
 // ── TEXT TO SPEECH ──
 let ttsState = 'stopped'; // stopped | playing | paused
 let ttsPingTimer = null;
+let activeSectionBtn = null;
 
 function handleSpeak() {
   if (ttsState === 'stopped') { speakAll(); }
@@ -953,9 +954,25 @@ function speakAll() {
 }
 
 function speakSection(text, iconBtn) {
-  document.querySelectorAll('.section-speak-btn.speaking').forEach(b => b.classList.remove('speaking'));
-  if (iconBtn) iconBtn.classList.add('speaking');
+  // Reset any previously active section button
+  if (activeSectionBtn && activeSectionBtn !== iconBtn) {
+    activeSectionBtn.textContent = '🔊';
+    activeSectionBtn.classList.remove('speaking');
+  }
+  activeSectionBtn = iconBtn || null;
+  if (activeSectionBtn) activeSectionBtn.classList.add('speaking');
   startSpeaking(text);
+}
+
+function updateSectionBtn() {
+  if (!activeSectionBtn) return;
+  if (ttsState === 'playing')      { activeSectionBtn.textContent = '⏸'; }
+  else if (ttsState === 'paused')  { activeSectionBtn.textContent = '▶'; }
+  else {
+    activeSectionBtn.textContent = '🔊';
+    activeSectionBtn.classList.remove('speaking');
+    activeSectionBtn = null;
+  }
 }
 
 function startSpeaking(text) {
@@ -963,14 +980,14 @@ function startSpeaking(text) {
   clearInterval(ttsPingTimer);
   const utterance = new SpeechSynthesisUtterance(text);
   utterance.rate = 0.92;
-  utterance.onstart = () => { ttsState = 'playing'; updateSpeakBtn(); };
-  utterance.onpause = () => { ttsState = 'paused'; updateSpeakBtn(); };
-  utterance.onresume = () => { ttsState = 'playing'; updateSpeakBtn(); };
+  utterance.onstart = () => { ttsState = 'playing'; updateSpeakBtn(); updateSectionBtn(); };
+  utterance.onpause = () => { ttsState = 'paused'; updateSpeakBtn(); updateSectionBtn(); };
+  utterance.onresume = () => { ttsState = 'playing'; updateSpeakBtn(); updateSectionBtn(); };
   utterance.onend = utterance.onerror = () => {
     ttsState = 'stopped';
     clearInterval(ttsPingTimer);
-    document.querySelectorAll('.section-speak-btn.speaking').forEach(b => b.classList.remove('speaking'));
     updateSpeakBtn();
+    updateSectionBtn();
   };
   speechSynthesis.speak(utterance);
   // Chrome bug workaround — pauses after ~15s without this
@@ -1027,7 +1044,13 @@ function injectSpeakerIcons() {
     btn.textContent = '🔊';
     btn.addEventListener('click', e => {
       e.stopPropagation();
-      speakSection(getSectionText(el), btn);
+      if (activeSectionBtn === btn) {
+        // This section is already active — toggle pause/resume
+        if (ttsState === 'playing') pauseSpeech();
+        else if (ttsState === 'paused') resumeSpeech();
+      } else {
+        speakSection(getSectionText(el), btn);
+      }
     });
     el.appendChild(btn);
   });
