@@ -1964,7 +1964,10 @@ function buildPrompt() {
 <span class="prompt-key">Profile-specific:</span> <span class="prompt-val">${p.extra}</span>
 
 <span class="prompt-key">Formatting rules:</span>
-${lines.join('\n')}`;
+${lines.join('\n')}
+
+<span class="prompt-key">Line and paragraph length:</span>
+<span class="prompt-val">Keep sentences to 20 words or fewer. Keep paragraphs to 1–3 sentences. When a response contains 3 or more related items, use a bullet list rather than prose.</span>`;
 
   // Update char counter
   const charCount = out.innerText.length;
