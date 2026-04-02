@@ -993,6 +993,30 @@ function updateSpeakBtn() {
   else if (ttsState === 'paused') { btn.textContent = '▶ Resume'; }
 }
 
+function getSectionText(headingEl) {
+  const HEADING_TAGS = new Set(['H1','H2','H3','H4','H5','H6','SUMMARY']);
+
+  // For <summary> inside <details> — read just that collapsed block
+  if (headingEl.tagName === 'SUMMARY') {
+    const details = headingEl.closest('details');
+    if (details) return details.innerText.replace(/🔊/g, '').trim();
+  }
+
+  // For regular headings — walk forward siblings until the next heading
+  const headingText = Array.from(headingEl.childNodes)
+    .filter(n => !(n.nodeType === Node.ELEMENT_NODE && n.classList.contains('section-speak-btn')))
+    .map(n => n.textContent).join('').trim();
+
+  const parts = [headingText];
+  let sibling = headingEl.nextElementSibling;
+  while (sibling) {
+    if (HEADING_TAGS.has(sibling.tagName)) break;
+    parts.push(sibling.innerText || sibling.textContent || '');
+    sibling = sibling.nextElementSibling;
+  }
+  return parts.join('\n').trim();
+}
+
 function injectSpeakerIcons() {
   const content = document.getElementById('reading-content');
   if (!content || !('speechSynthesis' in window)) return;
@@ -1003,9 +1027,7 @@ function injectSpeakerIcons() {
     btn.textContent = '🔊';
     btn.addEventListener('click', e => {
       e.stopPropagation();
-      // Gather text: from this element to the next heading
-      const parent = el.closest('details') || el.parentElement;
-      speakSection(parent.innerText, btn);
+      speakSection(getSectionText(el), btn);
     });
     el.appendChild(btn);
   });
