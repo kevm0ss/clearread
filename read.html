@@ -347,6 +347,278 @@ body {
   .toolbar-source { display: none; }
   .reading-wrap { padding: 40px 20px 80px; }
 }
+
+/* DESIGN PREFERENCE STYLES */
+body[data-bg="white"]  { background: #d8d4ce; }
+body[data-bg="warm"]   { background: #faf8f3; }
+body[data-bg="yellow"] { background: #fef9e7; }
+body[data-bg="dark"]   { background: #1c1917; }
+body[data-bg="dark"] .reading-content,
+body[data-bg="dark"] .reading-content h1,
+body[data-bg="dark"] .reading-content h2,
+body[data-bg="dark"] .reading-content h3 { color: #faf8f3; }
+body[data-bg="dark"] .reading-content strong { color: #faf8f3; }
+body[data-bg="dark"] .reading-content summary { background: #2a2520; color: #faf8f3; }
+body[data-bg="dark"] .reading-content details { border-color: #3a3530; background: #231f1c; }
+body[data-bg="dark"] .truncation-banner { background: #2a2008; border-color: #78350f; color: #fef3c7; }
+
+body[data-fontsize="small"]  .reading-content { font-size: 14px; }
+body[data-fontsize="medium"] .reading-content { font-size: 17px; }
+body[data-fontsize="large"]  .reading-content { font-size: 20px; }
+body[data-fontsize="xl"]     .reading-content { font-size: 24px; }
+
+body[data-spacing="normal"]   .reading-content p,
+body[data-spacing="normal"]   .reading-content li  { line-height: 1.7; }
+body[data-spacing="relaxed"]  .reading-content p,
+body[data-spacing="relaxed"]  .reading-content li  { line-height: 2.1; margin-bottom: 1.2em; }
+body[data-spacing="spacious"] .reading-content p,
+body[data-spacing="spacious"] .reading-content li  { line-height: 2.5; margin-bottom: 1.8em; }
+
+body[data-width="narrow"] .reading-content p,
+body[data-width="narrow"] .reading-content li { max-width: 45ch; }
+
+/* REFINE PANEL */
+.refine-trigger {
+  position: fixed;
+  bottom: 24px;
+  right: 24px;
+  background: var(--ink);
+  color: #c8c3bc;
+  border: 1px solid #3a3530;
+  border-radius: 24px;
+  padding: 11px 20px;
+  font-size: 13px;
+  font-weight: 700;
+  font-family: 'Plus Jakarta Sans', sans-serif;
+  cursor: pointer;
+  z-index: 200;
+  box-shadow: 0 4px 24px rgba(0,0,0,0.35);
+  transition: all 0.15s;
+  letter-spacing: 0.03em;
+}
+.refine-trigger:hover { border-color: var(--amber); color: var(--amber); }
+
+.refine-panel {
+  position: fixed;
+  bottom: 72px;
+  right: 24px;
+  width: 290px;
+  background: #1a1612;
+  border: 1px solid #3a3530;
+  border-radius: 14px;
+  box-shadow: 0 12px 48px rgba(0,0,0,0.5);
+  z-index: 199;
+  max-height: calc(100vh - 100px);
+  overflow-y: auto;
+}
+.refine-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 14px 18px 12px;
+  border-bottom: 1px solid #2a2520;
+}
+.refine-title {
+  font-size: 11px;
+  font-weight: 700;
+  color: #8a857e;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+}
+.refine-close {
+  background: none;
+  border: none;
+  color: #6a6560;
+  cursor: pointer;
+  font-size: 15px;
+  padding: 0;
+  line-height: 1;
+}
+.refine-close:hover { color: #c8c3bc; }
+.refine-section { padding: 14px 18px; border-bottom: 1px solid #2a2520; }
+.refine-section:last-child { border-bottom: none; }
+.refine-section-label {
+  font-size: 10px;
+  font-weight: 700;
+  letter-spacing: 0.12em;
+  color: #8a857e;
+  text-transform: uppercase;
+  margin-bottom: 12px;
+}
+.refine-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 10px;
+}
+.refine-row:last-child { margin-bottom: 0; }
+.refine-row-label { font-size: 12px; color: #c8c3bc; }
+.refine-btn-group { display: flex; gap: 4px; }
+.refine-btn {
+  background: #2a2520;
+  border: 1px solid #3a3530;
+  border-radius: 6px;
+  padding: 5px 9px;
+  font-size: 12px;
+  font-weight: 600;
+  color: #a8a29e;
+  cursor: pointer;
+  font-family: 'Plus Jakarta Sans', sans-serif;
+  transition: all 0.1s;
+}
+.refine-btn:hover { color: #faf8f3; border-color: #5a5550; }
+.refine-btn.active { background: var(--amber); border-color: var(--amber); color: #fff; }
+.refine-swatch {
+  width: 26px;
+  height: 26px;
+  border-radius: 50%;
+  border: 1.5px solid #4a4540;
+  cursor: pointer;
+  transition: all 0.1s;
+  outline: 2px solid transparent;
+}
+.refine-swatch:hover { transform: scale(1.1); }
+.refine-swatch.active { outline: 2px solid var(--amber); outline-offset: 2px; }
+.refine-note { font-size: 11px; color: #8a857e; margin-bottom: 12px; line-height: 1.5; }
+.refine-check {
+  display: flex;
+  align-items: flex-start;
+  gap: 10px;
+  font-size: 13px;
+  color: #c8c3bc;
+  margin-bottom: 10px;
+  cursor: pointer;
+  line-height: 1.4;
+}
+.refine-check input { accent-color: var(--amber); width: 15px; height: 15px; margin-top: 1px; flex-shrink: 0; }
+.refine-check:hover { color: #faf8f3; }
+.refine-reformat-btn {
+  width: 100%;
+  background: var(--amber);
+  border: none;
+  border-radius: 8px;
+  padding: 10px;
+  font-size: 13px;
+  font-weight: 700;
+  color: #1c1917;
+  cursor: pointer;
+  font-family: 'Plus Jakarta Sans', sans-serif;
+  margin-top: 14px;
+  transition: background 0.15s;
+}
+.refine-reformat-btn:hover { background: #b45309; color: #fff; }
+.refine-reformat-btn:disabled { background: #2a2520; color: #5a5550; cursor: not-allowed; }
+.refine-undo-btn {
+  width: 100%;
+  background: none;
+  border: 1px solid #3a3530;
+  border-radius: 8px;
+  padding: 9px;
+  font-size: 12px;
+  font-weight: 600;
+  color: #8a857e;
+  cursor: pointer;
+  font-family: 'Plus Jakarta Sans', sans-serif;
+  margin-top: 8px;
+  transition: all 0.15s;
+}
+.refine-undo-btn:hover { border-color: #8a857e; color: #c8c3bc; }
+.refine-cost-note {
+  font-size: 11px;
+  color: #8a857e;
+  text-align: center;
+  margin-top: 8px;
+  line-height: 1.5;
+}
+.refine-coffee-btn {
+  display: block;
+  margin-top: 10px;
+  padding: 9px 14px;
+  background: #d97706;
+  color: #fff;
+  font-family: 'Plus Jakarta Sans', sans-serif;
+  font-size: 13px;
+  font-weight: 600;
+  text-align: center;
+  text-decoration: none;
+  border-radius: 8px;
+  transition: background 0.15s;
+}
+.refine-coffee-btn:hover { background: #b45309; }
+
+/* READING AIDS TOGGLE */
+.refine-aid-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 12px;
+}
+.refine-aid-row:last-child { margin-bottom: 0; }
+.refine-aid-label { font-size: 13px; color: #c8c3bc; }
+.refine-aid-desc { font-size: 11px; color: #5a5550; margin-top: 2px; }
+.refine-toggle {
+  background: #2a2520;
+  border: 1px solid #3a3530;
+  border-radius: 20px;
+  padding: 4px 12px;
+  font-size: 11px;
+  font-weight: 700;
+  color: #6a6560;
+  cursor: pointer;
+  font-family: 'Plus Jakarta Sans', sans-serif;
+  letter-spacing: 0.05em;
+  transition: all 0.15s;
+  min-width: 44px;
+}
+.refine-toggle.active { background: var(--amber); border-color: var(--amber); color: #fff; }
+
+/* READING RULER */
+.reading-ruler {
+  display: none;
+  position: fixed;
+  left: 0;
+  right: 0;
+  height: 2em;
+  background: rgba(217,119,6,0.12);
+  border-top: 1px solid rgba(217,119,6,0.2);
+  border-bottom: 1px solid rgba(217,119,6,0.2);
+  pointer-events: none;
+  z-index: 50;
+  transition: top 0.05s linear;
+}
+body.ruler-active .reading-ruler { display: block; }
+
+/* FOCUS MODE */
+body.focus-active .reading-content p,
+body.focus-active .reading-content li,
+body.focus-active .reading-content h1,
+body.focus-active .reading-content h2,
+body.focus-active .reading-content h3 { opacity: 0.2; transition: opacity 0.15s; }
+body.focus-active .reading-content p.focus-highlight,
+body.focus-active .reading-content li.focus-highlight,
+body.focus-active .reading-content h1.focus-highlight,
+body.focus-active .reading-content h2.focus-highlight,
+body.focus-active .reading-content h3.focus-highlight { opacity: 1; }
+
+/* SECTION SPEAKER ICONS */
+.section-speak-btn {
+  background: none;
+  border: none;
+  cursor: pointer;
+  font-size: 13px;
+  opacity: 0.35;
+  padding: 0 0 0 8px;
+  vertical-align: middle;
+  transition: opacity 0.15s;
+  line-height: 1;
+}
+.section-speak-btn:hover { opacity: 1; }
+.section-speak-btn.speaking { opacity: 1; }
+
+@media (max-width: 600px) {
+  .refine-panel { right: 12px; left: 12px; width: auto; bottom: 68px; }
+  .refine-trigger { right: 12px; bottom: 16px; }
+}
 </style>
 </head>
 <body>
@@ -361,6 +633,7 @@ body {
   <div class="toolbar-actions">
     <span id="cache-badge" style="display:none;font-size:11px;font-weight:700;letter-spacing:0.05em;color:#6ee7b7;padding:4px 10px;background:rgba(110,231,183,0.1);border-radius:20px;border:1px solid rgba(110,231,183,0.2);">⚡ Cached</span>
     <button id="refresh-btn" style="display:none;background:none;border:1px solid #3a3530;color:#8a857e;font-family:inherit;font-size:13px;padding:6px 14px;border-radius:8px;cursor:pointer;" onclick="refreshPage()">↻ Refresh</button>
+    <button class="toolbar-btn" id="speak-btn" onclick="handleSpeak()" style="display:none;">🔊 Listen</button>
     <button class="toolbar-btn" id="expand-btn" onclick="expandAll()" style="display:none;">Expand all</button>
     <button class="toolbar-btn" id="collapse-btn" onclick="collapseAll()" style="display:none;">Collapse all</button>
     <a href="index.html" class="toolbar-btn primary">← Reformat another</a>
@@ -401,6 +674,95 @@ body {
   <div class="reading-content" id="reading-content" style="display:none;"></div>
 
 </main>
+
+<!-- READING RULER -->
+<div class="reading-ruler" id="reading-ruler"></div>
+
+<!-- REFINE TRIGGER -->
+<button class="refine-trigger" id="refine-trigger" onclick="toggleRefine()" style="display:none;">✦ Refine</button>
+
+<!-- REFINE PANEL -->
+<div class="refine-panel" id="refine-panel" style="display:none;">
+  <div class="refine-header">
+    <span class="refine-title">Refine your reading</span>
+    <button class="refine-close" onclick="toggleRefine()">✕</button>
+  </div>
+
+  <!-- DESIGN -->
+  <div class="refine-section">
+    <div class="refine-section-label">Design</div>
+
+    <div class="refine-row">
+      <span class="refine-row-label">Text size</span>
+      <div class="refine-btn-group">
+        <button class="refine-btn" data-pref="fontsize" data-val="small"   onclick="setDesignPref('fontsize','small',this)">A−</button>
+        <button class="refine-btn active" data-pref="fontsize" data-val="medium" onclick="setDesignPref('fontsize','medium',this)">A</button>
+        <button class="refine-btn" data-pref="fontsize" data-val="large"   onclick="setDesignPref('fontsize','large',this)">A+</button>
+        <button class="refine-btn" data-pref="fontsize" data-val="xl"      onclick="setDesignPref('fontsize','xl',this)">A++</button>
+      </div>
+    </div>
+
+    <div class="refine-row">
+      <span class="refine-row-label">Spacing</span>
+      <div class="refine-btn-group">
+        <button class="refine-btn active" data-pref="spacing" data-val="normal"   onclick="setDesignPref('spacing','normal',this)">Normal</button>
+        <button class="refine-btn" data-pref="spacing" data-val="relaxed"  onclick="setDesignPref('spacing','relaxed',this)">Relaxed</button>
+        <button class="refine-btn" data-pref="spacing" data-val="spacious" onclick="setDesignPref('spacing','spacious',this)">Spacious</button>
+      </div>
+    </div>
+
+    <div class="refine-row">
+      <span class="refine-row-label">Background</span>
+      <div class="refine-btn-group">
+        <button class="refine-swatch active" data-pref="bg" data-val="warm"   onclick="setDesignPref('bg','warm',this)"   style="background:#faf8f3;" title="Warm white"></button>
+        <button class="refine-swatch" data-pref="bg" data-val="white"  onclick="setDesignPref('bg','white',this)"  style="background:#d8d4ce;" title="Grey"></button>
+        <button class="refine-swatch" data-pref="bg" data-val="yellow" onclick="setDesignPref('bg','yellow',this)" style="background:#fef9e7;" title="Soft yellow"></button>
+        <button class="refine-swatch" data-pref="bg" data-val="dark"   onclick="setDesignPref('bg','dark',this)"   style="background:#1c1917;border-color:#6a6560;" title="Dark"></button>
+      </div>
+    </div>
+
+    <div class="refine-row">
+      <span class="refine-row-label">Line width</span>
+      <div class="refine-btn-group">
+        <button class="refine-btn active" data-pref="width" data-val="normal" onclick="setDesignPref('width','normal',this)">Normal</button>
+        <button class="refine-btn" data-pref="width" data-val="narrow" onclick="setDesignPref('width','narrow',this)">Narrow</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- READING AIDS -->
+  <div class="refine-section">
+    <div class="refine-section-label">Reading Aids</div>
+    <div class="refine-aid-row">
+      <div>
+        <div class="refine-aid-label">Reading ruler</div>
+        <div class="refine-aid-desc">Highlights your current line</div>
+      </div>
+      <button class="refine-toggle" id="ruler-toggle" onclick="toggleRuler()">Off</button>
+    </div>
+    <div class="refine-aid-row">
+      <div>
+        <div class="refine-aid-label">Focus mode</div>
+        <div class="refine-aid-desc">Dims everything except your paragraph</div>
+      </div>
+      <button class="refine-toggle" id="focus-toggle" onclick="toggleFocusMode()">Off</button>
+    </div>
+  </div>
+
+  <!-- CONTENT -->
+  <div class="refine-section">
+    <div class="refine-section-label">Content</div>
+    <p class="refine-note">These re-run the reformat with new instructions applied.</p>
+    <label class="refine-check"><input type="checkbox" id="pref-simpler" onchange="updateReformatBtn()"> Use simpler language throughout</label>
+    <label class="refine-check"><input type="checkbox" id="pref-vshort" onchange="updateReformatBtn()"> Very short sentences (10 words max)</label>
+    <label class="refine-check"><input type="checkbox" id="pref-bullets" onchange="updateReformatBtn()"> Convert dense paragraphs to bullets</label>
+    <label class="refine-check"><input type="checkbox" id="pref-collapse" onchange="updateReformatBtn()"> Collapse long sections</label>
+    <button class="refine-reformat-btn" id="reformat-prefs-btn" onclick="reformatWithPrefs()">↺ Reformat with these settings</button>
+    <button class="refine-undo-btn" id="undo-reformat-btn" onclick="undoReformat()" style="display:none;">← Undo — back to original</button>
+    <p class="refine-cost-note">Each reformat uses AI — please use thoughtfully.</p>
+    <a href="https://buymeacoffee.com/readclear" target="_blank" rel="noopener" class="refine-coffee-btn">☕ Buy us a coffee to keep this free</a>
+  </div>
+</div>
 
 <script>
 const PROFILE_LABELS = {
@@ -460,6 +822,11 @@ function init() {
   const content = document.getElementById('reading-content');
   content.innerHTML = sanitiseHtml(result.html);
   content.style.display = 'block';
+  document.getElementById('refine-trigger').style.display = 'block';
+  if ('speechSynthesis' in window) {
+    document.getElementById('speak-btn').style.display = 'inline-flex';
+  }
+  injectSpeakerIcons();
 
   // Show expand/collapse buttons if there are any details elements
   if (content.querySelectorAll('details').length > 0) {
@@ -565,7 +932,360 @@ function escHtml(str) {
   return String(str).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
 }
 
-document.addEventListener('DOMContentLoaded', init);
+document.addEventListener('DOMContentLoaded', () => { init(); loadPrefs(); initReadingAids(); });
+
+/* ── READING AIDS ──────────────────────────────── */
+
+// ── TEXT TO SPEECH ──
+let ttsState = 'stopped'; // stopped | playing | paused
+let ttsPingTimer = null;
+let activeSectionBtn = null;
+let currentUtteranceId = 0;
+
+function handleSpeak() {
+  if (ttsState === 'stopped') { speakAll(); }
+  else if (ttsState === 'playing') { pauseSpeech(); }
+  else if (ttsState === 'paused') { resumeSpeech(); }
+}
+
+function speakAll() {
+  const content = document.getElementById('reading-content');
+  if (!content) return;
+  // Walk the DOM so we can add a pause-period after headings
+  const HEADING_TAGS = new Set(['H1','H2','H3','H4','H5','H6','SUMMARY']);
+  const parts = [];
+  content.querySelectorAll('h1,h2,h3,h4,h5,h6,p,li,summary').forEach(el => {
+    const text = Array.from(el.childNodes)
+      .filter(n => !(n.nodeType === Node.ELEMENT_NODE && n.classList?.contains('section-speak-btn')))
+      .map(n => n.textContent).join('').trim();
+    if (!text) return;
+    // Headings get a period appended so TTS pauses before the first sentence
+    parts.push(HEADING_TAGS.has(el.tagName) && !/[.!?]$/.test(text) ? text + '.' : text);
+  });
+  startSpeaking(parts.join('\n'));
+}
+
+function speakSection(text, iconBtn) {
+  // Reset any previously active section button
+  if (activeSectionBtn && activeSectionBtn !== iconBtn) {
+    activeSectionBtn.textContent = '🔊';
+    activeSectionBtn.classList.remove('speaking');
+  }
+  activeSectionBtn = iconBtn || null;
+  if (activeSectionBtn) activeSectionBtn.classList.add('speaking');
+  startSpeaking(text);
+}
+
+function updateSectionBtn() {
+  if (!activeSectionBtn) return;
+  if (ttsState === 'playing')      { activeSectionBtn.textContent = '⏸'; }
+  else if (ttsState === 'paused')  { activeSectionBtn.textContent = '▶'; }
+  else {
+    activeSectionBtn.textContent = '🔊';
+    activeSectionBtn.classList.remove('speaking');
+    activeSectionBtn = null;
+  }
+}
+
+function startSpeaking(text) {
+  const myId = ++currentUtteranceId; // increment before cancel so old events are ignored
+  speechSynthesis.cancel();
+  clearInterval(ttsPingTimer);
+  const utterance = new SpeechSynthesisUtterance(text);
+  utterance.rate = 0.92;
+  utterance.onstart  = () => { if (currentUtteranceId !== myId) return; ttsState = 'playing'; updateSpeakBtn(); updateSectionBtn(); };
+  utterance.onpause  = () => { if (currentUtteranceId !== myId) return; ttsState = 'paused';  updateSpeakBtn(); updateSectionBtn(); };
+  utterance.onresume = () => { if (currentUtteranceId !== myId) return; ttsState = 'playing'; updateSpeakBtn(); updateSectionBtn(); };
+  utterance.onend = utterance.onerror = () => {
+    if (currentUtteranceId !== myId) return; // stale event from a cancelled utterance — ignore
+    ttsState = 'stopped';
+    clearInterval(ttsPingTimer);
+    updateSpeakBtn();
+    updateSectionBtn();
+  };
+  speechSynthesis.speak(utterance);
+  // Chrome bug workaround — pauses after ~15s without this
+  ttsPingTimer = setInterval(() => {
+    if (speechSynthesis.speaking && !speechSynthesis.paused) {
+      speechSynthesis.pause();
+      speechSynthesis.resume();
+    }
+  }, 12000);
+}
+
+function pauseSpeech() { speechSynthesis.pause(); ttsState = 'paused'; updateSpeakBtn(); }
+function resumeSpeech() { speechSynthesis.resume(); ttsState = 'playing'; updateSpeakBtn(); }
+
+function updateSpeakBtn() {
+  const btn = document.getElementById('speak-btn');
+  if (!btn) return;
+  if (ttsState === 'stopped') { btn.textContent = '🔊 Listen'; }
+  else if (ttsState === 'playing') { btn.textContent = '⏸ Pause'; }
+  else if (ttsState === 'paused') { btn.textContent = '▶ Resume'; }
+}
+
+function getSectionText(headingEl) {
+  const HEADING_TAGS = new Set(['H1','H2','H3','H4','H5','H6','SUMMARY']);
+
+  // For <summary> inside <details> — read just that collapsed block
+  if (headingEl.tagName === 'SUMMARY') {
+    const details = headingEl.closest('details');
+    if (details) return details.innerText.replace(/🔊/g, '').trim();
+  }
+
+  // For regular headings — walk forward siblings until the next heading
+  const headingText = Array.from(headingEl.childNodes)
+    .filter(n => !(n.nodeType === Node.ELEMENT_NODE && n.classList.contains('section-speak-btn')))
+    .map(n => n.textContent).join('').trim();
+
+  // Add a period so TTS pauses after the heading before reading the first sentence
+  const pausedHeading = /[.!?]$/.test(headingText) ? headingText : headingText + '.';
+  const parts = [pausedHeading];
+  let sibling = headingEl.nextElementSibling;
+  while (sibling) {
+    if (HEADING_TAGS.has(sibling.tagName)) break;
+    parts.push(sibling.innerText || sibling.textContent || '');
+    sibling = sibling.nextElementSibling;
+  }
+  return parts.join('\n').trim();
+}
+
+function injectSpeakerIcons() {
+  const content = document.getElementById('reading-content');
+  if (!content || !('speechSynthesis' in window)) return;
+  content.querySelectorAll('h2, h3, summary').forEach(el => {
+    const btn = document.createElement('button');
+    btn.className = 'section-speak-btn';
+    btn.title = 'Read this section aloud';
+    btn.textContent = '🔊';
+    btn.addEventListener('click', e => {
+      e.stopPropagation();
+      if (activeSectionBtn === btn) {
+        // This section is already active — toggle pause/resume
+        if (ttsState === 'playing') pauseSpeech();
+        else if (ttsState === 'paused') resumeSpeech();
+      } else {
+        speakSection(getSectionText(el), btn);
+      }
+    });
+    el.appendChild(btn);
+  });
+}
+
+// ── READING RULER ──
+function initReadingAids() {
+  const ruler = document.getElementById('reading-ruler');
+  if (!ruler) return;
+  document.addEventListener('mousemove', e => {
+    if (!document.body.classList.contains('ruler-active')) return;
+    ruler.style.top = (e.clientY - 14) + 'px';
+  });
+  document.addEventListener('touchmove', e => {
+    if (!document.body.classList.contains('ruler-active')) return;
+    ruler.style.top = (e.touches[0].clientY - 14) + 'px';
+  }, { passive: true });
+  // Focus mode hover tracking
+  const FOCUS_SEL = '.reading-content p, .reading-content li, .reading-content h1, .reading-content h2, .reading-content h3';
+  document.addEventListener('mousemove', e => {
+    if (!document.body.classList.contains('focus-active')) return;
+    const el = document.elementFromPoint(e.clientX, e.clientY);
+    const para = el?.closest(FOCUS_SEL);
+    document.querySelectorAll('.focus-highlight').forEach(x => x.classList.remove('focus-highlight'));
+    if (para) para.classList.add('focus-highlight');
+  });
+  document.addEventListener('touchstart', e => {
+    if (!document.body.classList.contains('focus-active')) return;
+    const el = document.elementFromPoint(e.touches[0].clientX, e.touches[0].clientY);
+    const para = el?.closest(FOCUS_SEL);
+    document.querySelectorAll('.focus-highlight').forEach(x => x.classList.remove('focus-highlight'));
+    if (para) para.classList.add('focus-highlight');
+  }, { passive: true });
+}
+
+function toggleRuler() {
+  const active = document.body.classList.toggle('ruler-active');
+  const btn = document.getElementById('ruler-toggle');
+  if (btn) { btn.textContent = active ? 'On' : 'Off'; btn.classList.toggle('active', active); }
+  currentPrefs.ruler = active;
+  try { localStorage.setItem('readclear_prefs', JSON.stringify(currentPrefs)); } catch(e) {}
+}
+
+// ── FOCUS MODE ──
+function toggleFocusMode() {
+  const active = document.body.classList.toggle('focus-active');
+  const btn = document.getElementById('focus-toggle');
+  if (btn) { btn.textContent = active ? 'On' : 'Off'; btn.classList.toggle('active', active); }
+  currentPrefs.focus = active;
+  try { localStorage.setItem('readclear_prefs', JSON.stringify(currentPrefs)); } catch(e) {}
+}
+
+/* ── REFINE PANEL ──────────────────────────────── */
+
+const WORKER_URL = 'https://readclear-worker.kev-958.workers.dev';
+
+const PREF_DEFAULTS = { fontsize: 'medium', spacing: 'normal', bg: 'warm', width: 'normal' };
+
+let currentPrefs = { ...PREF_DEFAULTS };
+
+function loadPrefs() {
+  try {
+    const saved = JSON.parse(localStorage.getItem('readclear_prefs'));
+    if (saved) currentPrefs = { ...PREF_DEFAULTS, ...saved };
+  } catch(e) {}
+
+  // Apply design prefs
+  applyDesignPrefs();
+
+  // Restore button active states
+  Object.entries(currentPrefs).forEach(([key, val]) => {
+    document.querySelectorAll(`[data-pref="${key}"]`).forEach(b => {
+      b.classList.toggle('active', b.dataset.val === val);
+    });
+  });
+
+  // Restore content checkbox states
+  try {
+    const contentPrefs = JSON.parse(localStorage.getItem('readclear_content_prefs')) || {};
+    ['simpler','vshort','bullets','collapse'].forEach(k => {
+      const el = document.getElementById('pref-' + k);
+      if (el) el.checked = !!contentPrefs[k];
+    });
+  } catch(e) {}
+
+  // Update reformat button label to reflect current state
+  updateReformatBtn();
+}
+
+function applyDesignPrefs() {
+  document.body.setAttribute('data-bg',       currentPrefs.bg);
+  document.body.setAttribute('data-fontsize',  currentPrefs.fontsize);
+  document.body.setAttribute('data-spacing',   currentPrefs.spacing);
+  document.body.setAttribute('data-width',     currentPrefs.width);
+}
+
+function setDesignPref(key, val, btn) {
+  currentPrefs[key] = val;
+  document.querySelectorAll(`[data-pref="${key}"]`).forEach(b => b.classList.remove('active'));
+  btn.classList.add('active');
+  applyDesignPrefs();
+  try { localStorage.setItem('readclear_prefs', JSON.stringify(currentPrefs)); } catch(e) {}
+}
+
+function toggleRefine() {
+  const panel = document.getElementById('refine-panel');
+  panel.style.display = panel.style.display === 'none' ? 'block' : 'none';
+}
+
+function updateReformatBtn() {
+  const anyChecked = ['simpler','vshort','bullets','collapse'].some(k => document.getElementById('pref-' + k)?.checked);
+  const hasOriginal = !!localStorage.getItem('readclear_result_original');
+  const btn = document.getElementById('reformat-prefs-btn');
+  if (!btn) return;
+  if (!anyChecked && hasOriginal) {
+    btn.textContent = '↩ Revert to default';
+  } else {
+    btn.textContent = '↺ Reformat with these settings';
+  }
+}
+
+async function reformatWithPrefs() {
+  const result = (() => { try { return JSON.parse(localStorage.getItem('readclear_result')); } catch(e) { return null; } })();
+  if (!result || !result.url) return;
+
+  // Save content pref checkbox states
+  const contentPrefs = {};
+  ['simpler','vshort','bullets','collapse'].forEach(k => {
+    contentPrefs[k] = document.getElementById('pref-' + k)?.checked || false;
+  });
+  try { localStorage.setItem('readclear_content_prefs', JSON.stringify(contentPrefs)); } catch(e) {}
+
+  // Build extras string from checked options
+  const extras = [];
+  if (contentPrefs.simpler)   extras.push('Use the simplest possible language. Replace every complex word with a plain everyday alternative. Aim for a reading level that anyone can understand.');
+  if (contentPrefs.vshort)    extras.push('Keep every sentence to 10 words or fewer. Split longer sentences aggressively. One idea per sentence, no exceptions.');
+  if (contentPrefs.bullets)   extras.push('Convert every paragraph of 2 or more sentences into a bullet list. Prose should be the exception, not the rule.');
+  if (contentPrefs.collapse)  extras.push('Wrap any section with 3 or more paragraphs in <details><summary>[one sentence summary of the section]</summary>...</details>.');
+
+  if (extras.length === 0) {
+    // Nothing ticked — revert to original if we have one, otherwise just close
+    const hasOriginal = !!localStorage.getItem('readclear_result_original');
+    if (hasOriginal) {
+      undoReformat();
+    }
+    return;
+  }
+
+  const btn = document.getElementById('reformat-prefs-btn');
+  btn.disabled = true;
+  btn.textContent = '↺ Reformatting…';
+
+  try {
+    const response = await fetch(`${WORKER_URL}/reformat`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ url: result.url, profile: result.profile || 'mixed', extras: extras.join('\n') })
+    });
+
+    const data = await response.json();
+    if (!response.ok || data.error) throw new Error(data.error || 'Reformat failed.');
+
+    // Save original before overwriting so undo is possible
+    try { localStorage.setItem('readclear_result_original', JSON.stringify(result)); } catch(e) {}
+
+    // Update reading content
+    const content = document.getElementById('reading-content');
+    content.innerHTML = sanitiseHtml(data.html);
+
+    // Update expand/collapse buttons
+    document.getElementById('expand-btn').style.display   = content.querySelectorAll('details').length > 0 ? 'inline-flex' : 'none';
+    document.getElementById('collapse-btn').style.display = content.querySelectorAll('details').length > 0 ? 'inline-flex' : 'none';
+
+    // Update truncation banner
+    document.getElementById('truncation-banner').style.display = data.truncated ? 'block' : 'none';
+
+    // Save updated result to localStorage
+    try {
+      localStorage.setItem('readclear_result', JSON.stringify({
+        ...result, html: data.html, truncated: data.truncated, fromCache: false
+      }));
+    } catch(e) {}
+
+    // Show undo button
+    document.getElementById('undo-reformat-btn').style.display = 'block';
+    toggleRefine();
+
+  } catch(err) {
+    alert('Reformat failed. Please try again.');
+  } finally {
+    btn.disabled = false;
+    btn.textContent = '↺ Reformat with these settings';
+  }
+}
+
+function undoReformat() {
+  const original = (() => { try { return JSON.parse(localStorage.getItem('readclear_result_original')); } catch(e) { return null; } })();
+  if (!original) return;
+
+  // Restore original content
+  const content = document.getElementById('reading-content');
+  content.innerHTML = sanitiseHtml(original.html);
+
+  // Restore localStorage result
+  try { localStorage.setItem('readclear_result', JSON.stringify(original)); } catch(e) {}
+  try { localStorage.removeItem('readclear_result_original'); } catch(e) {}
+
+  // Update expand/collapse buttons
+  document.getElementById('expand-btn').style.display   = content.querySelectorAll('details').length > 0 ? 'inline-flex' : 'none';
+  document.getElementById('collapse-btn').style.display = content.querySelectorAll('details').length > 0 ? 'inline-flex' : 'none';
+
+  // Update truncation banner
+  document.getElementById('truncation-banner').style.display = original.truncated ? 'block' : 'none';
+
+  // Hide undo button
+  document.getElementById('undo-reformat-btn').style.display = 'none';
+
+  toggleRefine();
+}
 </script>
 
 </body>

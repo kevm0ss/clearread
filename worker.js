@@ -121,7 +121,7 @@ async function handleReformat(request, env, corsHeaders) {
     return errorResponse('Invalid request body.', 400, corsHeaders);
   }
 
-  const { url, profile = 'mixed' } = body;
+  const { url, profile = 'mixed', extras = '' } = body;
 
   if (!url || !url.startsWith('http')) {
     return errorResponse('A valid URL is required.', 400, corsHeaders);
@@ -201,7 +201,7 @@ Input format: The content uses markdown-style structure:
 Output format: Return clean semantic HTML only. No markdown. No code fences. No commentary.
 Allowed tags: <h1> <h2> <h3> <p> <ul> <ol> <li> <strong> <a href=""> <details> <summary> <blockquote> <hr>
 Do not include <html> <head> <body> or <style> tags.
-Always preserve every <a href=""> link from the original content.`;
+Always preserve every <a href=""> link from the original content.${extras ? `\n\nPersonalisation — apply these additional instructions on top of the profile rules:\n${extras.slice(0, 800)}` : ''}`;
 
   const userMessage = `Reformat the following web page content. Preserve every fact, link, and detail. Only change structure and presentation.
 
