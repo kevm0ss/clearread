@@ -16,59 +16,61 @@ const ALLOWED_ORIGINS = [
   'https://reformat-v2.clearread-7x3.pages.dev',
 ];
 
-// Shared rules applied to every profile
+// Additional rules layered on top of every profile — from the readclear formatting framework
 const SHARED_RULES = `
-Universal formatting rules (apply to every profile):
-- Keep sentences to 20 words or fewer. One idea per sentence.
-- Keep paragraphs to 1–3 sentences. Never run more than 3 sentences together.
+Additional rules (apply to every profile):
+- Keep sentences to 20 words or fewer.
+- Keep paragraphs to 1–3 sentences. Never run longer.
 - When 3 or more related items appear in prose, convert them to a bullet list.
-- Use a meaningful heading every 3–4 paragraphs to help the reader track their place.
-- Never use ALL CAPS. Never use double negatives (e.g. "not unlikely" → "likely", "not unimportant" → "important").
-- Never use italics.
-- Bold one key term per paragraph — the single most important word or phrase. Use it sparingly so it stands out.
-- Use <details><summary> only for sections that are genuinely long or complex — 4 or more sentences, or sections covering multiple distinct sub-topics. Short sections, single facts, and simple lists must stay open as normal HTML. Do not wrap everything.
-- When you do use <details>, the <summary> must be one plain sentence stating the most important point of that section. The reader should know what they will find before opening it.`;
+- Never use ALL CAPS. Avoid double negatives — rewrite them positively (e.g. "not unlikely" → "likely").
+- Never use italics.`;
 
 const PROFILE_PROMPTS = {
   phonological: `Profile: I have phonological dyslexia.
 Core rule: Never simplify content. Only change how it is structured and presented.
-Profile-specific: Long or unfamiliar words are the main barrier. Use plain, common words wherever possible. If a technical term is essential, define it in plain language immediately after in brackets.
+Profile-specific: Use plain, common words. If a technical term is necessary, define it in plain language immediately after. Avoid jargon where a simpler word exists.
 Formatting rules:
-1. Use plain language throughout. Swap jargon for everyday words where possible.
-2. Define every technical term when first used — e.g. "photosynthesis (how plants make food from sunlight)".
-3. Lead with the most important point. Put supporting detail after.
-4. Open the first <details> section by default (add the open attribute) so the reader sees content immediately.
+1. Use short sentences. One idea per sentence.
+2. Bold the key term in each sentence for easy scanning.
+3. Leave clear visual gaps between sections and ideas.
+4. Always lead with the most important point. Put detail after.
+5. Use plain language throughout. Define any technical term when first used.
 ${SHARED_RULES}`,
 
   visual: `Profile: I have visual stress dyslexia.
 Core rule: Never simplify content. Only change how it is structured and presented.
-Profile-specific: Dense blocks of text are the main barrier — they can feel visually overwhelming or appear to move. Space and structure are more important than anything else.
+Profile-specific: Layout and spacing are critical. Dense text is the main barrier. Use generous whitespace, short line lengths, and strong visual hierarchy.
 Formatting rules:
-1. Break paragraphs aggressively — 2 sentences maximum per paragraph for this profile.
-2. Prefer bullet lists over prose wherever the content allows.
-3. Leave extra space between sections — use <hr> between major topic shifts.
-4. All <details> sections start closed. The reader opens only what they need, reducing visual clutter.
+1. Use short sentences. One idea per sentence.
+2. Bold the key term in each sentence for easy scanning.
+3. Leave generous visual gaps between every section and idea.
+4. Prefer bullet points over prose wherever possible — dense paragraphs are the main barrier.
+5. Avoid long unbroken paragraphs — break into chunks of 2 sentences maximum.
 ${SHARED_RULES}`,
 
   memory: `Profile: I have working memory dyslexia.
 Core rule: Never simplify content. Only change how it is structured and presented.
-Profile-specific: Losing the thread mid-sentence or mid-section is the main challenge. Structure must make it easy to stop, look away, and find your place again.
+Profile-specific: Losing the thread mid-sentence is the main challenge. Number all steps. Summarise first. Never bury the main point.
 Formatting rules:
-1. Always put the key point at the top of every section — never bury it.
-2. Number every step or sequential process — never leave steps inside prose.
-3. Use a short summary sentence at the start of any section longer than 3 paragraphs.
-4. All <details> sections start closed — the reader controls what they hold in mind at once.
+1. Use short sentences. One idea per sentence.
+2. Bold the key term in each sentence for easy scanning.
+3. Always put the key point at the top of each section — never bury it.
+4. Number every step or sequential item — never bury steps in prose.
+5. Use clear visual gaps and section headers so the reader always knows where they are.
+6. Add a one-sentence summary at the start of any section longer than 3 paragraphs.
 ${SHARED_RULES}`,
 
   mixed: `Profile: I am dyslexic (mixed profile).
 Core rule: Never simplify content. Only change how it is structured and presented.
-Profile-specific: Apply the full range of dyslexia-friendly adjustments. Prioritise structure, spacing, and plain language equally.
+Profile-specific: Apply a broad set of dyslexia-friendly adjustments: short sentences, plain language, numbered steps for any process, clear visual structure.
 Formatting rules:
-1. Lead with the most important point in every section.
-2. Use plain language. Define technical terms when first used.
-3. Number every step or process — never bury steps in prose.
-4. Use a short summary sentence at the start of any section longer than 3 paragraphs.
-5. All <details> sections start closed.
+1. Use short sentences. One idea per sentence.
+2. Bold the key term in each sentence for easy scanning.
+3. Leave clear visual gaps between sections and ideas.
+4. Always lead with the most important point. Put detail after.
+5. Use plain language. Define technical terms when first used.
+6. Number every step or process — never bury steps in prose.
+7. Use a one-sentence summary at the top of long sections.
 ${SHARED_RULES}`,
 };
 
@@ -111,6 +113,7 @@ export default {
 };
 
 async function handleReformat(request, env, corsHeaders) {
+  // Parse request body
   let body;
   try {
     body = await request.json();
@@ -128,10 +131,14 @@ async function handleReformat(request, env, corsHeaders) {
   try {
     const parsed = new URL(url);
     const host = parsed.hostname.toLowerCase();
-    const blocked = ['localhost', '127.0.0.1', '0.0.0.0', '::1', '169.254.169.254'];
+    const blocked = [
+      'localhost', '127.0.0.1', '0.0.0.0', '::1',
+      '169.254.169.254', // cloud metadata
+    ];
     if (blocked.includes(host)) {
       return errorResponse('That URL cannot be reformatted.', 400, corsHeaders);
     }
+    // Block private IP ranges (10.x, 172.16-31.x, 192.168.x)
     if (/^10\./.test(host) || /^192\.168\./.test(host) ||
         /^172\.(1[6-9]|2\d|3[01])\./.test(host)) {
       return errorResponse('That URL cannot be reformatted.', 400, corsHeaders);
@@ -172,29 +179,30 @@ async function handleReformat(request, env, corsHeaders) {
     return errorResponse('blocked', 403, corsHeaders);
   }
 
+  // Limit content length to avoid huge Claude requests
   const truncatedText = text.length > 12000 ? text.slice(0, 12000) + '\n\n[Content truncated for length]' : text;
 
   // 3. Build Claude prompt
   const profilePrompt = PROFILE_PROMPTS[profile] || PROFILE_PROMPTS.mixed;
 
-  const systemPrompt = `You are an accessibility formatter. You reformat web content for people with dyslexia using progressive disclosure — collapsible sections that let the reader start with the key points and drill into detail only when they want to.
+  const systemPrompt = `You are an accessibility formatter. You reformat web content for people with dyslexia.
 
-CRITICAL RULE: Never remove, simplify, or summarise the original content. Every fact, detail, and point must be preserved in the expanded sections. Only change the structure and presentation.
+CRITICAL RULE: Never remove, simplify, or summarise the original content. Every fact, detail, and point must be preserved. Only change the structure and presentation.
 
 ${profilePrompt}
 
 Input format: The content uses markdown-style structure:
-- # ## ### mark headings — use these to identify major sections
+- # ## ### mark headings — preserve as <h1> <h2> <h3>
 - [link text](url) marks links — preserve as <a href="url">link text</a>
 - **text** marks bold — preserve as <strong>text</strong>
 - • marks list items — use <ul><li> for these
 
 Output format: Return clean semantic HTML only. No markdown. No code fences. No commentary.
-Allowed tags: <div> <h1> <h2> <h3> <h4> <p> <ul> <ol> <li> <strong> <a href=""> <details> <summary> <blockquote> <hr>
+Allowed tags: <h1> <h2> <h3> <p> <ul> <ol> <li> <strong> <a href=""> <details> <summary> <blockquote> <hr>
 Do not include <html> <head> <body> or <style> tags.
 Always preserve every <a href=""> link from the original content.`;
 
-  const userMessage = `Reformat the following web page content using progressive disclosure. Preserve every fact, link, and detail in the expanded sections. Start with a visible summary block, then collapse each section.
+  const userMessage = `Reformat the following web page content. Preserve every fact, link, and detail. Only change structure and presentation.
 
 Page title: ${title}
 
@@ -243,6 +251,7 @@ ${truncatedText}`;
     return errorResponse('No content returned from formatter.', 500, corsHeaders);
   }
 
+  // 5. Return result
   return new Response(JSON.stringify({
     title,
     html: reformattedHtml,
@@ -268,6 +277,7 @@ async function handleReformatImage(request, env, corsHeaders) {
     return errorResponse('No image data provided.', 400, corsHeaders);
   }
 
+  // Sanity check media type
   const allowedTypes = ['image/jpeg', 'image/png', 'image/gif', 'image/webp'];
   if (!allowedTypes.includes(mediaType)) {
     return errorResponse('Unsupported image type.', 400, corsHeaders);
@@ -275,16 +285,16 @@ async function handleReformatImage(request, env, corsHeaders) {
 
   const profilePrompt = PROFILE_PROMPTS[profile] || PROFILE_PROMPTS.mixed;
 
-  const systemPrompt = `You are an accessibility formatter. You read text from images of documents and reformat it for people with dyslexia using progressive disclosure — collapsible sections that let the reader start with the key points and drill into detail only when they want to.
+  const systemPrompt = `You are an accessibility formatter. You read text from images of documents and reformat it for people with dyslexia.
 
 CRITICAL RULE: Transcribe and include every word of text you can see in the image. Never remove, simplify, or summarise content. Only change the structure and presentation.
 
 ${profilePrompt}
 
 Output format: Return clean semantic HTML only. No markdown. No code fences. No commentary.
-Allowed tags: <div> <h1> <h2> <h3> <h4> <p> <ul> <ol> <li> <strong> <a href=""> <details> <summary> <blockquote> <hr>
+Allowed tags: <h1> <h2> <h3> <p> <ul> <ol> <li> <strong> <a href=""> <details> <summary> <blockquote> <hr>
 Do not include <html> <head> <body> or <style> tags.
-Start with a <h1> containing the document title or type (e.g. "Appointment Letter", "Prescription Notice"), then follow with the summary block and collapsible sections.`;
+Start your response with a <h1> containing the document title or type (e.g. "Appointment Letter", "Prescription Notice").`;
 
   let claudeResponse;
   try {
@@ -304,11 +314,15 @@ Start with a <h1> containing the document title or type (e.g. "Appointment Lette
           content: [
             {
               type: 'image',
-              source: { type: 'base64', media_type: mediaType, data: imageData },
+              source: {
+                type: 'base64',
+                media_type: mediaType,
+                data: imageData,
+              },
             },
             {
               type: 'text',
-              text: 'Please read all the text in this document image and reformat it using progressive disclosure — a visible summary block followed by collapsible sections. Include every piece of text you can see.',
+              text: 'Please read all the text in this document image and reformat it to be more accessible for someone with dyslexia. Include every piece of text you can see.',
             },
           ],
         }],
@@ -330,6 +344,7 @@ Start with a <h1> containing the document title or type (e.g. "Appointment Lette
 
   let reformattedHtml = claudeResponse.content?.[0]?.text || '';
 
+  // Strip any accidental markdown code fences
   reformattedHtml = reformattedHtml
     .replace(/^```html\s*/i, '')
     .replace(/^```\s*/i, '')
@@ -340,6 +355,7 @@ Start with a <h1> containing the document title or type (e.g. "Appointment Lette
     return errorResponse('No content returned from formatter.', 500, corsHeaders);
   }
 
+  // Extract a title from the first <h1> if present
   const titleMatch = reformattedHtml.match(/<h1[^>]*>([^<]+)<\/h1>/i);
   const title = titleMatch ? titleMatch[1].trim() : 'Scanned document';
 
@@ -355,11 +371,15 @@ Start with a <h1> containing the document title or type (e.g. "Appointment Lette
 
 /**
  * Extract readable structured content from HTML.
+ * Preserves headings, links, lists, bold text and paragraph breaks.
+ * Sends structured markdown-style text to Claude so nothing is lost.
  */
 function extractContent(html, baseUrl) {
+  // Extract title
   const titleMatch = html.match(/<title[^>]*>([^<]+)<\/title>/i);
   const title = titleMatch ? decodeEntities(titleMatch[1]).trim() : baseUrl;
 
+  // Step 1 — remove entirely useless blocks
   let cleaned = html
     .replace(/<script\b[\s\S]*?<\/script>/gi, '')
     .replace(/<style\b[\s\S]*?<\/style>/gi, '')
@@ -371,12 +391,16 @@ function extractContent(html, baseUrl) {
     .replace(/<aside\b[\s\S]*?<\/aside>/gi, '')
     .replace(/<!--[\s\S]*?-->/g, '');
 
+  // Step 2 — try to isolate main content area
   const mainMatch =
     cleaned.match(/<main\b[^>]*>([\s\S]*?)<\/main>/i) ||
     cleaned.match(/<article\b[^>]*>([\s\S]*?)<\/article>/i) ||
     cleaned.match(/<div[^>]+(?:id|class)="[^"]*(?:content|article|main|post|body)[^"]*"[^>]*>([\s\S]*?)<\/div>/i);
   if (mainMatch) cleaned = mainMatch[1];
 
+  // Step 3 — convert semantic elements to structured text before stripping
+
+  // Headings → markdown style
   cleaned = cleaned
     .replace(/<h1[^>]*>([\s\S]*?)<\/h1>/gi, (_, t) => `\n\n# ${stripTags(t).trim()}\n\n`)
     .replace(/<h2[^>]*>([\s\S]*?)<\/h2>/gi, (_, t) => `\n\n## ${stripTags(t).trim()}\n\n`)
@@ -385,14 +409,18 @@ function extractContent(html, baseUrl) {
     .replace(/<h5[^>]*>([\s\S]*?)<\/h5>/gi, (_, t) => `\n\n##### ${stripTags(t).trim()}\n\n`)
     .replace(/<h6[^>]*>([\s\S]*?)<\/h6>/gi, (_, t) => `\n\n###### ${stripTags(t).trim()}\n\n`);
 
+  // Bold
   cleaned = cleaned
     .replace(/<strong[^>]*>([\s\S]*?)<\/strong>/gi, '**$1**')
     .replace(/<b[^>]*>([\s\S]*?)<\/b>/gi, '**$1**');
 
+  // Links — convert to [text](url), skip anchors and javascript
   cleaned = cleaned.replace(/<a\s[^>]*href="([^"]*)"[^>]*>([\s\S]*?)<\/a>/gi, (_, href, text) => {
     const linkText = stripTags(text).trim();
     if (!linkText) return '';
+    // Skip javascript: and empty anchors
     if (href.startsWith('javascript:') || href === '#') return linkText;
+    // Resolve relative URLs
     let absUrl = href;
     try {
       absUrl = href.startsWith('http') ? href : new URL(href, baseUrl).href;
@@ -400,10 +428,12 @@ function extractContent(html, baseUrl) {
     return `[${linkText}](${absUrl})`;
   });
 
+  // List items
   cleaned = cleaned
     .replace(/<li[^>]*>([\s\S]*?)<\/li>/gi, (_, t) => `\n• ${stripTags(t).trim()}`)
     .replace(/<\/[uo]l>/gi, '\n');
 
+  // Paragraphs and divs → double newlines
   cleaned = cleaned
     .replace(/<p[^>]*>/gi, '\n\n')
     .replace(/<\/p>/gi, '')
@@ -411,8 +441,13 @@ function extractContent(html, baseUrl) {
     .replace(/<\/div>/gi, '\n')
     .replace(/<\/section>/gi, '\n\n');
 
+  // Step 4 — strip all remaining tags
   cleaned = stripTags(cleaned);
+
+  // Step 5 — decode HTML entities
   cleaned = decodeEntities(cleaned);
+
+  // Step 6 — clean up whitespace
   cleaned = cleaned
     .replace(/\n{4,}/g, '\n\n\n')
     .replace(/[ \t]{2,}/g, ' ')
