@@ -13,7 +13,6 @@
 const ALLOWED_ORIGINS = [
   'https://readclear.importantsmallthings.com',
   'https://clearread-7x3.pages.dev',
-  'https://reformat-v2.clearread-7x3.pages.dev',
 ];
 
 // Additional rules layered on top of every profile — from the readclear formatting framework
