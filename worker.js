@@ -72,6 +72,21 @@ Formatting rules:
 6. Number every step or process — never bury steps in prose.
 7. Use a one-sentence summary at the top of long sections.
 ${SHARED_RULES}`,
+
+  aphasia: `Profile: I have aphasia.
+Core rule: Preserve every fact and piece of information. You may replace complex or formal words with simpler everyday alternatives — but never remove meaning. Reorganise structure to make each point as clear as possible.
+Profile-specific: Aphasia affects how language is processed. Very short sentences help most. Active voice is much easier than passive. Pronouns (it, they, this, that, he, she, we, us) are confusing — always replace them with the actual noun. Everyday words are easier than formal, medical, or abstract language. Repeating key words is helpful — do not avoid repetition.
+Formatting rules:
+1. Target 5 words per sentence. Never more than 10. One point only per sentence.
+2. Split any sentence with embedded clauses into two or more separate sentences.
+3. Always use active voice. Rewrite every passive sentence. Example: "The ambulance will collect you" not "You will be collected by the ambulance".
+4. Never use pronouns (it, they, them, this, that, he, she, we, us). Replace every pronoun with the exact noun it refers to.
+5. Use only everyday words. Replace formal or technical words: tablets not medication, doctor not physician, get better not recover, stroke not CVA, brain bleed not haemorrhage, blood clot not ischaemic, cope with not compensate for, interest not motivation, ambulance not transport.
+6. Repeat key words freely — repetition aids understanding. Do not use pronouns to avoid repeating a word.
+7. Use bullet points for any list of two or more items.
+8. Maximum 2 sentences per paragraph. Leave generous space between paragraphs.
+9. Bold the single most important word or phrase in each paragraph.
+10. Never use ALL CAPS, italics, or underlines.`,
 };
 
 export default {
@@ -185,10 +200,13 @@ async function handleReformat(request, env, corsHeaders) {
 
   // 3. Build Claude prompt
   const profilePrompt = PROFILE_PROMPTS[profile] || PROFILE_PROMPTS.mixed;
+  const isAphasia = profile === 'aphasia';
 
-  const systemPrompt = `You are an accessibility formatter. You reformat web content for people with dyslexia.
+  const systemPrompt = `You are an accessibility formatter. You reformat web content for people with ${isAphasia ? 'aphasia' : 'dyslexia'}.
 
-CRITICAL RULE: Never remove, simplify, or summarise the original content. Every fact, detail, and point must be preserved. Only change the structure and presentation.
+CRITICAL RULE: ${isAphasia
+    ? 'Preserve every fact and piece of information. You may replace complex or formal words with simpler everyday alternatives, but never remove any meaning. Only change structure, vocabulary, and presentation.'
+    : 'Never remove, simplify, or summarise the original content. Every fact, detail, and point must be preserved. Only change the structure and presentation.'}
 
 ${profilePrompt}
 

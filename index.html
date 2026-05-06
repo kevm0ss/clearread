@@ -201,6 +201,17 @@ body {
   justify-content: flex-start;
   margin-top: 16px;
 }
+.profile-aphasia-row {
+  margin-top: 20px;
+  padding-top: 16px;
+  border-top: 1px solid var(--dark-border);
+}
+.mini-card-aphasia {
+  max-width: 260px;
+}
+.mini-card-aphasia.active { border-color: #38bdf8; background: rgba(56,189,248,0.08); }
+.mini-card-aphasia.active .mini-card-name { color: #38bdf8; }
+.mini-card-aphasia:hover { border-color: #38bdf8; }
 .quiz-link-small {
   font-size: 14px;
   font-weight: 600;
@@ -741,7 +752,7 @@ body {
       </div>
 
       <div>
-        <p class="profile-mini-label">Select by choosing your dyslexic type:</p>
+        <p class="profile-mini-label">Dyslexia type:</p>
         <div class="profile-mini-row" id="profile-chips">
           <button class="mini-card active" data-profile="mixed" onclick="setProfile('mixed',this)">
             <span class="mini-card-emoji">⚡</span>
@@ -766,6 +777,14 @@ body {
         </div>
         <div class="profile-footer-row">
           <button class="quiz-link-small" onclick="openQuiz()">Not sure of your type? Take our quick quiz</button>
+        </div>
+        <div class="profile-aphasia-row">
+          <p class="profile-mini-label">Other reading difficulties:</p>
+          <button class="mini-card mini-card-aphasia" data-profile="aphasia" onclick="setProfile('aphasia',this)">
+            <span class="mini-card-emoji">💬</span>
+            <div class="mini-card-name">Aphasia</div>
+            <div class="mini-card-desc">Word finding or language understanding after stroke or brain injury</div>
+          </button>
         </div>
       </div>
 
@@ -968,7 +987,7 @@ body {
 // PROFILE
 const PROFILE_KEY = 'readclear_profile';
 let currentProfile = 'mixed';
-const profileLabels = { mixed:'Mixed / Unsure', phonological:'Phonological', visual:'Visual Stress', memory:'Working Memory' };
+const profileLabels = { mixed:'Mixed / Unsure', phonological:'Phonological', visual:'Visual Stress', memory:'Working Memory', aphasia:'Aphasia' };
 
 function loadProfile() {
   try {
