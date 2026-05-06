@@ -77,16 +77,17 @@ ${SHARED_RULES}`,
 Core rule: Preserve every fact and piece of information. You may replace complex or formal words with simpler everyday alternatives — but never remove meaning. Reorganise structure to make each point as clear as possible.
 Profile-specific: Aphasia affects how language is processed. Very short sentences help most. Active voice is much easier than passive. Pronouns (it, they, this, that, he, she, we, us) are confusing — always replace them with the actual noun. Everyday words are easier than formal, medical, or abstract language. Repeating key words is helpful — do not avoid repetition.
 Formatting rules:
-1. Target 5 words per sentence. Never more than 10. One point only per sentence.
-2. Split any sentence with embedded clauses into two or more separate sentences.
-3. Always use active voice. Rewrite every passive sentence. Example: "The ambulance will collect you" not "You will be collected by the ambulance".
-4. Never use pronouns (it, they, them, this, that, he, she, we, us). Replace every pronoun with the exact noun it refers to.
-5. Use only everyday words. Replace formal or technical words: tablets not medication, doctor not physician, get better not recover, stroke not CVA, brain bleed not haemorrhage, blood clot not ischaemic, cope with not compensate for, interest not motivation, ambulance not transport.
-6. Repeat key words freely — repetition aids understanding. Do not use pronouns to avoid repeating a word.
-7. Use bullet points for any list of two or more items.
-8. Maximum 2 sentences per paragraph. Leave generous space between paragraphs.
-9. Bold the single most important word or phrase in each paragraph.
-10. Never use ALL CAPS, italics, or underlines.`,
+1. Wrap each topic or message block in a <section> tag. Each <section> covers one clear topic — a heading (h2 or h3) plus 1–4 short paragraphs or a bullet list. Never put multiple topics in one <section>.
+2. Target 5 words per sentence. Never more than 10. One point only per sentence.
+3. Split any sentence with embedded clauses into two or more separate sentences.
+4. Always use active voice. Rewrite every passive sentence. Example: "The ambulance will collect you" not "You will be collected by the ambulance".
+5. Never use pronouns (it, they, them, this, that, he, she, we, us). Replace every pronoun with the exact noun it refers to.
+6. Use only everyday words. Replace formal or technical words: tablets not medication, doctor not physician, get better not recover, stroke not CVA, brain bleed not haemorrhage, blood clot not ischaemic, cope with not compensate for, interest not motivation, ambulance not transport.
+7. Repeat key words freely — repetition aids understanding. Do not use pronouns to avoid repeating a word.
+8. Use bullet points for any list of two or more items.
+9. Maximum 2 sentences per paragraph. Leave generous space between paragraphs.
+10. Bold the single most important word or phrase in each paragraph.
+11. Never use ALL CAPS, italics, or underlines.`,
 };
 
 export default {
@@ -217,7 +218,7 @@ Input format: The content uses markdown-style structure:
 - • marks list items — use <ul><li> for these
 
 Output format: Return clean semantic HTML only. No markdown. No code fences. No commentary.
-Allowed tags: <h1> <h2> <h3> <p> <ul> <ol> <li> <strong> <a href=""> <details> <summary> <blockquote> <hr>
+Allowed tags: <h1> <h2> <h3> <p> <ul> <ol> <li> <strong> <a href=""> <details> <summary> <section> <blockquote> <hr>
 Do not include <html> <head> <body> or <style> tags.
 Always preserve every <a href=""> link from the original content.${extras ? `\n\nPersonalisation — apply these additional instructions on top of the profile rules:\n${extras.slice(0, 800)}` : ''}`;
 
@@ -312,7 +313,7 @@ CRITICAL RULE: Transcribe and include every word of text you can see in the imag
 ${profilePrompt}
 
 Output format: Return clean semantic HTML only. No markdown. No code fences. No commentary.
-Allowed tags: <h1> <h2> <h3> <p> <ul> <ol> <li> <strong> <a href=""> <details> <summary> <blockquote> <hr>
+Allowed tags: <h1> <h2> <h3> <p> <ul> <ol> <li> <strong> <a href=""> <details> <summary> <section> <blockquote> <hr>
 Do not include <html> <head> <body> or <style> tags.
 Start your response with a <h1> containing the document title or type (e.g. "Appointment Letter", "Prescription Notice").`;
 

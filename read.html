@@ -377,6 +377,28 @@ body[data-spacing="spacious"] .reading-content li  { line-height: 2.5; margin-bo
 body[data-width="narrow"] .reading-content p,
 body[data-width="narrow"] .reading-content li { max-width: 45ch; }
 
+/* APHASIA — boxed sections */
+body[data-profile="aphasia"] .reading-content section {
+  border: 2px solid #c8b89a;
+  border-radius: 10px;
+  padding: 22px 26px;
+  margin-bottom: 28px;
+  background: rgba(255,255,255,0.55);
+}
+body[data-profile="aphasia"] .reading-content section h2,
+body[data-profile="aphasia"] .reading-content section h3 {
+  margin-top: 0;
+  color: #1c6b8a;
+}
+body[data-bg="dark"][data-profile="aphasia"] .reading-content section {
+  background: rgba(255,255,255,0.04);
+  border-color: #3a5060;
+}
+body[data-bg="dark"][data-profile="aphasia"] .reading-content section h2,
+body[data-bg="dark"][data-profile="aphasia"] .reading-content section h3 {
+  color: #7dd3f0;
+}
+
 /* REFINE PANEL */
 .refine-trigger {
   position: fixed;
@@ -769,7 +791,8 @@ const PROFILE_LABELS = {
   mixed: 'Mixed / Unsure',
   phonological: 'Phonological',
   visual: 'Visual Stress',
-  memory: 'Working Memory'
+  memory: 'Working Memory',
+  aphasia: 'Aphasia'
 };
 
 function init() {
@@ -822,6 +845,7 @@ function init() {
   const content = document.getElementById('reading-content');
   content.innerHTML = sanitiseHtml(result.html);
   content.style.display = 'block';
+  document.body.dataset.profile = result.profile || 'mixed';
   document.getElementById('refine-trigger').style.display = 'block';
   if ('speechSynthesis' in window) {
     document.getElementById('speak-btn').style.display = 'inline-flex';
