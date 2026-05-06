@@ -1149,6 +1149,12 @@ body {
         <div class="profile-desc">Lose the thread mid-sentence. Need clear chunking.</div>
         <div class="active-check">✓ Selected</div>
       </div>
+      <div class="profile-card" onclick="selectProfile('aphasia',this)" style="border-color:#1e3a4a;">
+        <div class="profile-emoji">💬</div>
+        <div class="profile-name">Aphasia</div>
+        <div class="profile-desc">Word finding or language understanding after stroke or brain injury.</div>
+        <div class="active-check">✓ Selected</div>
+      </div>
     </div>
 
     <button class="quiz-link" onclick="openQuiz()">▶ Unsure of your profile type? Take a quick quiz</button>
@@ -1499,6 +1505,7 @@ body {
           <button class="demo-profile-btn" onclick="switchDemoProfile('phonological',this)">Phonological</button>
           <button class="demo-profile-btn" onclick="switchDemoProfile('visual',this)">Visual Stress</button>
           <button class="demo-profile-btn" onclick="switchDemoProfile('memory',this)">Working Memory</button>
+          <button class="demo-profile-btn" onclick="switchDemoProfile('aphasia',this)">Aphasia</button>
         </div>
         <button class="demo-close" onclick="closeDemo()">✕</button>
       </div>
@@ -1559,6 +1566,10 @@ const profileData = {
   mixed: {
     label: "I am dyslexic (mixed profile).",
     extra: "Apply a broad set of dyslexia-friendly adjustments: short sentences, plain language, numbered steps for any process, clear visual structure."
+  },
+  aphasia: {
+    label: "I have aphasia.",
+    extra: "Use very short sentences — aim for 5 words, never more than 10. One point per sentence only. Always use active voice — never passive. Never use pronouns (it, they, this, that, he, she, we, us) — always repeat the actual noun instead. Use only everyday words: tablets not medication, doctor not physician, get better not recover. Repeat key words freely — repetition helps. Put each topic in its own clearly separated section. Use bullet points for any list of two or more items."
   }
 };
 
@@ -1580,7 +1591,8 @@ const profileTraits = {
   phonological: ['short-sentences','bold-keys','clear-gaps','lead-point','no-jargon','html-docs'],
   visual:       ['short-sentences','bold-keys','clear-gaps','lead-point','html-docs','diagrams','no-padding'],
   memory:       ['short-sentences','bold-keys','clear-gaps','lead-point','numbered-steps','no-padding','summary-first'],
-  mixed:        ['short-sentences','bold-keys','clear-gaps','lead-point','html-docs','diagrams','no-jargon','numbered-steps','no-padding','summary-first']
+  mixed:        ['short-sentences','bold-keys','clear-gaps','lead-point','html-docs','diagrams','no-jargon','numbered-steps','no-padding','summary-first'],
+  aphasia:      ['short-sentences','clear-gaps','no-jargon','no-padding']
 };
 
 function selectProfile(p, el) {
