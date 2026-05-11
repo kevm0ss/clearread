@@ -1104,7 +1104,7 @@ function getSectionText(headingEl) {
 function injectSpeakerIcons() {
   const content = document.getElementById('reading-content');
   if (!content || !('speechSynthesis' in window)) return;
-  content.querySelectorAll('h2, h3, summary').forEach(el => {
+  content.querySelectorAll('h1, h2, h3, summary').forEach(el => {
     const btn = document.createElement('button');
     btn.className = 'section-speak-btn';
     btn.title = 'Read this section aloud';
