@@ -1320,8 +1320,8 @@ async function reformatWithPrefs() {
     document.getElementById('expand-btn').style.display   = content.querySelectorAll('details').length > 0 ? 'inline-flex' : 'none';
     document.getElementById('collapse-btn').style.display = content.querySelectorAll('details').length > 0 ? 'inline-flex' : 'none';
 
-    // Update truncation banner
-    document.getElementById('truncation-banner').style.display = data.truncated ? 'block' : 'none';
+    // Hide truncation banner — user is already on a reformatted page, warning is not relevant after a refine
+    document.getElementById('truncation-banner').style.display = 'none';
 
     // Save updated result to localStorage
     try {
