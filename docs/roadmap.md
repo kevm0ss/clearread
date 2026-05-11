@@ -2,7 +2,7 @@
 
 ## Status Key
 - ✅ Done
-- 🔨 In progress
+- 🔨 In progress / pending
 - 📋 Planned
 - 🔮 Future / deferred
 
@@ -13,9 +13,22 @@
 | Feature | Status | Notes |
 |---|---|---|
 | GitHub → Cloudflare Pages pipeline | ✅ | Auto-deploys on push to main |
-| Cloudflare Worker | ✅ | readclear-worker.kev-958.workers.dev |
+| Cloudflare Worker | ✅ | readclear-worker.kev-958.workers.dev — manually deployed |
 | Custom domain | ✅ | readclear.importantsmallthings.com |
 | Buy Me a Coffee link | ✅ | readclear tip page in all footers |
+| Cloudflare Web Analytics | 🔨 | Token needed from Cloudflare dashboard — see [analytics.md](analytics.md) |
+
+---
+
+## Profiles
+
+| Feature | Status | Notes |
+|---|---|---|
+| Mixed / Unsure profile | ✅ | Default |
+| Phonological profile | ✅ | |
+| Visual Stress profile | ✅ | |
+| Working Memory profile | ✅ | |
+| Aphasia profile | ✅ | Full implementation across all tools — see [profiles.md](profiles.md) |
 
 ---
 
@@ -24,7 +37,8 @@
 | Feature | Status | Notes |
 |---|---|---|
 | URL input + submit | ✅ | Auto-adds https:// if missing |
-| Profile selector (4 types) | ✅ | Mini-cards, persists in localStorage |
+| Profile selector (dyslexia) | ✅ | 4 mini-cards, persists in localStorage |
+| Aphasia profile chip | ✅ | Separate row with blue chip |
 | Profile quiz | ✅ | One question at a time, emoji anchors |
 | Worker backend | ✅ | Fetch + extract + Claude reformat |
 | Claude Haiku model | ✅ | ~£0.01/reformat |
@@ -39,16 +53,37 @@
 
 ---
 
+## Read Page (read.html)
+
+| Feature | Status | Notes |
+|---|---|---|
+| Reformatted content display | ✅ | Sanitised HTML rendering |
+| Profile-specific CSS | ✅ | body.dataset.profile targeting |
+| Aphasia boxed sections | ✅ | CSS targets body[data-profile="aphasia"] section |
+| Truncation banner | ✅ | Shown if content was cut before sending to Claude |
+| REFINE panel | ✅ | Design prefs + content reformat — see [refine-panel.md](refine-panel.md) |
+| TTS — Listen button | ✅ | Plays whole article |
+| TTS — Section icons | ✅ | 🔊 icon next to each heading, plays just that section |
+| TTS — Pause/play | ✅ | Pause/resume, works correctly when switching sections |
+| TTS — Chrome 15s bug fix | ✅ | Heartbeat pause/resume every 14s |
+| TTS — Heading pauses | ✅ | Appends pause after heading text |
+| Reading Ruler | ✅ | Horizontal line follows cursor/touch |
+| Focus Mode | ✅ | Dims non-active paragraphs and headings |
+| Dark mode | ✅ | data-bg="dark" CSS targeting |
+
+---
+
 ## Prompt Builder (prompt.html)
 
 | Feature | Status | Notes |
 |---|---|---|
-| Profile selector | ✅ | |
+| Profile selector (dyslexia) | ✅ | |
+| Aphasia profile card | ✅ | Distinct styling with dark border hint |
 | Trait toggles | ✅ | |
 | Live prompt generator | ✅ | |
 | Copy button | ✅ | |
 | AI install guide | ✅ | ChatGPT, Claude, Gemini, Copilot |
-| Design aligned with index.html | ✅ | Same nav, footer, CSS variables |
+| Aphasia demo | ✅ | Demo profile button added |
 
 ---
 
@@ -61,6 +96,7 @@
 | Client-side image resize | ✅ | 800px max, JPEG 0.85 |
 | Worker vision endpoint | ✅ | /reformat-image, claude-haiku-4-5 |
 | Profile carry-through | ✅ | Reads from same localStorage key |
+| Aphasia profile chip | ✅ | Same chip as index.html |
 | Privacy notice | ✅ | Honest, not scary |
 | Public linking | 📋 | Wait until tested and cost is understood |
 
@@ -73,6 +109,16 @@
 | Soft sales message | ✅ | |
 | Contact link | ✅ | importantsmallthings.com/#contact |
 | LinkedIn link | ✅ | linkedin.com/company/108339431 |
+
+---
+
+## Analytics
+
+| Feature | Status | Notes |
+|---|---|---|
+| Cloudflare Workers Metrics | ✅ | Request count, CPU time — auto-provided |
+| Anthropic Console | ✅ | Token usage, cost tracking — check monthly |
+| Cloudflare Web Analytics | 🔨 | Needs token from Cloudflare dashboard — see [analytics.md](analytics.md) |
 
 ---
 
@@ -95,10 +141,9 @@
 | Chrome extension | 🔮 | Reformat any page while browsing |
 | PDF reformatter | 🔮 | Separate from image scan — needs Worker PDF parsing |
 | Image reformatter (public) | 🔮 | Currently private beta |
-| Stroke / brain injury profiles | 🔮 | Same trait system, different framing |
 | ADHD profile | 🔮 | |
 | ESL profile | 🔮 | |
+| Widgit symbols in aphasia output | 🔮 | Images alongside text — complex, many failure modes |
 | User-provided API keys | 🔮 | Needs careful security thinking |
-| Analytics | 🔮 | Add when there is something to measure |
 | User accounts | 🔮 | Cloudflare D1 if needed |
 | Full site reformatting | 🔮 | Much more complex than single pages |
