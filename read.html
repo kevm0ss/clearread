@@ -232,13 +232,13 @@ body {
 }
 .reading-content summary::-webkit-details-marker { display: none; }
 .reading-content details > *:not(summary) {
-  padding: 20px 22px;
+  padding: 0 22px;
 }
-.reading-content details > p:first-of-type,
-.reading-content details > ul:first-of-type,
-.reading-content details > ol:first-of-type,
-.reading-content details > h3:first-of-type {
-  margin-top: 0;
+.reading-content details > *:not(summary):first-child {
+  padding-top: 20px;
+}
+.reading-content details > *:not(summary):last-child {
+  padding-bottom: 20px;
 }
 
 /* Nested details (second level) */
