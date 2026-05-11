@@ -18,7 +18,7 @@ const ALLOWED_ORIGINS = [
 // Additional rules layered on top of every profile — from the readclear formatting framework
 const SHARED_RULES = `
 Additional rules (apply to every profile):
-- Keep sentences to 20 words or fewer.
+- Never shorten a sentence by removing words. If a sentence is over 15 words, split it into two separate sentences. Each sentence must still carry all its original meaning. Split — never trim.
 - Keep paragraphs to 1–3 sentences. Never run longer.
 - When 3 or more related items appear in prose, convert them to a bullet list.
 - Never use ALL CAPS. Avoid double negatives — rewrite them positively (e.g. "not unlikely" → "likely").
@@ -27,67 +27,69 @@ Additional rules (apply to every profile):
 const PROFILE_PROMPTS = {
   phonological: `Profile: I have phonological dyslexia.
 Core rule: Never simplify content. Only change how it is structured and presented.
-Profile-specific: Use plain, common words. If a technical term is necessary, define it in plain language immediately after. Avoid jargon where a simpler word exists.
+Profile-specific: Decoding unfamiliar or long words is the main difficulty. Use plain, common words. If a technical term is necessary, define it immediately after in plain language. Avoid jargon where a simpler word exists.
 Formatting rules:
-1. Use short sentences. One idea per sentence.
-2. Bold the key term in each sentence for easy scanning.
+1. Split any sentence over 15 words into two shorter sentences. Never remove words — always split. Each sentence must keep all its original meaning.
+2. One idea per sentence. Bold the key term in each sentence for easy scanning.
 3. Leave clear visual gaps between sections and ideas.
-4. Always lead with the most important point. Put detail after.
-5. Use plain language throughout. Define any technical term when first used.
+4. Always lead with the most important point. Put supporting detail after.
+5. Use plain language throughout. Define any technical term the moment it first appears.
+6. For any section longer than 3 paragraphs: keep the first paragraph visible (it must contain the key point), then wrap all remaining paragraphs in a <details><summary>Continue reading: [brief topic label]</summary>...</details> block. All content inside <details> must follow the same rules above — reformatted, not raw original text.
 ${SHARED_RULES}`,
 
   visual: `Profile: I have visual stress dyslexia.
 Core rule: Never simplify content. Only change how it is structured and presented.
-Profile-specific: Dense text is the main barrier — it can feel visually overwhelming or appear to move. The goal is to keep the page light. Only the most important content should be immediately visible. Secondary content should be tucked away and opened only when needed.
+Profile-specific: Dense text is the main barrier — it can feel visually overwhelming or appear to move. Keep the page light. Only the most important content should be immediately visible. Everything else collapses behind a clear, descriptive label.
 Formatting rules:
-1. Use short sentences. One idea per sentence.
-2. Bold the key term in each sentence for easy scanning.
+1. Split any sentence over 15 words into two shorter sentences. Never remove words — always split. Each sentence must keep all its original meaning.
+2. One idea per sentence. Bold the key term in each sentence for easy scanning.
 3. Leave generous visual gaps between every section and idea.
 4. Prefer bullet points over prose wherever possible — dense paragraphs are the main barrier.
-5. Avoid long unbroken paragraphs — break into chunks of 2 sentences maximum.
-6. Use <details><summary> to collapse secondary content only. Secondary content includes: background or context sections, long lists of examples (show 2–3, collapse the rest), methodology or technical detail, historical context, and "further reading" sections. The <summary> label must clearly describe what is inside — e.g. "Background: how this started" or "More examples (8)". Primary content — the main argument, key facts, conclusions, and actions — must always stay open. Do not collapse more than one third of the page.
+5. Never more than 2 sentences per paragraph.
+6. Use <details><summary> to collapse secondary content. Secondary content includes: background or context, long lists of examples (show 2–3 then collapse the rest), methodology or technical detail, historical context, and further reading sections. The <summary> label must clearly describe what is inside — e.g. "Background: how this started" or "More examples (8 total)". Primary content — main argument, key facts, conclusions, and actions — must always stay visible. Do not collapse more than one third of the page. All content inside <details> must follow the same rules above — reformatted, not raw text.
 ${SHARED_RULES}`,
 
   memory: `Profile: I have working memory dyslexia.
 Core rule: Never simplify content. Only change how it is structured and presented.
-Profile-specific: Losing the thread mid-sentence is the main challenge. Number all steps. Summarise first. Never bury the main point.
+Profile-specific: Losing the thread mid-sentence or between sections is the main challenge. Show the headline first. Collapse the detail. Number all steps. The reader should be able to see every key point without having to read through long paragraphs.
 Formatting rules:
-1. Use short sentences. One idea per sentence.
-2. Bold the key term in each sentence for easy scanning.
-3. Always put the key point at the top of each section — never bury it.
+1. Split any sentence over 15 words into two shorter sentences. Never remove words — always split. Each sentence must keep all its original meaning.
+2. One idea per sentence. Bold the key term in each sentence for easy scanning.
+3. Always put the key point at the very top of each section — never bury it.
 4. Number every step or sequential item — never bury steps in prose.
 5. Use clear visual gaps and section headers so the reader always knows where they are.
-6. Add a one-sentence summary at the start of any section longer than 3 paragraphs.
+6. For any section with more than 2 paragraphs: keep the opening sentence or key point visible, then wrap all remaining paragraphs in <details><summary>Full detail: [topic]</summary>...</details>. This is essential — the reader must be able to see a headline for every section without reading through long content. All content inside <details> must follow the same rules above — reformatted, not raw text.
 ${SHARED_RULES}`,
 
   mixed: `Profile: I am dyslexic (mixed profile).
 Core rule: Never simplify content. Only change how it is structured and presented.
-Profile-specific: Apply a broad set of dyslexia-friendly adjustments: short sentences, plain language, numbered steps for any process, clear visual structure.
+Profile-specific: Apply a broad set of dyslexia-friendly adjustments: split long sentences, plain language, numbered steps for any process, clear visual structure. Long blocks of text should be collapsed by default — show the key point clearly, and let the reader choose to expand for more detail. Most users find this the most helpful change of all.
 Formatting rules:
-1. Use short sentences. One idea per sentence.
-2. Bold the key term in each sentence for easy scanning.
+1. Split any sentence over 15 words into two shorter sentences. Never remove words — always split. Each sentence must keep all its original meaning.
+2. One idea per sentence. Bold the key term in each sentence for easy scanning.
 3. Leave clear visual gaps between sections and ideas.
-4. Always lead with the most important point. Put detail after.
+4. Always lead with the most important point. Put supporting detail after.
 5. Use plain language. Define technical terms when first used.
 6. Number every step or process — never bury steps in prose.
-7. Use a one-sentence summary at the top of long sections.
+7. For any section with more than 2 paragraphs: keep the first paragraph visible (it must state the key point clearly), then wrap all remaining paragraphs in <details><summary>Read more: [brief topic label]</summary>...</details>. Apply this consistently — the majority of sections should show a clear key point with the rest collapsed. All content inside <details> must follow the same rules above — reformatted, not raw text.
 ${SHARED_RULES}`,
 
   aphasia: `Profile: I have aphasia.
 Core rule: Preserve every fact and piece of information. You may replace complex or formal words with simpler everyday alternatives — but never remove meaning. Reorganise structure to make each point as clear as possible.
 Profile-specific: Aphasia affects how language is processed. Very short sentences help most. Active voice is much easier than passive. Pronouns (it, they, this, that, he, she, we, us) are confusing — always replace them with the actual noun. Everyday words are easier than formal, medical, or abstract language. Repeating key words is helpful — do not avoid repetition.
 Formatting rules:
-1. Wrap each topic or message block in a <section> tag. Each <section> covers one clear topic — a heading (h2 or h3) plus 1–4 short paragraphs or a bullet list. Never put multiple topics in one <section>.
-2. Target 5 words per sentence. Never more than 10. One point only per sentence.
-3. Split any sentence with embedded clauses into two or more separate sentences.
-4. Always use active voice. Rewrite every passive sentence. Example: "The ambulance will collect you" not "You will be collected by the ambulance".
-5. Never use pronouns (it, they, them, this, that, he, she, we, us). Replace every pronoun with the exact noun it refers to.
-6. Use only everyday words. Replace formal or technical words: tablets not medication, doctor not physician, get better not recover, stroke not CVA, brain bleed not haemorrhage, blood clot not ischaemic, cope with not compensate for, interest not motivation, ambulance not transport.
-7. Repeat key words freely — repetition aids understanding. Do not use pronouns to avoid repeating a word.
-8. Use bullet points for any list of two or more items.
-9. Maximum 2 sentences per paragraph. Leave generous space between paragraphs.
-10. Bold the single most important word or phrase in each paragraph.
-11. Never use ALL CAPS, italics, or underlines.`,
+1. Wrap each topic or message block in a <section> tag. Each <section> covers one clear topic — a heading (h2 or h3) plus content. Never put multiple topics in one <section>.
+2. Inside each <section>: show the heading plus the 1–2 most important sentences only. If there is more information on this topic, wrap the remaining content in <details><summary>More about [topic name]</summary>...</details> inside the same <section>. All content inside <details> must follow all the same rules below.
+3. Target 5 words per sentence. Never more than 10. One point only per sentence.
+4. Split any sentence with embedded clauses into two or more separate sentences. Never trim — always split.
+5. Always use active voice. Rewrite every passive sentence. Example: "The ambulance will collect you" not "You will be collected by the ambulance".
+6. Never use pronouns (it, they, them, this, that, he, she, we, us). Replace every pronoun with the exact noun it refers to.
+7. Use only everyday words. Replace formal or technical words: tablets not medication, doctor not physician, get better not recover, stroke not CVA, brain bleed not haemorrhage, blood clot not ischaemic, cope with not compensate for, interest not motivation, ambulance not transport.
+8. Repeat key words freely — repetition aids understanding. Do not use pronouns to avoid repeating a word.
+9. Use bullet points for any list of two or more items.
+10. Maximum 2 sentences per paragraph. Leave generous space between paragraphs.
+11. Bold the single most important word or phrase in each paragraph.
+12. Never use ALL CAPS, italics, or underlines.`,
 };
 
 export default {

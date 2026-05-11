@@ -774,11 +774,13 @@ body.focus-active .reading-content h3.focus-highlight { opacity: 1; }
   <!-- CONTENT -->
   <div class="refine-section">
     <div class="refine-section-label">Content</div>
-    <p class="refine-note">These re-run the reformat with new instructions applied.</p>
-    <label class="refine-check"><input type="checkbox" id="pref-simpler" onchange="updateReformatBtn()"> Use simpler language throughout</label>
-    <label class="refine-check"><input type="checkbox" id="pref-vshort" onchange="updateReformatBtn()"> Very short sentences (10 words max)</label>
+    <p class="refine-note" id="refine-content-note">These re-run the reformat with new instructions applied. Content is always preserved.</p>
+    <label class="refine-check"><input type="checkbox" id="pref-simpler" onchange="updateReformatBtn()"> <span id="pref-simpler-label">Rephrase for clarity</span></label>
+    <label class="refine-check"><input type="checkbox" id="pref-vshort" onchange="updateReformatBtn()"> <span id="pref-vshort-label">Very short sentences (10 words max)</span></label>
     <label class="refine-check"><input type="checkbox" id="pref-bullets" onchange="updateReformatBtn()"> Convert dense paragraphs to bullets</label>
     <label class="refine-check"><input type="checkbox" id="pref-collapse" onchange="updateReformatBtn()"> Collapse long sections</label>
+    <label class="refine-check aphasia-only" style="display:none;"><input type="checkbox" id="pref-shorter" onchange="updateReformatBtn()"> Make sentences even shorter (3–4 words)</label>
+    <label class="refine-check aphasia-only" style="display:none;"><input type="checkbox" id="pref-labels" onchange="updateReformatBtn()"> Add a topic word label to each box</label>
     <button class="refine-reformat-btn" id="reformat-prefs-btn" onclick="reformatWithPrefs()">↺ Reformat with these settings</button>
     <button class="refine-undo-btn" id="undo-reformat-btn" onclick="undoReformat()" style="display:none;">← Undo — back to original</button>
     <p class="refine-cost-note">Each reformat uses AI — please use thoughtfully.</p>
@@ -794,6 +796,30 @@ const PROFILE_LABELS = {
   memory: 'Working Memory',
   aphasia: 'Aphasia'
 };
+
+let currentProfile = 'mixed';
+
+// Set up REFINE content section labels and options for the active profile
+function configureRefinePanel(profile) {
+  currentProfile = profile;
+  const isAphasia = profile === 'aphasia';
+
+  // Update labels
+  document.getElementById('pref-simpler-label').textContent = isAphasia
+    ? 'Simplify vocabulary further'
+    : 'Rephrase for clarity';
+  document.getElementById('pref-vshort-label').textContent = isAphasia
+    ? 'Make sentences even shorter (3–4 words)'
+    : 'Very short sentences (10 words max)';
+  document.getElementById('refine-content-note').textContent = isAphasia
+    ? 'These re-run the reformat with additional aphasia-friendly adjustments.'
+    : 'These re-run the reformat with new instructions. Content is always preserved.';
+
+  // Show or hide aphasia-only options
+  document.querySelectorAll('.aphasia-only').forEach(el => {
+    el.style.display = isAphasia ? 'flex' : 'none';
+  });
+}
 
 function init() {
   // Read result from localStorage (set by index.html after Worker call)
@@ -846,6 +872,7 @@ function init() {
   content.innerHTML = sanitiseHtml(result.html);
   content.style.display = 'block';
   document.body.dataset.profile = result.profile || 'mixed';
+  configureRefinePanel(result.profile || 'mixed');
   document.getElementById('refine-trigger').style.display = 'block';
   if ('speechSynthesis' in window) {
     document.getElementById('speak-btn').style.display = 'inline-flex';
@@ -1170,7 +1197,7 @@ function loadPrefs() {
   // Restore content checkbox states
   try {
     const contentPrefs = JSON.parse(localStorage.getItem('readclear_content_prefs')) || {};
-    ['simpler','vshort','bullets','collapse'].forEach(k => {
+    ['simpler','vshort','bullets','collapse','shorter','labels'].forEach(k => {
       const el = document.getElementById('pref-' + k);
       if (el) el.checked = !!contentPrefs[k];
     });
@@ -1201,7 +1228,8 @@ function toggleRefine() {
 }
 
 function updateReformatBtn() {
-  const anyChecked = ['simpler','vshort','bullets','collapse'].some(k => document.getElementById('pref-' + k)?.checked);
+  const allKeys = ['simpler','vshort','bullets','collapse','shorter','labels'];
+  const anyChecked = allKeys.some(k => document.getElementById('pref-' + k)?.checked);
   const hasOriginal = !!localStorage.getItem('readclear_result_original');
   const btn = document.getElementById('reformat-prefs-btn');
   if (!btn) return;
@@ -1216,22 +1244,57 @@ async function reformatWithPrefs() {
   const result = (() => { try { return JSON.parse(localStorage.getItem('readclear_result')); } catch(e) { return null; } })();
   if (!result || !result.url) return;
 
-  // Save content pref checkbox states
+  const isAphasia = currentProfile === 'aphasia';
+
+  // Save content pref checkbox states (all keys including aphasia-only)
   const contentPrefs = {};
-  ['simpler','vshort','bullets','collapse'].forEach(k => {
+  ['simpler','vshort','bullets','collapse','shorter','labels'].forEach(k => {
     contentPrefs[k] = document.getElementById('pref-' + k)?.checked || false;
   });
   try { localStorage.setItem('readclear_content_prefs', JSON.stringify(contentPrefs)); } catch(e) {}
 
-  // Build extras string from checked options
+  // Build profile-aware extras string from checked options
   const extras = [];
-  if (contentPrefs.simpler)   extras.push('Use the simplest possible language. Replace every complex word with a plain everyday alternative. Aim for a reading level that anyone can understand.');
-  if (contentPrefs.vshort)    extras.push('Keep every sentence to 10 words or fewer. Split longer sentences aggressively. One idea per sentence, no exceptions.');
-  if (contentPrefs.bullets)   extras.push('Convert every paragraph of 2 or more sentences into a bullet list. Prose should be the exception, not the rule.');
-  if (contentPrefs.collapse)  extras.push('Wrap any section with 3 or more paragraphs in <details><summary>[one sentence summary of the section]</summary>...</details>.');
+
+  if (contentPrefs.simpler) {
+    if (isAphasia) {
+      extras.push('Do another pass at vocabulary simplification. Replace any remaining formal, medical, or complex words with the simplest possible everyday alternative. Everyday words only.');
+    } else {
+      extras.push('Rephrase any remaining complex or formal sentences for clarity. Do not change vocabulary — keep all specific terms and facts. Only simplify sentence structure and phrasing.');
+    }
+  }
+
+  if (contentPrefs.vshort) {
+    if (isAphasia) {
+      extras.push('Push every sentence to 3–4 words. Absolute maximum 7 words per sentence. Split aggressively into more sentences. Never trim words — always split. One point only per sentence.');
+    } else {
+      extras.push('Split any remaining sentence over 10 words into two or more shorter sentences. Never remove words — always split. Target 10 words maximum per sentence, one idea only.');
+    }
+  }
+
+  if (contentPrefs.bullets) {
+    extras.push('Convert every paragraph of 2 or more sentences into a bullet list. Prose should be the exception, not the rule. Every fact must be preserved as a bullet point.');
+  }
+
+  if (contentPrefs.collapse) {
+    if (isAphasia) {
+      extras.push('Inside each <section> box: keep only the heading and the single most important sentence visible. Wrap all remaining content in <details><summary>More about [topic name]</summary>...</details> inside the same section. All content inside <details> must follow the same aphasia rules — short sentences, no pronouns, active voice, everyday words.');
+    } else {
+      extras.push('For any section with more than 1 paragraph: keep the first paragraph visible (it must state the key point), then wrap all remaining paragraphs in <details><summary>Read more: [brief label describing what follows]</summary>...</details>. The content inside <details> must follow all the same formatting rules — reformatted, not raw text.');
+    }
+  }
+
+  // Aphasia-only options
+  if (isAphasia && contentPrefs.shorter) {
+    extras.push('Push every sentence to exactly 3 words wherever possible. Never more than 5 words in any sentence. Split every clause into its own sentence. This is more aggressive than the base profile — go as short as language allows while keeping meaning.');
+  }
+
+  if (isAphasia && contentPrefs.labels) {
+    extras.push('At the start of each <section>, before the heading, add a single bold topic word in capitals that labels the section at a glance — for example <strong>MEDICINE</strong>, <strong>APPOINTMENT</strong>, <strong>TRANSPORT</strong>, <strong>CONTACT</strong>. Choose the most obvious everyday word for the topic.');
+  }
 
   if (extras.length === 0) {
-    // Nothing ticked — revert to original if we have one, otherwise just close
+    // Nothing ticked — revert to original if we have one
     const hasOriginal = !!localStorage.getItem('readclear_result_original');
     if (hasOriginal) {
       undoReformat();
