@@ -307,10 +307,13 @@ async function handleReformatImage(request, env, corsHeaders) {
   }
 
   const profilePrompt = PROFILE_PROMPTS[profile] || PROFILE_PROMPTS.mixed;
+  const isAphasia = profile === 'aphasia';
 
-  const systemPrompt = `You are an accessibility formatter. You read text from images of documents and reformat it for people with dyslexia.
+  const systemPrompt = `You are an accessibility formatter. You read text from images of documents and reformat it for people with ${isAphasia ? 'aphasia' : 'dyslexia'}.
 
-CRITICAL RULE: Transcribe and include every word of text you can see in the image. Never remove, simplify, or summarise content. Only change the structure and presentation.
+CRITICAL RULE: Transcribe and include every word of text you can see in the image. ${isAphasia
+    ? 'You may replace complex or formal words with simpler everyday alternatives, but never remove any meaning. Only change structure, vocabulary, and presentation.'
+    : 'Never remove, simplify, or summarise content. Only change the structure and presentation.'}
 
 ${profilePrompt}
 
