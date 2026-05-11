@@ -79,6 +79,18 @@ body {
   transition: color 0.2s;
 }
 .nav-link:hover { color: #faf8f3; }
+.nav-listen-btn {
+  font-size: 13px;
+  font-weight: 600;
+  color: #8a857e;
+  background: none;
+  border: none;
+  cursor: pointer;
+  font-family: 'Plus Jakarta Sans', sans-serif;
+  transition: color 0.2s;
+  padding: 0;
+}
+.nav-listen-btn:hover { color: #faf8f3; }
 
 /* ── HERO ─────────────────────────────────────────────── */
 .hero {
@@ -727,7 +739,10 @@ body {
     <a href="/" class="nav-logo">readclear</a>
     <span class="beta-badge">Beta</span>
   </div>
-  <a href="prompt.html" class="nav-link">Use ChatGPT/CoPilot? Make AI dyslexic friendly →</a>
+  <div style="display:flex;align-items:center;gap:20px;">
+    <button id="page-listen-btn" class="nav-listen-btn" onclick="handlePageListen()">🔊 Listen</button>
+    <a href="prompt.html" class="nav-link">Use ChatGPT/CoPilot? Make AI dyslexic friendly →</a>
+  </div>
 </nav>
 
 <!-- HERO -->
@@ -1360,6 +1375,56 @@ function initSlider() {
   window.addEventListener('touchend', () => { dragging = false; });
 }
 // ── END COMPARE SLIDER ────────────────────────────────────
+</script>
+
+<script>
+// ── PAGE TTS ──────────────────────────────────────────────
+(function() {
+  if (!('speechSynthesis' in window)) return;
+  let ttsId = 0, ttsState = 'stopped', pingTimer = null;
+  const SKIP = '.nav, footer, .footer, .share-wrap, .modal-overlay, .upload-zone, .compare-section';
+
+  function getPageText() {
+    const seen = new Set(), parts = [];
+    document.querySelectorAll('h1, h2, h3, p').forEach(el => {
+      if (el.closest(SKIP)) return;
+      const text = el.innerText?.trim();
+      if (!text || seen.has(text)) return;
+      seen.add(text);
+      const isH = /^H[1-4]$/.test(el.tagName);
+      parts.push(isH && !/[.!?]$/.test(text) ? text + '.' : text);
+    });
+    return parts.join('\n');
+  }
+
+  function updateBtn() {
+    const btn = document.getElementById('page-listen-btn');
+    if (!btn) return;
+    btn.textContent = ttsState === 'playing' ? '⏸ Pause' : ttsState === 'paused' ? '▶ Resume' : '🔊 Listen';
+  }
+
+  function startSpeaking() {
+    const id = ++ttsId;
+    speechSynthesis.cancel();
+    clearInterval(pingTimer);
+    const utt = new SpeechSynthesisUtterance(getPageText());
+    utt.rate = 0.92;
+    utt.onstart  = () => { if (ttsId !== id) return; ttsState = 'playing';  updateBtn(); };
+    utt.onpause  = () => { if (ttsId !== id) return; ttsState = 'paused';   updateBtn(); };
+    utt.onresume = () => { if (ttsId !== id) return; ttsState = 'playing';  updateBtn(); };
+    utt.onend = utt.onerror = () => { if (ttsId !== id) return; ttsState = 'stopped'; clearInterval(pingTimer); updateBtn(); };
+    speechSynthesis.speak(utt);
+    pingTimer = setInterval(() => {
+      if (speechSynthesis.speaking && !speechSynthesis.paused) { speechSynthesis.pause(); speechSynthesis.resume(); }
+    }, 12000);
+  }
+
+  window.handlePageListen = function() {
+    if (ttsState === 'stopped') startSpeaking();
+    else if (ttsState === 'playing') { speechSynthesis.pause(); ttsState = 'paused'; updateBtn(); }
+    else { speechSynthesis.resume(); ttsState = 'playing'; updateBtn(); }
+  };
+})();
 </script>
 
 </body>
