@@ -1194,14 +1194,7 @@ function loadPrefs() {
     });
   });
 
-  // Restore content checkbox states
-  try {
-    const contentPrefs = JSON.parse(localStorage.getItem('readclear_content_prefs')) || {};
-    ['simpler','vshort','bullets','collapse','shorter','labels'].forEach(k => {
-      const el = document.getElementById('pref-' + k);
-      if (el) el.checked = !!contentPrefs[k];
-    });
-  } catch(e) {}
+  // Content checkboxes always start unchecked — they are actions, not persistent settings
 
   // Update reformat button label to reflect current state
   updateReformatBtn();
