@@ -197,6 +197,15 @@ async function handleReformat(request, env, corsHeaders) {
     return errorResponse('blocked', 403, corsHeaders);
   }
 
+  // Check if extracted content looks like wrong content from a JS-rendered site.
+  // Modern SPAs (React/Next.js etc.) send a near-empty HTML shell — the only pre-rendered
+  // content is often legal boilerplate (privacy policy, cookie notices).
+  // Detect this by counting legal keyword density and bail out with a clear error
+  // so the user gets a useful message rather than a reformatted privacy policy.
+  if (looksLikeJsSite(text, url)) {
+    return errorResponse('js_site', 422, corsHeaders);
+  }
+
   // Limit content length to avoid huge Claude requests
   const wasTruncated = text.length > 12000;
   const truncatedText = wasTruncated ? text.slice(0, 12000) + '\n\n[Content truncated for length]' : text;
@@ -393,6 +402,51 @@ Start your response with a <h1> containing the document title or type (e.g. "App
     status: 200,
     headers: { ...corsHeaders, 'Content-Type': 'application/json' },
   });
+}
+
+/**
+ * Detect when extracted content is likely wrong — a common failure mode on
+ * JavaScript-rendered sites (React, Next.js, Vue etc.) where the Worker
+ * fetches a near-empty HTML shell and only finds pre-rendered legal boilerplate
+ * like a privacy policy or cookie notice.
+ *
+ * Returns true (= bail out) when:
+ *   - 4+ distinct legal/policy keywords are present in the text, AND
+ *   - the URL path doesn't look like an intentional legal page
+ *     (e.g. /privacy-policy, /terms) — if it does, the user may genuinely
+ *     want to read it, so we let it through.
+ */
+function looksLikeJsSite(text, url) {
+  const lower = text.toLowerCase();
+  const legalSignals = [
+    'privacy policy',
+    'personal data',
+    'gdpr',
+    'data protection',
+    'cookie policy',
+    'data controller',
+    'lawful basis',
+    'data subject',
+    'we may collect',
+    'right to erasure',
+    'right to access',
+    'retention period',
+    'third-party cookies',
+    'opt out of',
+    'your rights under',
+  ];
+  const hits = legalSignals.filter(kw => lower.includes(kw)).length;
+  if (hits < 4) return false;
+
+  // If the URL path clearly indicates an intentional legal page, let it through
+  try {
+    const path = new URL(url).pathname.toLowerCase();
+    if (/\/(privacy|terms|cookies?|gdpr|legal|policy|data.protection)/i.test(path)) {
+      return false;
+    }
+  } catch(e) {}
+
+  return true;
 }
 
 /**

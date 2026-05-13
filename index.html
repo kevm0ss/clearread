@@ -1131,11 +1131,15 @@ async function callWorker(url, profile) {
     showStatus('', '');
     document.getElementById('reformat-btn').disabled = false;
 
-    const isBlocked = err.message.includes('blocked') || err.message.includes('paywall') || err.message.includes('403') || err.message.includes('Unable');
-    if (isBlocked) {
-      showBlockedError(url);
+    if (err.message === 'js_site') {
+      showJsSiteError(url);
     } else {
-      showStatus(err.message || 'Something went wrong. Please try again.', 'error');
+      const isBlocked = err.message.includes('blocked') || err.message.includes('paywall') || err.message.includes('403') || err.message.includes('Unable');
+      if (isBlocked) {
+        showBlockedError(url);
+      } else {
+        showStatus(err.message || 'Something went wrong. Please try again.', 'error');
+      }
     }
   }
 }
@@ -1148,6 +1152,21 @@ function showBlockedError(url) {
     ${domain} is likely behind a paywall or has security that prevents access.
     This isn't something you've done wrong.<br><br>
     <a href="siteowners.html" style="color:#fcd34d;">Tell the site owner about readclear →</a>
+  `;
+  el.className = 'status-msg error';
+  el.style.display = 'block';
+}
+
+function showJsSiteError(url) {
+  const el = document.getElementById('status-msg');
+  el.innerHTML = `
+    <strong>This site loads its content with JavaScript — readclear can't access it.</strong><br><br>
+    Most modern apps and startup sites build their pages in the browser after they load.
+    readclear fetches pages directly and never sees that content.<br><br>
+    <strong>What to try instead:</strong> open the page normally, select all the text
+    (Ctrl+A or Cmd+A), copy it, then paste it into
+    <a href="prompt.html" style="color:#fcd34d;">our prompt tool</a>
+    to reformat it using ChatGPT or Copilot.
   `;
   el.className = 'status-msg error';
   el.style.display = 'block';
